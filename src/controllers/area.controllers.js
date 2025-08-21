@@ -8,6 +8,11 @@ export const getOneArea = (req, res) => {
     res.send('Obteniendo una sola area');
 }
 
+//Creacion unica
+export const postOneArea = (req, res) =>{
+    res.send('Creando Area');
+}
+
 //Actualizacion unica
 export const putOneArea = (req, res) => {
     res.send('Actualizando area');

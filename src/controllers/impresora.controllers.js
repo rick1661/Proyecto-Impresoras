@@ -1,7 +1,14 @@
+//Importacion de la conexion a la BD
+import {getConnection} from '../database/connection.js'
+
 //Funciones para los metodos get y put
 
 //Consulta general
 export const getImpresoras = (req, res) => {
+    const pool = await getConnection();
+
+    pool.request().query('SELECT * FROM impresora');
+
     res.send('Obteniendo impresoras');
 }
 
