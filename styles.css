@@ -1,0 +1,115 @@
+root{
+
+    --colorPrincipal: #00669c;
+
+}
+
+head{
+
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+
+
+}
+
+body{
+
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: medium;
+
+}
+
+
+#barraLateral{
+
+    background-color: #00669c;
+    width: 300px;
+    height: 1000px;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+    
+
+}
+
+#div-logo{
+    
+    position: relative; /* Se usa para que no se salga la imagen de la caja, ya que la imagen tiene position absolute */
+    background-color: #00669c;
+    width: 100%;
+    height: 200px;
+    
+}
+
+#img-logo{
+
+    position: absolute; /* se usa en caso de este div, donde tiene la altura y el ancho definido, sin esto top, right y left no funcionarían */
+    width: 50%;
+    top: 25%; /* sirve en caso de un div como este, donde tiene una altura definida, en caso de que la altura no este definida esta edición no se pone ; */
+    right: 0; /* se debe usar para que margin 0 auto funcione */
+    left: 0; /* se debe usar para que margin 0 auto funcione */ 
+    margin: 0 auto; /* Esto lo centra */
+    
+   
+
+}
+
+#div-opcs{
+    
+    align-content: center;
+    
+    
+
+    
+}
+
+
+.li-opc{
+
+    display: flex;
+    width: 100%;
+    height: 70px;
+    /*gap: 10px; /* Espacio entre el icono y el texto */
+    cursor: pointer;
+    color:white;
+
+    
+    
+}
+
+.li-opc:hover{
+    background-color: black;
+    color:white;
+    transition-duration: 0.4s;
+    
+    
+}
+
+
+
+
+i{
+    width: 40%;
+    height: 70px;
+    text-align: center;
+    align-content: center;
+    font-size: x-large;
+    
+   
+}
+
+
+    
+.a-opc-lateral{
+
+    width: 50%;
+    height: 70px;
+    text-align: left;
+    align-content: center;
+    font-size: large;
+   
+    
+    
+}
+
