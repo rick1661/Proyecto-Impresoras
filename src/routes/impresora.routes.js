@@ -9,7 +9,7 @@ router.get('/impresora', (req, res) => {
 
 //Consulta unica
 router.get('/impresora/:serie', (req, res) => {
-    res.send('Obteniendo una sola impresora');
+    res.send('Obteniendo una sola consulta');
 });
 
 //Actualizando impresora
@@ -19,7 +19,6 @@ router.put('/impresora/:serie', (req, res) => {
 
 // eliminacion de impresora
 router.delete('/impresora/:serie', (req, res) =>{
-     
     res.send('Eliminado impresora');
 });
 
