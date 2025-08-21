@@ -8,6 +8,11 @@ export const getOneContrato = (req, res) => {
     res.send('Obteniendo una sola consulta');
 };
 
+//Creacion unica
+export const postOneContrato = (req, res) =>{
+    res.send('Creando contrato');
+}
+
 //Actualizacion umica
 export const putOneContrato = (req, res) =>{
     res.send('Actualizando contrato');

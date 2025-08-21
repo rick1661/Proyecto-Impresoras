@@ -10,6 +10,11 @@ export const getOneImpresora = (req, res) => {
     res.send('Obteniendo una sola consulta');
 }
 
+//Creacion unica
+export const postOneImpresora = (req, res) => {
+    res.send('Creando impresora');
+}
+
 //Actualizacion unica
 export const putOneimpresora = (req, res) => {
     res.send('Actualizando impresora');

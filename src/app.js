@@ -2,7 +2,7 @@ import express from 'express';
 import impresoraRoutes from './routes/impresora.routes.js'; 
 import empresaRoutes from './routes/empresa.routes.js';
 import contratoRoutes from './routes/contrato.routes.js';
-import consumibleRoutes from './routes/contrato.routes.js';
+import consumibleRoutes from './routes/consumible.routes.js';
 import areaRoutes from './routes/area.routes.js';
 
 

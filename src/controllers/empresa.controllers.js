@@ -10,6 +10,13 @@ export const getOneEmpresa = (req,res) => {
     res.send('Obteniendo una sola empresa');
 };
 
+//Creacion unica
+export const postOneEmpresa = (req, res) => {
+    res.send('Creando Empresa');
+
+};
+
+
 //Actualizacion unica
  export const putOneEmpresa = (req, res) => {
     res.send("Actualizando empresa");

@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import {getEmpresas} from '../controllers/empresa.controllers.js';
 import {getOneEmpresa} from '../controllers/empresa.controllers.js';
+import {postOneEmpresa} from '../controllers/empresa.controllers.js';
 import {putOneEmpresa} from '../controllers/empresa.controllers.js';
 import {deleteOneEmpresa} from '../controllers/empresa.controllers.js';
 
@@ -11,6 +12,9 @@ router.get('/empresa', getEmpresas);
 
 //Consulta unica
 router.get('/empresa/:id', getOneEmpresa);
+
+//Creacion unica
+router.post('/empresa/:id', postOneEmpresa);
 
 //Actualizando impresora
 router.put('/empresa/:id', putOneEmpresa);
