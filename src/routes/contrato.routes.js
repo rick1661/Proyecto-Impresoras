@@ -1,25 +1,21 @@
 import {Router} from 'express';
+import {getContratos} from '../controllers/contrato.controllers.js';
+import {getOneContrato} from '../controllers/contrato.controllers.js';
+import {putOneContrato} from '../controllers/contrato.controllers.js';
+import {deleteOneContrato} from '../controllers/contrato.controllers.js';
 
 const router = Router();
 
 //Consulta general
-router.get('/contrato', (req, res) => {
-    res.send('Obteniendo contratos');
-});
+router.get('/contrato', getContratos);
 
 //Consulta unica
-router.get('/contrato/:id', (req, res) => {
-    res.send('Obteniendo una sola consulta');
-});
+router.get('/contrato/:id', getOneContrato);
 
 //Actualizacion unica
-router.put('/contrato/:id', (req, res) =>{
-    res.send('Actualizando contrato');
-});
+router.put('/contrato/:id', putOneContrato );
 
 //Eliminacion unica
-router.put('/contrato/:id', (req, res) =>{
-    res.send('Eliminando contrato');
-});
+router.put('/contrato/:id', deleteOneContrato);
 
 export default router;
