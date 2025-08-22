@@ -21,9 +21,23 @@ FOREIGN KEY (empresaID) REFERENCES empresa(empresaID)
 
 );
 
+create table contrato(
+
+contratoID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+nombre VARCHAR(20),
+empresaID INT,
+FOREIGN KEY (empresaID) REFERENCES empresa(empresaID),
+
+
+
+
+)
+
+
 create table impresora(
 
-serie INT NOT NULL PRIMARY KEY,
+impresoraID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+serie Varchar(50) NOT NULL,
 nombre VARCHAR(30),
 marcar VARCHAR(15),
 modelo VARCHAR(30),
@@ -43,19 +57,8 @@ tipo VARCHAR(15),
 modelo VARCHAR(15),
 impresoraID INT,
 tij VARCHAR(15),
-FOREIGN KEY (impresoraID) REFERENCES impresora(serie),
+FOREIGN KEY (impresoraID) REFERENCES impresora(impresoraID),
 
 );
 
 
-create table contrato(
-
-contratoID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-nombre VARCHAR(20),
-empresaID INT,
-FOREIGN KEY (empresaID) REFERENCES empresa(empresaID),
-
-
-
-
-)

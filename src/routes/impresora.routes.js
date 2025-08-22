@@ -11,15 +11,15 @@ const router = Router();
 router.get('/impresora', getImpresoras);
 
 //Consulta unica
-router.get('/impresora/:serie', getOneImpresora );
+router.get('/impresora/:id', getOneImpresora );
 
 //Creando impresora
-router.post('/impresora/:serie', postOneImpresora);
+router.post('/impresora/:id', postOneImpresora);
 
 //Actualizando impresora
-router.put('/impresora/:serie', putOneimpresora );
+router.put('/impresora/:id', putOneimpresora );
 
 // eliminacion de impresora
-router.delete('/impresora/:serie', deleteOneimpresora );
+router.delete('/impresora/:id', deleteOneimpresora );
 
 export default router;
