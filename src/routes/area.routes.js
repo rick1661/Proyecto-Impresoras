@@ -14,7 +14,7 @@ router.get('/area', getAreas);
 router.get('/area/:id', getOneArea );
 
 //Creacion unica
-router.get('/area/:id', postOneArea);
+router.post('/area/:id', postOneArea);
 
 //Actualizando impresora
 router.put('/area/:id', putOneArea );
