@@ -2,8 +2,8 @@ import {Router} from 'express';
 import {getImpresoras} from '../controllers/impresora.controllers.js';
 import {getOneImpresora} from '../controllers/impresora.controllers.js';
 import {postOneImpresora} from '../controllers/impresora.controllers.js';
-import {putOneimpresora} from '../controllers/impresora.controllers.js';
-import {deleteOneimpresora} from '../controllers/impresora.controllers.js';
+import {putOneImpresora} from '../controllers/impresora.controllers.js';
+import {deleteOneImpresora} from '../controllers/impresora.controllers.js';
 
 const router = Router();
 
@@ -17,9 +17,9 @@ router.get('/impresora/:id', getOneImpresora );
 router.post('/impresora/:id', postOneImpresora);
 
 //Actualizando impresora
-router.put('/impresora/:id', putOneimpresora );
+router.put('/impresora/:id', putOneImpresora );
 
 // eliminacion de impresora
-router.delete('/impresora/:id', deleteOneimpresora );
+router.delete('/impresora/:id', deleteOneImpresora );
 
 export default router;

@@ -62,3 +62,6 @@ FOREIGN KEY (impresoraID) REFERENCES impresora(impresoraID),
 );
 
 
+
+select * from empresa;
+

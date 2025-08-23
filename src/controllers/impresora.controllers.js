@@ -66,11 +66,10 @@ export const postOneImpresora = async (req, res) => {
 
 
 //Actualizacion unica
-export const putOneimpresora = async (req, res) => {
+export const putOneImpresora = async (req, res) => {
 
-    
-    const pool = await getConnection()
-    const result =await pool.request()
+    const pool = await getConnection();
+    const result = await pool.request()
         .input("id", sql.Int, req.params.id)
         .input("serie", sql.VarChar, req.body.serie)
         .input("nombre",sql.VarChar, req.body.nombre)
@@ -79,21 +78,20 @@ export const putOneimpresora = async (req, res) => {
         .input("direccionIP",sql.VarChar, req.body.direccionIP)
         .input("areaID",sql.VarChar, req.body.areaID)
         .input("contratoID",sql.VarChar, req.body.contratoID)
-        
-    .query("UPDATE impresora SET serie = @serie, nombre = @nombre, marca = @marca, modelo = @modelo, direccionIP = @direccionIP, areaID = @areaID, contratoID = @contratoID, impresoraID = @id ")
+    .query("UPDATE impresora SET impresoraID = @id,  serie = @serie, nombre = @nombre, marca = @marca, modelo = @modelo, direccionIP = @direccionIP, areaID = @areaID, contratoID = @contratoID, impresoraID = @id ")
 
     if(result.rowsAffected === 0){
-        return res.status(404).jason({message: "Impresora no encontrada"});
+        return res.status(404).json({message: "Impresora no encontrada"});
     }
     else{
-        res.jason('Impresora actualizada');
+        res.json('Impresora actualizada');
     }
     res.send('Actualizando impresora');
     
 }
 
 //Eliminacion unica
-export const deleteOneimpresora = async(req, res) =>{
+export const deleteOneImpresora = async(req, res) =>{
 
     const pool = await getConnection();
     const result = await pool.request()
