@@ -30,15 +30,13 @@ export const postOneEmpresa = async (req, res) => {
 
     console.log(req.body);
     const pool = await getConnection();
-    const result = await pool.request().query(`INSERT INTO empresa (nombre) VALUES ('${req.body.nombre}'); SELECT SCOPE_IDENTITY() AS id;`);
+    const result = await pool.request().query(`INSERT INTO empresa (nombre, empresaID) VALUES ('${req.body.nombre}', ${req.body.empresaID}); SELECT SCOPE_IDENTITY() AS id;`);
     console.log(result);
     res.json({
         id: result.recordset[0].id,
-        nombre: req.body.nombre
+        nombre: req.body.nombre,
+        empresaID: req.body.empresaID
     });
-
-  
-
 };
 
 
