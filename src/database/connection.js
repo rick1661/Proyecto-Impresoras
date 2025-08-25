@@ -8,7 +8,7 @@ const dbSettings = {
     server:"localhost",
     database:"ImpresorasBD",
     dialect: "mssql",
-    port: 1433,
+    //port: 1433,
     options:{
         encrypt: true, // Usar cifrado si es necesario
         trustServerCertificate: true // Opcional, para evitar problemas de certificado en desarrollo

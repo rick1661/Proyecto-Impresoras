@@ -28,9 +28,6 @@ nombre VARCHAR(20),
 empresaID INT,
 FOREIGN KEY (empresaID) REFERENCES empresa(empresaID),
 
-
-
-
 )
 
 
