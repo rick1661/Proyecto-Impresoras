@@ -131,8 +131,22 @@
                     <input type="text" name="marca" placeholder="Marca" required>
                     <input type="text" name="modelo" placeholder="Modelo" required>
                     <input type="text" name="direccionIp" placeholder="Dirección IP" required>
-                    <input type="text" name="area" placeholder="Área" required>
-                    <input type="text" name="contrato" placeholder="Contrato" required>
+                    <label for="area">Área:</label>
+                    <select name="area" id="area" required>
+                        <option value="">Selecciona un área</option>
+                        <option value="oficina">Oficina</option>
+                        <option value="almacen">Almacén</option>
+                        <option value="recepcion">Recepción</option>
+                        <!-- Agrega más opciones según necesites -->
+                    </select>
+                    <label for="area">contrato:</label>
+                    <select name="contrato" id="contraro" required>
+                        <option value="">Selecciona un área</option>
+                        <option value="oficina">Oficina</option>
+                        <option value="almacen">Almacén</option>
+                        <option value="recepcion">Recepción</option>
+                        <!-- Agrega más opciones según necesites -->
+                    </select>
                     <button type="submit">Guardar</button>
                 </form>
             </div>
