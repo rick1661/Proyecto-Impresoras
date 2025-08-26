@@ -1,3 +1,4 @@
+
 import sql from 'mssql'
 //"ITTJCDSTEC-17/SQLEXPRESS",
 //objeto de conexion

@@ -25,7 +25,7 @@ export const getOneEmpresa = async(req,res) => {
     return res.json(resultado.recordset[0]);
 };
 
-//Creacion unica
+//Creacion unica                
 export const postOneEmpresa = async (req, res) => {
 
     console.log(req.body);

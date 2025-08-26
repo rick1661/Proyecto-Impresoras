@@ -50,10 +50,11 @@ FOREIGN KEY (contratoID) REFERENCES contrato(contratoID),
 create table consumible(
 
 consumibleID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-tipo VARCHAR(15),
-modelo VARCHAR(15),
+tipo VARCHAR(15), 
+modelo VARCHAR(15), 
+tij VARCHAR(15), 
+fecha DATE, 
 impresoraID INT NOT NULL,
-tij VARCHAR(15),
 FOREIGN KEY (impresoraID) REFERENCES impresora(impresoraID),
 
 );
@@ -64,4 +65,8 @@ select * from contrato;
 select * from area;
 select * from consumible
 
+Insert empresa (nombre) VALUES ('Hospital')
 
+Insert impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCNDF1DD','Interlab TJ HP Recepcion', 'HP','MULTIFUNCIONAL E52645DN','192.168.85.127',1,1)
+
+Select serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID ;

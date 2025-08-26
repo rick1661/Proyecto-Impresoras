@@ -7,8 +7,8 @@ import {deleteOneImpresora} from '../controllers/impresora.controllers.js';
 
 const router = Router();
 
-// Consulta general
-router.get('/impresora', getImpresoras);
+//General
+router.get('/impresora/', getImpresoras );
 
 //Consulta unica
 router.get('/impresora/:id', getOneImpresora );

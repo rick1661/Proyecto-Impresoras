@@ -1,44 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impresoras SIMNSA</title>
     <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
 </head>
 
 <body>
 
-    <aside class= "sidebar">
+    <aside class="sidebar">
 
-        <header class ="sidebar-header">
+        <header class="sidebar-header">
 
-             <a href="#" class="header-logo">
+            <a href="#" class="header-logo">
 
                 <img src="pictures/logo.png" alt="SIMNSA">
 
-             </a>
-             
-             <button class="toggler sidebar-toggler">
-                
+            </a>
+
+            <button class="toggler sidebar-toggler">
+
                 <span class="material-symbols-rounded">chevron_left</span>
 
             </button>
-           
+
             <button class="toggler menu-toggler">
 
                 <span class="material-symbols-rounded">menu</span>
 
             </button>
-        
+
         </header>
 
         <nav class="sidebar-nav">
             <ul class="nav-list primary-nav">
 
-                 <li class="nav-item">
+                <li class="nav-item">
 
                     <a href="#" class="nav-link">
 
@@ -49,8 +53,8 @@
 
                     <span class="nav-tooltip">Impresoras</span>
 
-                 </li>
-                 <li class="nav-item">
+                </li>
+                <li class="nav-item">
 
                     <a href="#" class="nav-link">
 
@@ -61,16 +65,16 @@
 
                     <span class="nav-tooltip">Consumibles</span>
 
-                 </li>
+                </li>
 
             </ul>
 
             <ul class="nav-list secondary-nav">
 
             </ul>
-            
 
-           <!--
+
+            <!--
              <li class="li-opc">
                 <i class="fa-solid fa-print"></i>
                 <a class="a-opc-lateral">Impresoras</a>
@@ -82,13 +86,70 @@
                 <a class="a-opc-lateral" >Toners</a>
 
             </li>-->
-            
+
         </nav>
-        
+
 
     </aside>
-  <!-- Script -->
-  <script src="code.js"></script>
-        
+    <div class="main-content">
+
+
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Serie</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Dirección IP</th>
+                    <th>Área</th>
+                    <th>Contrato</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí puedes agregar filas de datos -->
+                <tr>
+                    <td>12345</td>
+                    <td>Impresora 1</td>
+                    <td>HP</td>
+                    <td>LaserJet Pro</td>
+                    <td>192.168.1.10</td>
+                    <td>Oficina</td>
+                    <td>SI</td>
+                </tr>
+                <!-- Más filas aquí -->
+            </tbody>
+        </table>
+
+        <div id="modalForm" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Agregar impresora</h2>
+                <form id="formImpresora">
+                    <input type="text" name="serie" placeholder="Serie" required>
+                    <input type="text" name="nombre" placeholder="Nombre" required>
+                    <input type="text" name="marca" placeholder="Marca" required>
+                    <input type="text" name="modelo" placeholder="Modelo" required>
+                    <input type="text" name="direccionIp" placeholder="Dirección IP" required>
+                    <input type="text" name="area" placeholder="Área" required>
+                    <input type="text" name="contrato" placeholder="Contrato" required>
+                    <button type="submit">Guardar</button>
+                </form>
+            </div>
+        </div>
+
+        <button class="addImpresoraBtn liquid">
+            <span>Agregar Impresora</span>
+        </button>
+
+    </div>
+
+
+    <!-- Script -->
+    <script src="/code JS/asaid.js"></script>
+    <script src="/code JS/table.js"></script>
+    <script src="/code JS/botonADD.js"></script>
+
 </body>
-</html
+
+</html>

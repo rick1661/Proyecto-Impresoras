@@ -28,15 +28,17 @@ export const postOneConsumible = async (req, res) => {
     const result = await pool.request()
         .input("tipo", sql.VarChar, req.body.tipo)
         .input("modelo", sql.VarChar, req.body.modelo)
+        .input("tij", sql.VarChar, req.body.tij)
+        .input("fecha", sql.Date, req.body.fecha)
         .input("impresoraID", sql.Int, req.body.impresoraID)
-        .input("tij", sql.Int, req.body.tij)
-        .query("INSERT INTO consumible (tipo, modelo, impresoraID, tij) VALUES (@tipo, @modelo, @impresoraID, @tij); SELECT SCOPE_IDENTITY() AS id;");
+        .query("INSERT INTO consumible (tipo, modelo, tij , fecha, impresoraID) VALUES (@tipo, @modelo, @tij, @fecha, @impresoraID); SELECT SCOPE_IDENTITY() AS id;");
     res.json({
         id: result.recordset[0].id,
         tipo: req.body.tipo,
         modelo: req.body.modelo,
         impresoraID: req.body.impresoraID,
-        tij: req.body.tij
+        tij: req.body.tij,
+        fecha: req.body.fecha
     });
 };
 
@@ -47,9 +49,10 @@ export const putOneConsumible = async (req, res) => {
         .input("consumibleID", sql.Int, req.params.id)
         .input("tipo", sql.VarChar, req.body.tipo)
         .input("modelo", sql.VarChar, req.body.modelo)
+        .input("tij", sql.VarChar, req.body.tij)
+        .input("fecha", sql.Date, req.body.fecha)
         .input("impresoraID", sql.Int, req.body.impresoraID)
-        .input("tij", sql.Int, req.body.tij)
-        .query("UPDATE consumible SET tipo = @tipo, modelo = @modelo, impresoraID = @impresoraID, tij = @tij WHERE consumibleID = @consumibleID");
+        .query("UPDATE consumible SET tipo = @tipo, modelo = @modelo, tij = @tij, fecha = @fecha, impresoraID = @impresoraID WHERE consumibleID = @consumibleID");
 
     if(result.rowsAffected[0] === 0){
         return res.status(404).json({message: "Consumible no encontrado"});
@@ -57,7 +60,7 @@ export const putOneConsumible = async (req, res) => {
     else{
         res.json('Consumible actualizado');
     }
-};
+};  
 
 //Eliminacion unica
 export const deleteOneConsumible = async (req, res) =>{
