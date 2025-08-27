@@ -92,7 +92,7 @@ INSERT area (nombre, empresaID) VALUES ('Especialidades', '2')
 INSERT area (nombre, empresaID) VALUES ('Dermalife', '2')
 INSERT area (nombre, empresaID) VALUES ('Bajapet', '2')
 INSERT area (nombre, empresaID) VALUES ('Easy Park', '2')
-INSERT area (nombre, empresaID) VALUES ('Diseño grafico', '2')
+INSERT area (nombre, empresaID) VALUES ('Diseï¿½o grafico', '2')
 INSERT area (nombre, empresaID) VALUES ('Call center', '2')
 INSERT area (nombre, empresaID) VALUES ('Recursos humanos S', '2')
 INSERT area (nombre, empresaID) VALUES ('Atencion a clientes', '2')
@@ -115,8 +115,84 @@ INSERT area (nombre, empresaID) VALUES ('Administracion', '1')
 INSERT area (nombre, empresaID) VALUES ('Finanzas', '1')
 INSERT area (nombre, empresaID) VALUES ('Farmacia Hospitalaria', '1')
 INSERT area (nombre, empresaID) VALUES ('Analisis de cuentas', '1')
-INSERT area (nombre, empresaID) VALUES ('', '1')
 
+
+/*-Insercciones Area-*/
+   INSERT INTO contrato (nombre, empresaID) VALUES ('39-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('37-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('07-2024-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('36-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('48-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('35-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('46-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('17-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('38-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('23-2023-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('13-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('13-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('66-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('40-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('47-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('33-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('01-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('Oncologia H', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('32-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('34-2022-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('16-2021-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('38-2020-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('39-2020-MPS', '1');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('41-2021-MPS', '1');
+
+   INSERT INTO contrato (nombre, empresaID) VALUES ('51-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('22-2022-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('01-2023-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('08-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('29-2022-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('12-2022-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('11-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('59-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('10-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('20-2024-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('50-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('02-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('24-2023-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('06-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('09-2018-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('54-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('53-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('30-2022-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('52-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('09-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('07-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('55-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('08-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('58-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('61-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('07-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('01-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('25-2022-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('60-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('07-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('40-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('57-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('16-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('28-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('05-2024-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('31-2022-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('18-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('17-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('13-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('05-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('41-2020-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('10-2023-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('06-2021-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('26-2019-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('03-2023-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('30-2024-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('30-2024-MPS', '2');
+   INSERT INTO contrato (nombre, empresaID) VALUES ('Oncologia S', '2');
+
+   
 
 
 
