@@ -394,3 +394,29 @@ option::picked {
   box-shadow: 0 4px 16px rgba(0,102,156,0.15);
   text-shadow: 0 0 8px #ffffff;
 } 
+
+.inputError{
+  outline: 2px solid red;
+  animation: horizontal-shaking 0.3s ease;
+}
+
+@keyframes horizontal-shaking {
+ 0% { transform: translateX(0) }
+ 25% { transform: translateX(5px) }
+ 50% { transform: translateX(-5px) }
+ 75% { transform: translateX(5px) }
+ 100% { transform: translateX(0) }
+}
+
+.inputOk{
+  outline: 2px solid green;
+}
+
+.selectError {
+  outline: 2px solid red;
+  animation: horizontal-shaking 0.3s ease;
+}
+
+.selectOk{
+  outline: 2px solid green;
+}

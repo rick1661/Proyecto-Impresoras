@@ -2,6 +2,13 @@
 const modal = document.getElementById('modalForm');
 const btn = document.getElementsByClassName('addImpresoraBtn')[0];
 const span = document.querySelector('.close');
+const inputSerie = document.querySelector('#formImpresora input[name="serie"]');
+const inputNombre = document.querySelector('#formImpresora input[name="nombre"]');
+const inputMarca = document.querySelector('#formImpresora input[name="marca"]');
+const inputModelo = document.querySelector('#formImpresora input[name="modelo"]');
+const inputDireccionIp = document.querySelector('#formImpresora input[name="direccionIp"]')
+const selectArea = document.querySelector('#formImpresora select[name="area"]');
+const selectContrato = document.querySelector('#formImpresora select[name="contrato"]');
 
 console.log("Click");
 btn.onclick = function () {
@@ -11,8 +18,38 @@ btn.onclick = function () {
     getAreas();
     // Cargar las áreas y contratos al abrir el modal
     getContratos();
+    //console.log(inputSerie);
+    // Asignar eventos
+    inputSerie.value = '';
+    inputNombre.value = '';
+    inputMarca.value = '';
+    inputModelo.value = '';
+    inputDireccionIp.value = '';
+    inputSerie.addEventListener('blur', validacionCampos);
+    inputNombre.addEventListener('blur', validacionCampos);
+    inputMarca.addEventListener('blur', validacionCampos);
+    inputModelo.addEventListener('blur', validacionCampos);
+    inputDireccionIp.addEventListener('blur', validacionCampos);
+    selectArea.addEventListener('blur', validacionSelect);
+    selectContrato.addEventListener('blur', validacionSelect);
 
+    //Quitar estilos de error 
+    inputSerie.classList.remove('inputError');
+    inputNombre.classList.remove('inputError');
+    inputMarca.classList.remove('inputError');
+    inputModelo.classList.remove('inputError');
+    inputDireccionIp.classList.remove('inputError');
+    selectArea.classList.remove('selectError');
+    selectContrato.classList.remove('selectError');
 
+    //Quitar estilos de OK
+    inputSerie.classList.remove('inputOk');
+    inputNombre.classList.remove('inputOk');
+    inputMarca.classList.remove('inputOk');
+    inputModelo.classList.remove('inputOk');
+    inputDireccionIp.classList.remove('inputOk');
+    selectArea.classList.remove('selectOk');
+    selectContrato.classList.remove('selectOk');
 
 }
 span.onclick = function () {
@@ -73,4 +110,28 @@ function getContratos() {
     .catch(error => {
       console.error('Error al cargar Contratos:', error);
     });
+}
+
+function validacionCampos(input) {
+    // Validar campos requeridos
+    
+    if (input.target.value.trim() === '') {
+        input.target.placeholder =(`Ingrese ${input.target.name}`);
+        input.target.classList.remove('inputOk');
+        input.target.classList.add('inputError');
+    }else{
+       input.target.classList.add('inputOk');
+    }
+}
+
+function validacionSelect(select) {
+  //console.log(select.target);
+  //console.log(select.target.value);
+  if(select.target.value === "n") {
+      select.target.classList.remove('selectOk');
+      select.target.classList.add('selectError');
+      
+  } else {
+      select.target.classList.add('selectOk');
+  }
 }
