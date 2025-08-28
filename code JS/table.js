@@ -8,7 +8,7 @@ function getImpresoras() {
   fetch('http://localhost:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
-      console.log(data);
+      //console.log(data);
       const tbody = document.querySelector('.styled-table tbody');
       tbody.innerHTML = ''; // Limpia el contenido actual
       data.forEach(impresora => {
