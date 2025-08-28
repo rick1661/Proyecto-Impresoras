@@ -12,3 +12,16 @@
 //sudo npm install -g nodemon
 
 //comando para ejecutar docker mssql docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=<password>" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
+
+
+sudo apt update
+sudo apt install git
+
+
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@email.com"
+
+ssh-keygen -t ed25519 -C "tu@email.com"
+
+
+cat ~/.ssh/id_ed25519.pub
