@@ -9,61 +9,67 @@ const inputModelo = document.querySelector('#formImpresora input[name="modelo"]'
 const inputDireccionIp = document.querySelector('#formImpresora input[name="direccionIp"]')
 const selectArea = document.querySelector('#formImpresora select[name="area"]');
 const selectContrato = document.querySelector('#formImpresora select[name="contrato"]');
+const formulario = document.getElementById('formImpresora');
 
 console.log("Click");
 btn.onclick = function () {
-    modal.style.display = 'block';
+  modal.style.display = 'block';
 
-    // Cargar las áreas y contratos al abrir el modal
-    getAreas();
-    // Cargar las áreas y contratos al abrir el modal
-    getContratos();
-    //console.log(inputSerie);
-    // Asignar eventos
-    inputSerie.value = '';
-    inputNombre.value = '';
-    inputMarca.value = '';
-    inputModelo.value = '';
-    inputDireccionIp.value = '';
-    inputSerie.addEventListener('blur', validacionCampos);
-    inputNombre.addEventListener('blur', validacionCampos);
-    inputMarca.addEventListener('blur', validacionCampos);
-    inputModelo.addEventListener('blur', validacionCampos);
-    inputDireccionIp.addEventListener('blur', validacionCampos);
-    selectArea.addEventListener('blur', validacionSelect);
-    selectContrato.addEventListener('blur', validacionSelect);
+  // Cargar las áreas y contratos al abrir el modal
+  getAreas();
+  // Cargar las áreas y contratos al abrir el modal
+  getContratos();
+  //console.log(inputSerie);
+  // Asignar eventos
+  inputSerie.value = '';
+  inputNombre.value = '';
+  inputMarca.value = '';
+  inputModelo.value = '';
+  inputDireccionIp.value = '';
+  inputSerie.addEventListener('blur', validacionCampos);
+  inputNombre.addEventListener('blur', validacionCampos);
+  inputMarca.addEventListener('blur', validacionCampos);
+  inputModelo.addEventListener('blur', validacionCampos);
+  inputDireccionIp.addEventListener('blur', validacionCampos);
+  selectArea.addEventListener('blur', validacionSelect);
+  selectContrato.addEventListener('blur', validacionSelect);
+  formulario.addEventListener('submit', formularioEnvio);
 
-    //Quitar estilos de error 
-    inputSerie.classList.remove('inputError');
-    inputNombre.classList.remove('inputError');
-    inputMarca.classList.remove('inputError');
-    inputModelo.classList.remove('inputError');
-    inputDireccionIp.classList.remove('inputError');
-    selectArea.classList.remove('selectError');
-    selectContrato.classList.remove('selectError');
+  //Quitar estilos de error 
+  inputSerie.classList.remove('inputError');
+  inputNombre.classList.remove('inputError');
+  inputMarca.classList.remove('inputError');
+  inputModelo.classList.remove('inputError');
+  inputDireccionIp.classList.remove('inputError');
+  selectArea.classList.remove('selectError');
+  selectContrato.classList.remove('selectError');
 
-    //Quitar estilos de OK
-    inputSerie.classList.remove('inputOk');
-    inputNombre.classList.remove('inputOk');
-    inputMarca.classList.remove('inputOk');
-    inputModelo.classList.remove('inputOk');
-    inputDireccionIp.classList.remove('inputOk');
-    selectArea.classList.remove('selectOk');
-    selectContrato.classList.remove('selectOk');
+  //Quitar estilos de OK
+  inputSerie.classList.remove('inputOk');
+  inputNombre.classList.remove('inputOk');
+  inputMarca.classList.remove('inputOk');
+  inputModelo.classList.remove('inputOk');
+  inputDireccionIp.classList.remove('inputOk');
+  selectArea.classList.remove('selectOk');
+  selectContrato.classList.remove('selectOk');
+
+  //Limpiar los select
+  selectArea.value = "n";
+  selectContrato.value = "n";
 
 }
 span.onclick = function () {
-    modal.style.display = 'none';
+  modal.style.display = 'none';
 }
 window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = 'none';
-        
-    }
+  if (event.target == modal) {
+    modal.style.display = 'none';
+
+  }
 }
 
 function getAreas() {
-   fetch('http://localhost:3000/area')
+  fetch('http://localhost:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -74,13 +80,13 @@ function getAreas() {
         option.textContent = area.nombre;
         select.appendChild(option);
       });
-     // <option value="oficina">Oficina</option>
+      // <option value="oficina">Oficina</option>
 
-    //Eliminar opciones previas
-    // while(select.firstChild) {
-    //      contenedorCarrito.removeChild(contenedorCarrito.firstChild);
-     // }
-      
+      //Eliminar opciones previas
+      // while(select.firstChild) {
+      //      contenedorCarrito.removeChild(contenedorCarrito.firstChild);
+      // }
+
     })
     .catch(error => {
       console.error('Error al cargar Areas:', error);
@@ -88,7 +94,7 @@ function getAreas() {
 }
 
 function getContratos() {
-   fetch('http://localhost:3000/contrato')
+  fetch('http://localhost:3000/contrato')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -99,39 +105,78 @@ function getContratos() {
         option.textContent = contrato.nombre;
         select.appendChild(option);
       });
-     // <option value="oficina">Oficina</option>
+      // <option value="oficina">Oficina</option>
 
-    //Eliminar opciones previas
-    // while(select.firstChild) {
-    //      contenedorCarrito.removeChild(contenedorCarrito.firstChild);
-     // }
-      
+      //Eliminar opciones previas
+      // while(select.firstChild) {
+      //      contenedorCarrito.removeChild(contenedorCarrito.firstChild);
+      // }
+
     })
     .catch(error => {
       console.error('Error al cargar Contratos:', error);
     });
 }
 
+//Funcion para validar los Input
+
 function validacionCampos(input) {
-    // Validar campos requeridos
-    
-    if (input.target.value.trim() === '') {
-        input.target.placeholder =(`Ingrese ${input.target.name}`);
-        input.target.classList.remove('inputOk');
-        input.target.classList.add('inputError');
-    }else{
-       input.target.classList.add('inputOk');
-    }
+  // Validar campos requeridos
+
+  if (input.target.value.trim() === '') {
+    input.target.placeholder = (`Ingrese ${input.target.name}`);
+    input.target.classList.remove('inputOk');
+    input.target.classList.add('inputError');
+  } else {
+    input.target.classList.add('inputOk');
+  }
 }
 
+//Funciona para validar los Select
 function validacionSelect(select) {
   //console.log(select.target);
   //console.log(select.target.value);
-  if(select.target.value === "n") {
-      select.target.classList.remove('selectOk');
-      select.target.classList.add('selectError');
-      
+  if (select.target.value === "n") {
+    select.target.classList.remove('selectOk');
+    select.target.classList.add('selectError');
+
   } else {
-      select.target.classList.add('selectOk');
+
+    select.target.classList.add('selectOk');
   }
+}
+
+
+//Funcion Para enviar datos
+
+function formularioEnvio(formulario) {
+  formulario.preventDefault(); // Evitar el envío del formulario
+
+  //validamos los campos
+  Array.from(formulario.target.elements).forEach(element => {
+    console.log(element);
+    if (element.value.trim() === '' || element.value === "n") {
+      element.placeholder = (`Ingrese ${element.name}`);
+      element.classList.remove('inputOk');
+      element.classList.add('inputError');
+    } else {
+      
+      element.classList.add('inputOk');
+      fetch('http://localhost:3000/impresora/:id', {
+        method: 'POST',
+        body: formulario // Puedes pasar FormData directamente
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Respuesta del servidor:', data);
+        })
+        .catch(error => {
+          console.error('Error al enviar el formulario:', error);
+        });
+
+      // Si todo es válido, enviar el formulario
+      console.log('Formulario enviado');
+    }
+  });
+
 }
