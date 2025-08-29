@@ -149,37 +149,40 @@ function validacionSelect(select) {
 
 //Funcion Para enviar datos
 
-function formularioEnvio(formulario) {
+async function formularioEnvio(formulario) {
+
   formulario.preventDefault(); // Evitar el envío del formulario
-  console.log('Enviando formulario...');
-  console.log(formulario.target.elements);
+  // Validar que todos los campos sean correctos antes de enviar
+  if (inputSerie.value.trim() === '' || inputNombre.value.trim() === '' || inputMarca.value.trim() === '' || inputModelo.value.trim() === '' || inputDireccionIp.value.trim() === '' || selectArea.value === "n" || selectContrato.value === "n") {
+      // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
+      alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+  
+  } else {
+    console.log(formulario);
+    //const datosFormulario = new FormData(formulario); // 2. Crear FormData
+    //console.log(datosFormulario);
 
-  //validamos los campos
-  Array.from(formulario.target.elements).forEach(element => {
-    console.log(element);
-    if (element.value.trim() === '' || element.value === "n") {
-      element.placeholder = (`Ingrese ${element.name}`);
-      element.classList.remove('inputOk');
-      element.classList.add('inputError');
+    try 
+    {
+      //const respuesta = fetch('http://localhost:3000/empresa/:id', { 
+        //method: 'POST',
+        //body: datosFormulario
+      //});
 
-    } else {
-      
-      element.classList.add('inputOk');
-      fetch('http://localhost:3000/impresora/:id', {
-        method: 'POST',
-        body: formulario.target.element// Puedes pasar FormData directamente
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Respuesta del servidor:', data);
-        })
-        .catch(error => {
-          console.error('Error al enviar el formulario:', error);
-        });
-
-      // Si todo es válido, enviar el formulario
-      console.log('Formulario enviado');
+      //if (!respuesta.ok) {
+        //throw new Error(`Error HTTP: ${respuesta.status}`);
+      //};
+      //const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
+      //console.log('Datos enviados exitosamente:', resultado);
+      //alert('Datos recibidos correctamente.');
     }
-  });
+    catch (error) {
 
-}
+      console.error('Error al enviar datos:', error);
+      alert('Hubo un error al enviar los datos.');
+    };
+  
+
+  }
+
+};
