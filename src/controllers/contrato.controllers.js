@@ -7,7 +7,6 @@ export const getContratos = async (req, res) => {
     const result = await pool.request().query('SELECT * FROM contrato');
     res.json(result.recordset);
 
-    res.send('Obteniendo contratos');
 };
 
 //Consulta unica

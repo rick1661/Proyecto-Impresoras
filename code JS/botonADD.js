@@ -11,7 +11,7 @@ const selectArea = document.querySelector('#formImpresora select[name="area"]');
 const selectContrato = document.querySelector('#formImpresora select[name="contrato"]');
 const formulario = document.getElementById('formImpresora');
 
-console.log("Click");
+//------Eventos onclick------//
 btn.onclick = function () {
   modal.style.display = 'block';
 
@@ -61,13 +61,16 @@ btn.onclick = function () {
 span.onclick = function () {
   modal.style.display = 'none';
 }
-window.onclick = function (event) {
-  if (event.target == modal) {
-    modal.style.display = 'none';
 
-  }
-}
+// Quita el formulario dandole click a cualquier parte fuera de la ventana
+// window.onclick = function (event) {
+//   if (event.target == modal) {
+//     modal.style.display = 'none';
 
+//   }
+// }
+
+//----------------------------------------------Funciones---------------------------------------------//
 function getAreas() {
   fetch('http://localhost:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
@@ -154,35 +157,55 @@ async function formularioEnvio(formulario) {
   formulario.preventDefault(); // Evitar el envío del formulario
   // Validar que todos los campos sean correctos antes de enviar
   if (inputSerie.value.trim() === '' || inputNombre.value.trim() === '' || inputMarca.value.trim() === '' || inputModelo.value.trim() === '' || inputDireccionIp.value.trim() === '' || selectArea.value === "n" || selectContrato.value === "n") {
-      // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
-      alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-  
+    // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
+    alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+
   } else {
-    console.log(formulario);
-    //const datosFormulario = new FormData(formulario); // 2. Crear FormData
-    //console.log(datosFormulario);
+    //console.log(formulario.target.value);
+    const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
+    console.log(datosFormulario);
 
-    try 
-    {
-      //const respuesta = fetch('http://localhost:3000/empresa/:id', { 
-        //method: 'POST',
-        //body: datosFormulario
-      //});
+    try {
+      const respuesta = await fetch('http://localhost:3000/impresora/:id', {
+        method: 'POST',
+        body: JSON.stringify({
+          serie: datosFormulario.get('serie'),
+          nombre: datosFormulario.get('nombre'),
+          marca: datosFormulario.get('marca'),
+          modelo: datosFormulario.get('modelo'),
+          direccionIp: datosFormulario.get('direccionIp'),
+          areaID: datosFormulario.get('area'),
+          contratoID: datosFormulario.get('contrato')
+        })
+      });
 
-      //if (!respuesta.ok) {
-        //throw new Error(`Error HTTP: ${respuesta.status}`);
-      //};
-      //const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
-      //console.log('Datos enviados exitosamente:', resultado);
-      //alert('Datos recibidos correctamente.');
+      if (!respuesta.ok) {
+        throw new Error(`Error HTTP: ${respuesta.status}`);
+      };
+      const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
+      console.log('Datos enviados exitosamente:', resultado);
+      alert('Datos recibidos correctamente.');
+      resetFormulario();
     }
     catch (error) {
 
       console.error('Error al enviar datos:', error);
       alert('Hubo un error al enviar los datos.');
     };
-  
+
 
   }
 
 };
+
+
+function resetFormulario() {
+  inputSerie.value = '';
+  inputNombre.value = '';
+  inputMarca.value = '';
+  inputModelo.value = '';
+  inputDireccionIp.value = '';
+  selectArea.value = 'n';
+  selectContrato.value = 'n';
+
+}

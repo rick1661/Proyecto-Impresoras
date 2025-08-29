@@ -30,7 +30,6 @@ export const getOneImpresora = async (req, res) => {
         return res.json(result.recordset[0]);
     }
 
-    res.send('Obteniendo una sola consulta');
 }
 
 //Creacion unica
