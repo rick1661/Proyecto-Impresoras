@@ -25,3 +25,11 @@ ssh-keygen -t ed25519 -C "tu@email.com"
 
 
 cat ~/.ssh/id_ed25519.pub
+
+probar la conexion de la llave en el equipo
+
+ ssh -T git@github.com
+
+ ----
+ contenedor docker mssql : 2bfa99364046 
+ 

@@ -151,6 +151,8 @@ function validacionSelect(select) {
 
 function formularioEnvio(formulario) {
   formulario.preventDefault(); // Evitar el envío del formulario
+  console.log('Enviando formulario...');
+  console.log(formulario.target.elements);
 
   //validamos los campos
   Array.from(formulario.target.elements).forEach(element => {
@@ -159,12 +161,13 @@ function formularioEnvio(formulario) {
       element.placeholder = (`Ingrese ${element.name}`);
       element.classList.remove('inputOk');
       element.classList.add('inputError');
+
     } else {
       
       element.classList.add('inputOk');
       fetch('http://localhost:3000/impresora/:id', {
         method: 'POST',
-        body: formulario // Puedes pasar FormData directamente
+        body: formulario.target.element// Puedes pasar FormData directamente
       })
         .then(response => response.json())
         .then(data => {
