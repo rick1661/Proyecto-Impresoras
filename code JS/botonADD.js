@@ -166,7 +166,7 @@ async function formularioEnvio(formulario) {
     console.log(datosFormulario);
 
     try {
-      const respuesta = await fetch('http://localhost:3000/impresora/:id', {
+      const respuesta = await fetch('http://localhost:3000/impresora/1', {
         method: 'POST',
         body: JSON.stringify({
           serie: datosFormulario.get('serie'),

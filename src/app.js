@@ -13,6 +13,8 @@ import areaRoutes from './routes/area.routes.js';
 const app = express();
 app.use(cors()) //Habilitar CORS
 app.use(express.json()); //Habilitar el parseo de JSON
+app.use(express.urlencoded({ extended: true })); // Para formularios (opcional)
+
 
 //Uso de rutas
 app.use(impresoraRoutes);
