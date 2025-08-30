@@ -164,19 +164,30 @@ async function formularioEnvio(formulario) {
     //console.log(formulario.target.value);
     const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
     console.log(datosFormulario);
+    // Convertir FormData a un objeto JavaScript
+    const ObjetodatosDelFormulario = Object.fromEntries(datosFormulario);
+    console.log(ObjetodatosDelFormulario);
+
+    // Convertir el objeto JavaScript a una cadena JSON
+    const jsonString = JSON.stringify(ObjetodatosDelFormulario);
+    console.log(jsonString);
+   
 
     try {
       const respuesta = await fetch('http://localhost:3000/impresora/1', {
         method: 'POST',
-        body: JSON.stringify({
-          serie: datosFormulario.get('serie'),
-          nombre: datosFormulario.get('nombre'),
-          marca: datosFormulario.get('marca'),
-          modelo: datosFormulario.get('modelo'),
-          direccionIp: datosFormulario.get('direccionIp'),
-          areaID: datosFormulario.get('area'),
-          contratoID: datosFormulario.get('contrato')
-        })
+        headers: {
+        'Content-Type': 'application/json' // Importante para JSON
+        },
+        body: jsonString // Convierte el objeto a JSON
+          // serie: datosFormulario.get('serie'),
+          // nombre: datosFormulario.get('nombre'),
+          // marca: datosFormulario.get('marca'),
+          // modelo: datosFormulario.get('modelo'),
+          // direccionIp: datosFormulario.get('direccionIp'),
+          // areaID: datosFormulario.get('area'),
+          // contratoID: datosFormulario.get('contrato')
+       //})
       });
 
       if (!respuesta.ok) {

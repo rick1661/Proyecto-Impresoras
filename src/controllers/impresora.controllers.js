@@ -36,9 +36,12 @@ export const getOneImpresora = async (req, res) => {
 //Creacion unica
 export const postOneImpresora = async (req, res) => {
 
-    console.log('llegamos aqui');
+    console.log('llegamos aquiiii');
+    console.log(req.body);
+    console.log(req.body.Number('serie'));
     const pool = await getConnection();
     const result = await pool.request()
+        .input("id", sql.Int, req.params.id)
         .input("serie", sql.VarChar, req.body.serie)
         .input("nombre", sql.VarChar, req.body.nombre)
         .input("marca", sql.VarChar, req.body.marca)
@@ -46,7 +49,7 @@ export const postOneImpresora = async (req, res) => {
         .input("direccionIp", sql.VarChar, req.body.direccionIp)
         .input("areaID", sql.Int, req.body.areaID)
         .input("contratoID", sql.Int, req.body.contratoID)
-        .query(`INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID) VALUES ('@serie', '@nombre', '@marca', '@modelo', '@direccionIp', '@areaID', '@contratoID'); SELECT SCOPE_IDENTITY() AS id;`);
+        .query(`INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID) VALUES (@serie, @nombre, @marca, @modelo, @direccionIp, @areaID, @contratoID); SELECT SCOPE_IDENTITY() AS id;`);
     console.log(result);
     res.json({
         id: result.recordset[0].id,
