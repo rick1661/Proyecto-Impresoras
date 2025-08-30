@@ -15,17 +15,16 @@ const formulario = document.getElementById('formImpresora');
 btn.onclick = function () {
   modal.style.display = 'block';
 
+  // Reiniciar el formulario al abrir el modal
+  resetFormulario();
+
   // Cargar las áreas y contratos al abrir el modal
   getAreas();
   // Cargar las áreas y contratos al abrir el modal
   getContratos();
   //console.log(inputSerie);
   // Asignar eventos
-  inputSerie.value = '';
-  inputNombre.value = '';
-  inputMarca.value = '';
-  inputModelo.value = '';
-  inputDireccionIp.value = '';
+
   inputSerie.addEventListener('blur', validacionCampos);
   inputNombre.addEventListener('blur', validacionCampos);
   inputMarca.addEventListener('blur', validacionCampos);
@@ -35,27 +34,7 @@ btn.onclick = function () {
   selectContrato.addEventListener('blur', validacionSelect);
   formulario.addEventListener('submit', formularioEnvio);
 
-  //Quitar estilos de error 
-  inputSerie.classList.remove('inputError');
-  inputNombre.classList.remove('inputError');
-  inputMarca.classList.remove('inputError');
-  inputModelo.classList.remove('inputError');
-  inputDireccionIp.classList.remove('inputError');
-  selectArea.classList.remove('selectError');
-  selectContrato.classList.remove('selectError');
-
-  //Quitar estilos de OK
-  inputSerie.classList.remove('inputOk');
-  inputNombre.classList.remove('inputOk');
-  inputMarca.classList.remove('inputOk');
-  inputModelo.classList.remove('inputOk');
-  inputDireccionIp.classList.remove('inputOk');
-  selectArea.classList.remove('selectOk');
-  selectContrato.classList.remove('selectOk');
-
-  //Limpiar los select
-  selectArea.value = "n";
-  selectContrato.value = "n";
+ 
 
 }
 span.onclick = function () {
@@ -83,13 +62,6 @@ function getAreas() {
         option.textContent = area.nombre;
         select.appendChild(option);
       });
-      // <option value="oficina">Oficina</option>
-
-      //Eliminar opciones previas
-      // while(select.firstChild) {
-      //      contenedorCarrito.removeChild(contenedorCarrito.firstChild);
-      // }
-
     })
     .catch(error => {
       console.error('Error al cargar Areas:', error);
@@ -108,12 +80,6 @@ function getContratos() {
         option.textContent = contrato.nombre;
         select.appendChild(option);
       });
-      // <option value="oficina">Oficina</option>
-
-      //Eliminar opciones previas
-      // while(select.firstChild) {
-      //      contenedorCarrito.removeChild(contenedorCarrito.firstChild);
-      // }
 
     })
     .catch(error => {
@@ -124,8 +90,8 @@ function getContratos() {
 //Funcion para validar los Input
 
 function validacionCampos(input) {
-  // Validar campos requeridos
 
+  // Validar campos requeridos
   if (input.target.value.trim() === '') {
     input.target.placeholder = (`Ingrese ${input.target.name}`);
     input.target.classList.remove('inputOk');
@@ -165,11 +131,21 @@ async function formularioEnvio(formulario) {
     const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
     console.log(datosFormulario);
     // Convertir FormData a un objeto JavaScript
-    const ObjetodatosDelFormulario = Object.fromEntries(datosFormulario);
-    console.log(ObjetodatosDelFormulario);
+    const ObjetoDatosDelFormulario = Object.fromEntries(datosFormulario);
+    console.log(ObjetoDatosDelFormulario);
+
+    //Convertir el valor de areaID y contratoID a enteros
+    ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
+    ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
+   
+
+
+    console.log(ObjetoDatosDelFormulario.area);
+    console.log(ObjetoDatosDelFormulario.contrato);
+
 
     // Convertir el objeto JavaScript a una cadena JSON
-    const jsonString = JSON.stringify(ObjetodatosDelFormulario);
+    const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
     console.log(jsonString);
    
 
@@ -209,7 +185,7 @@ async function formularioEnvio(formulario) {
 
 };
 
-
+//Funcion para resetear el formulario
 function resetFormulario() {
   inputSerie.value = '';
   inputNombre.value = '';
@@ -218,5 +194,23 @@ function resetFormulario() {
   inputDireccionIp.value = '';
   selectArea.value = 'n';
   selectContrato.value = 'n';
+
+   //Quitar estilos de error 
+  inputSerie.classList.remove('inputError');
+  inputNombre.classList.remove('inputError');
+  inputMarca.classList.remove('inputError');
+  inputModelo.classList.remove('inputError');
+  inputDireccionIp.classList.remove('inputError');
+  selectArea.classList.remove('selectError');
+  selectContrato.classList.remove('selectError');
+
+  //Quitar estilos de OK
+  inputSerie.classList.remove('inputOk');
+  inputNombre.classList.remove('inputOk');
+  inputMarca.classList.remove('inputOk');
+  inputModelo.classList.remove('inputOk');
+  inputDireccionIp.classList.remove('inputOk');
+  selectArea.classList.remove('selectOk');
+  selectContrato.classList.remove('selectOk');
 
 }

@@ -36,9 +36,7 @@ export const getOneImpresora = async (req, res) => {
 //Creacion unica
 export const postOneImpresora = async (req, res) => {
 
-    console.log('llegamos aquiiii');
     console.log(req.body);
-    console.log(req.body.Number('serie'));
     const pool = await getConnection();
     const result = await pool.request()
         .input("id", sql.Int, req.params.id)
@@ -47,8 +45,8 @@ export const postOneImpresora = async (req, res) => {
         .input("marca", sql.VarChar, req.body.marca)
         .input("modelo", sql.VarChar, req.body.modelo)
         .input("direccionIp", sql.VarChar, req.body.direccionIp)
-        .input("areaID", sql.Int, req.body.areaID)
-        .input("contratoID", sql.Int, req.body.contratoID)
+        .input("areaID", sql.Int, req.body.area)
+        .input("contratoID", sql.Int, req.body.contrato)
         .query(`INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID) VALUES (@serie, @nombre, @marca, @modelo, @direccionIp, @areaID, @contratoID); SELECT SCOPE_IDENTITY() AS id;`);
     console.log(result);
     res.json({
@@ -105,5 +103,5 @@ export const deleteOneImpresora = async (req, res) => {
         return res.json({ message: "Producto eliminado" });
     }
 
-    res.send('Eliminado impresora');
+    
 }
