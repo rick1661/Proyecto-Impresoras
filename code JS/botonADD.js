@@ -1,32 +1,115 @@
 //Variables Globales
-export let seccion =0; //0=impresoras, 1=consumibles
+
 
 //Seleccionar elementos del DOM
 const modal = document.getElementById('modalForm');
 const btn = document.getElementsByClassName('addBtn')[0];
 const span = document.querySelector('.close');
-const inputSerie = document.querySelector('#formImpresora input[name="serie"]');
-const inputNombre = document.querySelector('#formImpresora input[name="nombre"]');
-const inputMarca = document.querySelector('#formImpresora input[name="marca"]');
-const inputModelo = document.querySelector('#formImpresora input[name="modelo"]');
-const inputDireccionIp = document.querySelector('#formImpresora input[name="direccionIp"]')
-const selectArea = document.querySelector('#formImpresora select[name="area"]');
-const selectContrato = document.querySelector('#formImpresora select[name="contrato"]');
-const formulario = document.getElementById('formImpresora');
+const inputSerie = document.querySelector('#form input[name="serie"]');
+const inputNombre = document.querySelector('#form input[name="nombre"]');
+const inputMarca = document.querySelector('#form input[name="marca"]');
+const inputModelo = document.querySelector('#form input[name="modelo"]');
+const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
+const selectArea = document.querySelector('#form select[name="area"]');
+const selectContrato = document.querySelector('#form select[name="contrato"]');
+const formulario = document.querySelector('#form');
+const TituloH2 = document.querySelector('#TituloH2');
+
+// document.addEventListener('DOMContentLoaded', function() {
+
+
+// });
 
 //------Eventos onclick------//
 btn.onclick = function () {
   modal.style.display = 'block';
 
-  // Reiniciar el formulario al abrir el modal
-  resetFormulario();
 
-  // Cargar las áreas y contratos al abrir el modal
-  getAreas();
-  // Cargar las áreas y contratos al abrir el modal
-  getContratos();
-  //console.log(inputSerie);
+  //console.log(btn.textContent);
+  switch (btn.textContent.trim()) {
+    case 'Agregar impresora':
+      console.log("Agregar impresora");
 
+      //Modificamos el titulo del formulario
+      TituloH2.textContent = "Agregar impresora";
+
+      //Modificamos la estructura del form para impresora
+      formulario.innerHTML = `<input type="text" name="serie" placeholder="Serie" required>
+                    <input type="text" name="nombre" placeholder="Nombre" required>
+                    <input type="text" name="marca" placeholder="Marca" required>
+                    <input type="text" name="modelo" placeholder="Modelo" required>
+                    <input type="text" name="direccionIp" placeholder="Dirección IP" required>
+                    <label for="area">Área:</label>
+                    <select name="area" id="selectArea" required>
+                        <option value="n">Selecciona un área</option>
+                        <!-- Agrega más opciones según necesites -->
+                    </select>
+                    <label for="area">contrato:</label>
+                    <select name="contrato" id="selectContrato" required>
+                        <option value="n">Selecciona un contrato</option>
+                        <!-- Agrega más opciones según necesites -->
+                    </select>
+                    <button type="submit">Guardar</button>`
+
+
+      // Cargar las áreas y contratos al abrir el modal
+      getAreas();
+      // Cargar las áreas y contratos al abrir el modal
+      getContratos();
+
+      break;
+    case 'Agregar consumible':
+      // Cargar datos de la impresora seleccionada
+      console.log("Agregar consumibles");
+
+      //Modificamos el titulo del formulario
+      TituloH2.textContent = "Agregar consumible";
+      //Modificanmos la estructura del formulario para Consumible
+      formulario.innerHTML = `
+                    <input type="text" name="tij" placeholder="TIJ" required>
+                    <input type="text" name="impresora" placeholder="impresora/serie" required>
+                    <label for="modelo">Tipo</label>
+                    <select name="tipo" id="selectTipo" required>
+                        <option value="n">Selecciona un Tipo</option>
+                        <!-- Agrega más opciones según necesites -->
+                        <option value="toner">Toner</option>
+                        <option value="tambor">Tambor</option>
+                    </select>
+                    <label for="modelo">Modelo</label>
+                    <select name="modelo" id="selectModelo" required>
+                        <option value="n">Selecciona un modelo</option>
+                        <!-- Agrega más opciones según necesites -->
+                        <option value="w9008">w9008</option>
+                        <option value="w1330xc">w1330xc</option>
+                        <option value="w1330x">w1330x</option>
+                        <option value="cf258xc">cf258xc</option>
+                        <option value="cf258x">cf258x</option>
+                        <option value="cf280xc">cf280xc</option>
+                        <option value="cf280x">cf280x</option>
+                        <option value="ce285ac">ce285ac</option>
+                        <option value="131a Y">131a Y</option>
+                        <option value="131a M">131a M</option>
+                        <option value="131a C">131a C</option>
+                        <option value="131a K">131a K</option>
+                        <option value="ce255xc">ce255xc</option>
+                        <option value="976yc Y">976yc Y</option>
+                        <option value="976yc M">976yc M</option>
+                        <option value="976yc C">976yc C</option>
+                        <option value="976yc K">976yc K</option>
+                        <option value="w9090mc Y">w9090mc Y</option>
+                        <option value="w9090mc M">w9090mc M</option>
+                        <option value="w9090mc C">w9090mc C</option>
+                        <option value="w9090mc K">w9090mc K</option>
+                        <option value="206X Y">206X Y</option>
+                        <option value="206X M">206X M</option>
+                        <option value="206X C">206X C</option>
+                        <option value="206X K">206X K</option>
+                        <option value="w132ac">w132ac</option>
+                        <option value="cf287jc">cf287jc</option>
+                    </select>
+                    <button type="submit">Guardar</button>`
+      break;
+  }
 
   // Asignar eventos
 
@@ -39,7 +122,7 @@ btn.onclick = function () {
   selectContrato.addEventListener('blur', validacionSelect);
   formulario.addEventListener('submit', formularioImpresoraEnvio);
 
- 
+
 
 }
 span.onclick = function () {
@@ -55,6 +138,8 @@ span.onclick = function () {
 // }
 
 //----------------------------------------------Funciones---------------------------------------------//
+
+//Consultar Areas
 function getAreas() {
   fetch('http://localhost:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
@@ -72,6 +157,8 @@ function getAreas() {
       console.error('Error al cargar Areas:', error);
     });
 }
+
+//Consultar contratos
 
 function getContratos() {
   fetch('http://localhost:3000/contrato')
@@ -91,6 +178,9 @@ function getContratos() {
       console.error('Error al cargar Contratos:', error);
     });
 }
+
+
+
 
 //Funcion para validar los Input
 
@@ -142,7 +232,7 @@ async function formularioImpresoraEnvio(formulario) {
     //Convertir el valor de areaID y contratoID a enteros
     ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
     ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
-   
+
 
 
     console.log(ObjetoDatosDelFormulario.area);
@@ -152,23 +242,23 @@ async function formularioImpresoraEnvio(formulario) {
     // Convertir el objeto JavaScript a una cadena JSON
     const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
     console.log(jsonString);
-   
+
 
     try {
       const respuesta = await fetch('http://localhost:3000/impresora/1', {
         method: 'POST',
         headers: {
-        'Content-Type': 'application/json' // Importante para JSON
+          'Content-Type': 'application/json' // Importante para JSON
         },
         body: jsonString // Convierte el objeto a JSON
-          // serie: datosFormulario.get('serie'),
-          // nombre: datosFormulario.get('nombre'),
-          // marca: datosFormulario.get('marca'),
-          // modelo: datosFormulario.get('modelo'),
-          // direccionIp: datosFormulario.get('direccionIp'),
-          // areaID: datosFormulario.get('area'),
-          // contratoID: datosFormulario.get('contrato')
-       //})
+        // serie: datosFormulario.get('serie'),
+        // nombre: datosFormulario.get('nombre'),
+        // marca: datosFormulario.get('marca'),
+        // modelo: datosFormulario.get('modelo'),
+        // direccionIp: datosFormulario.get('direccionIp'),
+        // areaID: datosFormulario.get('area'),
+        // contratoID: datosFormulario.get('contrato')
+        //})
       });
 
       if (!respuesta.ok) {
@@ -191,7 +281,7 @@ async function formularioImpresoraEnvio(formulario) {
 };
 
 //Funcion para resetear el formulario
-function resetFormulario() {
+function resetImpresoraFormulario() {
   inputSerie.value = '';
   inputNombre.value = '';
   inputMarca.value = '';
@@ -200,7 +290,7 @@ function resetFormulario() {
   selectArea.value = 'n';
   selectContrato.value = 'n';
 
-   //Quitar estilos de error 
+  //Quitar estilos de error 
   inputSerie.classList.remove('inputError');
   inputNombre.classList.remove('inputError');
   inputMarca.classList.remove('inputError');

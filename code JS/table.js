@@ -1,4 +1,4 @@
-import {seccion} from './botonADD.js';
+
 
 //Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
@@ -10,7 +10,7 @@ const botonADD = document.querySelector('.addBtn');
 btnImpresora.addEventListener('click', function() {
 
   // Establecer la sección a impresoras
-  seccion = 0;
+
 
   // Cambiar el contenido de la tabla para mostrar las columnas de impresoras  
   tabla.innerHTML = `
@@ -44,7 +44,7 @@ btnImpresora.addEventListener('click', function() {
 btnConsumible.addEventListener('click', function() {
 
   // Establecer la sección a consumibles
-  seccion = 1;
+
   console.log('Botón de consumibles clickeado');
   
   // Cambiar el contenido de la tabla para mostrar las columnas de consumibles

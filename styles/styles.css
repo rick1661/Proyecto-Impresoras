@@ -358,17 +358,17 @@ h2{
 }
 .close:hover { color: #000; }
 
-#formImpresora {
+#form {
   display: flex;
   flex-direction: column;
   gap: 18px;
   padding: 8px 0;
   
 }
-#formImpresora input[type="text"],
-#formImpresora input[type="date"],
-#formImpresora input[type="number"],
-#formImpresora select {
+#form input[type="text"],
+#form input[type="date"],
+#form input[type="number"],
+#form select {
   padding: 12px 14px;
   border: 1px solid #cbe4ff;
   border-radius: 6px;
@@ -385,12 +385,12 @@ option::picked {
 }
 
 
-#formImpresora input:focus {
+#form input:focus {
   border-color: var(--colorPrincipal);
   box-shadow: 0 0 0 2px rgba(0,102,156,0.15);
   outline: none;
 }
-#formImpresora button[type="submit"] {
+#form button[type="submit"] {
   padding: 12px 0;
   background: var(--colorSecundario);
   color: #fff;
@@ -402,7 +402,7 @@ option::picked {
   transition: background 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(0,102,156,0.08);
 }
-#formImpresora button[type="submit"]:hover {
+#form button[type="submit"]:hover {
   box-shadow: 0 4px 16px rgba(0,102,156,0.15);
   text-shadow: 0 0 8px #ffffff;
 } 
