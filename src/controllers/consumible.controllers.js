@@ -4,7 +4,7 @@ import sql from 'mssql';
 //Consulta General
 export const getConsumibles =  async (req, res) => {
     const pool = await getConnection();
-    const result = await pool.request().query('SELECT * FROM consumible');
+    const result = await pool.request().query('SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;');
     res.json(result.recordset);
 };
 

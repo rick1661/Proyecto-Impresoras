@@ -1,6 +1,9 @@
+//Variables Globales
+export let seccion =0; //0=impresoras, 1=consumibles
+
 //Seleccionar elementos del DOM
 const modal = document.getElementById('modalForm');
-const btn = document.getElementsByClassName('addImpresoraBtn')[0];
+const btn = document.getElementsByClassName('addBtn')[0];
 const span = document.querySelector('.close');
 const inputSerie = document.querySelector('#formImpresora input[name="serie"]');
 const inputNombre = document.querySelector('#formImpresora input[name="nombre"]');
@@ -23,6 +26,8 @@ btn.onclick = function () {
   // Cargar las áreas y contratos al abrir el modal
   getContratos();
   //console.log(inputSerie);
+
+
   // Asignar eventos
 
   inputSerie.addEventListener('blur', validacionCampos);
@@ -32,7 +37,7 @@ btn.onclick = function () {
   inputDireccionIp.addEventListener('blur', validacionCampos);
   selectArea.addEventListener('blur', validacionSelect);
   selectContrato.addEventListener('blur', validacionSelect);
-  formulario.addEventListener('submit', formularioEnvio);
+  formulario.addEventListener('submit', formularioImpresoraEnvio);
 
  
 
@@ -116,9 +121,9 @@ function validacionSelect(select) {
 }
 
 
-//Funcion Para enviar datos
+//Funcione Para enviar datos
 
-async function formularioEnvio(formulario) {
+async function formularioImpresoraEnvio(formulario) {
 
   formulario.preventDefault(); // Evitar el envío del formulario
   // Validar que todos los campos sean correctos antes de enviar
