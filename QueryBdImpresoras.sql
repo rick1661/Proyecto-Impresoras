@@ -63,7 +63,7 @@ select * from impresora
 select * from empresa
 select * from contrato;
 select * from area;
-select * from consumible
+select * from consumible;
 
 /*-Insercciones Empresa-*/
 INSERT empresa (nombre) VALUES ('Hospital')
@@ -193,7 +193,7 @@ INSERT area (nombre, empresaID) VALUES ('Analisis de cuentas', '1')
    INSERT INTO contrato (nombre, empresaID) VALUES ('Oncologia S', '2');
 
    
-
+   INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF410X', '410X', '2023-11-15', 5);
 
 
 Insert impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCNDF1DD','Interlab TJ HP Recepcion', 'HP','MULTIFUNCIONAL E52645DN','192.168.85.127',1,1)
