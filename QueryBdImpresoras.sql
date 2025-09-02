@@ -214,8 +214,8 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM9M3W0','Clinica Metabolica TJ HP Recepcion','HP','MFP E52645','192.168.85.168',17,33);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1R6V2K8','Centro Quirurgico TJ HP Enfermeria','HP','408dn','192.168.85.110',10,34);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1P2CZ','Centro Quirurgico TJ HP Recepcion','HP','MFP E52645','192.168.85.92',10,35);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CN95BJY09G','Dermalife TJ HP Recepcion','HP','MFP P57750 XC','192.168.85.153',20,33);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDKL5BCMQ','Direccion Medica TJ HP Operacion','HP','MFP M521dn','192.168.85.163',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
@@ -249,8 +249,8 @@ Contratro	Marca	Modelo 	Serie	Nombre	IP	Column1
 59-2021-MPS	
 10-2019-MPS	
 20-2024-MPS	
-50-2021-MPS	HP	MULTIFUNCIONAL E52645DN,	MXBCP1P2CZ	Centro Quirurgico TJ HP Recepcion	192.168.85.92	
-10-2019-MPS	HP	MULTIFUNCIONAL P57750DW	CN95BJY09G	Dermalife TJ HP Recepcion	192.168.85.153	
+50-2021-MPS		
+10-2019-MPS	
 02-2019-MPS	HP	MULTIFUNCIONAL M521DN	CNDKL5BCMQ	Direccion Medica TJ HP Operacion	192.168..85.163	
 24-2023-MPS	HP 	MULTIFUNCIONAL M283FDW	VNBRR572B8	Direccion General TJ HP Recepcion	192.168.85.188	
 06-2020-MPS	HP	IMPRESORA E50145DN	PHBCM61S1	Especialidades TJ HP Cons 01	192.168.85.129	
