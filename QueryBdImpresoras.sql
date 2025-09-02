@@ -201,6 +201,12 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDRQ4W6TH','ADM HSI TJ HP Blanco y Negro','HP','MFP M428dw','192.168.85.227',42,2);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNCRR9533F','ADM HSI TJ HP Color','HP','MFP E47528','192.168.85.34',42,3);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM9M2S4','Administracion TJ HP Operaciones','HP','MFP E52645','192.168.85.136',5,25);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('NDRQ4W6S2','Almacen HSI Sotano  TJ HP Operaciones','HP','MFP M428dw','192.168.85.97',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHRC','Atencion a Clientes TJ HP Operaciones 01','HP','MPF E52645','192.168.85.114',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1QCK1CR','Atencion a Clientes TJ HP Operaciones 02','HP','408DN','192.168.85.113',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCN9X2QJ','BiologiaMolecular TJ HP Operaciones 01','HP','MPF E52645DN','192.168.85.218',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S069','Biomedica HSI TJ Operaciones','HP','MPF E52645','192.168.85.235',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHR4','Contabilidad TJ HP Operaciones','HP','MPF E52645DN','192.168.85.152',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
@@ -227,38 +233,16 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-
-
-
-
-INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF410X', '410X', '2023-11-15', 5);
-
-Insert impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCNDF1DD','Interlab TJ HP Recepcion', 'HP','MULTIFUNCIONAL E52645DN','192.168.85.127',1,1)
-
-SELECT serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID ;
-
-use ImpresorasBD;
-SELECT * FROM consumible
-
-SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;
 
 
 Contratro	Marca	Modelo 	Serie	Nombre	IP	Column1
-39-2021-MPS	HP	MULTIFUNCIONAL E52645DN	MXBCP1P2D5	ADM HSI TJ HP P6	192.168.85.227	
-37-2022-MPS	HP	MULTIFUNCIONAL M428DW	CNDRQ4W6TH	ADM HSI TJ HP Blanco y Negro	192.168.85.184	
-07-2024-MPS	HP	TERRAJET 7500	CNCRR9533F	ADM HSI TJ HP Color	192.168.85.34	
-51-2021-MPS	HP	MULTIFUNCIONAL E52645DN	MXBCM9M2S4	Administracion TJ HP Operaciones	192.168.85.136	
-36-2022-MPS	HP	MULTIFUNCIONAL M428DW	CNDRQ4W6S2	Almacen HSI Sotano  TJ HP Operaciones	192.168.85.97	
-22-2022-MPS 	HP	E52645	MXBC19EHRC	Atencion a Clientes TJ HP Operaciones 01	192.168.85.114	
-01-2023-MPS	HP	IMPRESORA 408DN	CNB1QCK1CR	Atencion a Clientes TJ HP Operaciones 02	192.168.85.113	
-08-2021-MPS	HP	MULTIFUNCIONAL E52645DN	MXBCN9X2QJ	BiologiaMolecular TJ HP Operaciones 01	192.168.85.218	
-48-2021-MPS	HP 	MPF E52645	MXBCP1S069	Biomedica HSI TJ Operaciones	192.168.85.235	
-29-2022-MPS	HP	MULTIFUNCIONAL E52645DN	MXBC19EHR4	Contabilidad TJ HP Operaciones / EBP6 Finanzas	192.168.85.152	
+
+36-2022-MPS		
+22-2022-MPS 	
+01-2023-MPS	
+08-2021-MPS	
+48-2021-MPS
+29-2022-MPS
 35-2022-MPS	HP	MULTIFUNCIONAL M428DW	CNDRQ4W699	Calidad HSI TJ HP Operaciones	192.168.85.21	
 12-2022-MPS	HP	MULTIFUNCIONAL E52645DN	MXBC18OGO6	Cardiologia TJ HP Recepcion	192.168.85.167	
 11-2020-MPS	HP	IMPRESORA E50145DN	PHBCMBQ3LG	Clinica Metabolica TJ HP Consultorios 01 	192.168.85.166	
@@ -337,3 +321,13 @@ oftamologia			CNB1Q5DHYF	Oftalmologia TJ HP Consultorios 01	192.168.85.52	W1330X
 unident	HP 	HP Laser 408dn	CNB1R98F90D	Unident TJ HP Ortodoncia	192.168.85.250	W1330XC
 unident			CNB1R6V2JZ	Unident TJ HP Odontopediatria	192.168.85.242	
 						
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF410X', '410X', '2023-11-15', 5);
+
+Insert impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCNDF1DD','Interlab TJ HP Recepcion', 'HP','MULTIFUNCIONAL E52645DN','192.168.85.127',1,1)
+
+SELECT serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID ;
+
+use ImpresorasBD;
+SELECT * FROM consumible
+
+SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;
