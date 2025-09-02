@@ -219,24 +219,48 @@ body {
   min-height: 100vh;
   box-sizing: border-box;
   transition: all 0.4s ease;
+ 
+  /*max-height: calc(100vh - 500px); */
   
+   
 }
 
 
-
+#tableContainer{
+  max-height: calc(100vh - 135px);
+  overflow-x: auto;
+  overflow-y: auto;
+  margin-bottom: 10px;
+ 
+}
 .styled-table {
   border-collapse: collapse;
   width: 100%;
-  margin: 25px 0;
   font-size: 1rem;
   min-width: 700px;
   background: var(--colorSecundario);
   border-radius: 5px;
-  overflow: hidden;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
-  overflow-x: auto;
-  
+   
 }
+
+/*Posicionar a la vista  el primer renglon*/
+.styled-table th {
+  position: sticky;
+  top: 0;
+  background-color: var(--colorSecundario); /* Para que no se pegue con el contenido de abajo */
+  z-index: 1; /* Asegura que el encabezado esté por encima de las filas */
+}
+
+/*Bordes redondos de la tabla*/
+.styled-table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.styled-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
 .styled-table th, .styled-table td {
   padding: 12px 16px;
   text-align: left;
@@ -244,7 +268,6 @@ body {
 }
 
 .styled-table thead{
-  background-color: var(--colorPrincipal);
   text-align: left;
   font-weight: bold;
   font-size: 1.1rem;
@@ -269,14 +292,9 @@ body {
   border-bottom-right-radius: 12px;
 }
 
-/*Bordes redondos de la tabla*/
 
-.styled-table tr:last-child td:first-child {
-  border-bottom-left-radius: 12px;
-}
-.styled-table tr:last-child td:last-child {
-  border-bottom-right-radius: 12px;
-}
+
+
 
 /* ...existing code... */
 
