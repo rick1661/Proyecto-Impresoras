@@ -201,18 +201,18 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDRQ4W6TH','ADM HSI TJ HP Blanco y Negro','HP','MFP M428dw','192.168.85.227',42,2);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNCRR9533F','ADM HSI TJ HP Color','HP','MFP E47528','192.168.85.34',42,3);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM9M2S4','Administracion TJ HP Operaciones','HP','MFP E52645','192.168.85.136',5,25);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('NDRQ4W6S2','Almacen HSI Sotano  TJ HP Operaciones','HP','MFP M428dw','192.168.85.97',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHRC','Atencion a Clientes TJ HP Operaciones 01','HP','MPF E52645','192.168.85.114',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1QCK1CR','Atencion a Clientes TJ HP Operaciones 02','HP','408DN','192.168.85.113',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCN9X2QJ','BiologiaMolecular TJ HP Operaciones 01','HP','MPF E52645DN','192.168.85.218',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S069','Biomedica HSI TJ Operaciones','HP','MPF E52645','192.168.85.235',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHR4','Contabilidad TJ HP Operaciones','HP','MPF E52645DN','192.168.85.152',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('NDRQ4W6S2','Almacen HSI Sotano  TJ HP Operaciones','HP','MFP M428dw','192.168.85.97',37,4);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHRC','Atencion a Clientes TJ HP Operaciones 01','HP','MFP E52645','192.168.85.114',26,26);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1QCK1CR','Atencion a Clientes TJ HP Operaciones 02','HP','408dn','192.168.85.113',26,27);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCN9X2QJ','BiologiaMolecular TJ HP Operaciones 01','HP','MFP E52645','192.168.85.218',1,28);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S069','Biomedica HSI TJ Operaciones','HP','MFP E52645','192.168.85.232',36,5);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHR4','Contabilidad TJ HP Operaciones','HP','MFP E52645','192.168.85.152',7,29);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDRQ4W699','Calidad HSI TJ HP Operaciones','HP','MFP M428dw','192.168.85.21',46,6);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC18OGO6','Cardiologia TJ HP Recepcion','HP','MFP E52645','192.168.85.167',18,30);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBCMBQ3LG','Clinica Metabolica TJ HP Consultorios 01','HP','E50145','192.168.85.166',17,31);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCP2H0Z8','Clinica Metabolica TJ HP Consultorios 03','HP','E50145','192.168.85.146',17,32);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM9M3W0','Clinica Metabolica TJ HP Recepcion','HP','MFP E52645','192.168.85.168',17,33);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1R6V2K8','Centro Quirurgico TJ HP Enfermeria','HP','408dn','192.168.85.110',10,34);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
@@ -243,12 +243,12 @@ Contratro	Marca	Modelo 	Serie	Nombre	IP	Column1
 08-2021-MPS	
 48-2021-MPS
 29-2022-MPS
-35-2022-MPS	HP	MULTIFUNCIONAL M428DW	CNDRQ4W699	Calidad HSI TJ HP Operaciones	192.168.85.21	
-12-2022-MPS	HP	MULTIFUNCIONAL E52645DN	MXBC18OGO6	Cardiologia TJ HP Recepcion	192.168.85.167	
-11-2020-MPS	HP	IMPRESORA E50145DN	PHBCMBQ3LG	Clinica Metabolica TJ HP Consultorios 01 	192.168.85.166	
-59-2021-MPS	HP	IMPRESORA E50145DN	PHCCP2H0Z8	Clinica Metabolica TJ HP Consultorios 03	192.168.85.146	
-10-2019-MPS	HP	MULTIFUNCIONAL E52645DN	MXBCM9M3W0	Clinica Metabolica TJ HP Recepcion	192.168.85.168	
-20-2024-MPS	HP	Impresora HP75685A	CNB1R6V2K8	Centro Quirurgico TJ HP Enfermeria	192.168.85.110	
+35-2022-MPS	
+12-2022-MPS	
+11-2020-MPS	
+59-2021-MPS	
+10-2019-MPS	
+20-2024-MPS	
 50-2021-MPS	HP	MULTIFUNCIONAL E52645DN,	MXBCP1P2CZ	Centro Quirurgico TJ HP Recepcion	192.168.85.92	
 10-2019-MPS	HP	MULTIFUNCIONAL P57750DW	CN95BJY09G	Dermalife TJ HP Recepcion	192.168.85.153	
 02-2019-MPS	HP	MULTIFUNCIONAL M521DN	CNDKL5BCMQ	Direccion Medica TJ HP Operacion	192.168..85.163	
@@ -320,7 +320,23 @@ Oncologia S	HP 	HP Laser 408dn	CNB1N8J2H3	Oncologia TJ HP operaciones 01	192.168
 oftamologia			CNB1Q5DHYF	Oftalmologia TJ HP Consultorios 01	192.168.85.52	W1330XC
 unident	HP 	HP Laser 408dn	CNB1R98F90D	Unident TJ HP Ortodoncia	192.168.85.250	W1330XC
 unident			CNB1R6V2JZ	Unident TJ HP Odontopediatria	192.168.85.242	
+
+UPDATE impresora
+SET modelo ='MFP E52645'
+WHERE impresoraID = 6;
+
+UPDATE impresora
+SET modelo ='MFP E52645'
+WHERE impresoraID = 8;
+
+UPDATE impresora
+SET modelo ='MFP E52645'
+WHERE impresoraID = 9;
 						
+UPDATE impresora
+SET modelo ='E50145'
+WHERE impresoraID = 13;
+
 INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF410X', '410X', '2023-11-15', 5);
 
 Insert impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCNDF1DD','Interlab TJ HP Recepcion', 'HP','MULTIFUNCIONAL E52645DN','192.168.85.127',1,1)
