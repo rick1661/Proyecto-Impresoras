@@ -22,7 +22,7 @@ btn.onclick = function () {
   switch (btn.textContent.trim()) {
     case 'Agregar impresora':
 
-      
+
       console.log("Agregar impresora");
 
       //Modificamos el titulo del formulario
@@ -45,7 +45,7 @@ btn.onclick = function () {
                         <!-- Agrega más opciones según necesites -->
                     </select>
                     <button type="submit">Guardar</button>`
-    
+
       // Cargar las áreas y contratos al abrir el modal
       getAreas();
       // Cargar las áreas y contratos al abrir el modal
@@ -71,7 +71,76 @@ btn.onclick = function () {
       selectContrato.addEventListener('blur', validacionSelect);
       formulario.addEventListener('submit', formularioImpresoraEnvio);
 
-      
+            //Funcione Para enviar datos
+
+      async function formularioImpresoraEnvio(formulario) {
+
+        formulario.preventDefault(); // Evitar el envío del formulario
+        // Validar que todos los campos sean correctos antes de enviar
+        if (inputSerie.value.trim() === '' || inputNombre.value.trim() === '' || inputMarca.value.trim() === '' || inputModelo.value.trim() === '' || inputDireccionIp.value.trim() === '' || selectArea.value === "n" || selectContrato.value === "n") {
+          // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
+          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+
+        } else {
+          //console.log(formulario.target.value);
+          const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
+          console.log(datosFormulario);
+          // Convertir FormData a un objeto JavaScript
+          const ObjetoDatosDelFormulario = Object.fromEntries(datosFormulario);
+          console.log(ObjetoDatosDelFormulario);
+
+          //Convertir el valor de areaID y contratoID a enteros
+          ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
+          ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
+
+
+
+          console.log(ObjetoDatosDelFormulario.area);
+          console.log(ObjetoDatosDelFormulario.contrato);
+
+
+          // Convertir el objeto JavaScript a una cadena JSON
+          const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
+          console.log(jsonString);
+
+
+          try {
+            const respuesta = await fetch('http://localhost:3000/impresora/1', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json' // Importante para JSON
+              },
+              body: jsonString // Convierte el objeto a JSON
+              // serie: datosFormulario.get('serie'),
+              // nombre: datosFormulario.get('nombre'),
+              // marca: datosFormulario.get('marca'),
+              // modelo: datosFormulario.get('modelo'),
+              // direccionIp: datosFormulario.get('direccionIp'),
+              // areaID: datosFormulario.get('area'),
+              // contratoID: datosFormulario.get('contrato')
+              //})
+            });
+
+            if (!respuesta.ok) {
+              throw new Error(`Error HTTP: ${respuesta.status}`);
+            };
+            const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
+            console.log('Datos enviados exitosamente:', resultado);
+            alert('Datos recibidos correctamente.');
+            resetFormulario();
+          }
+          catch (error) {
+
+            console.error('Error al enviar datos:', error);
+            alert('Hubo un error al enviar los datos.');
+          };
+
+
+        }
+
+      };
+
+
 
       break;
     case 'Agregar consumible':
@@ -142,13 +211,55 @@ btn.onclick = function () {
       selectImpresora.addEventListener('blur', validacionSelect);
       selectTipo.addEventListener('blur', validacionSelect);
       selectModelo.addEventListener('blur', validacionSelect);
-      formulario.addEventListener('submit', formularioImpresoraEnvio);
+      formulario.addEventListener('submit', formularioConsumibleEnvio);
 
+
+      //Funcion para enviar Consumibles
+
+      async function formularioConsumibleEnvio(formulario) {
+
+        formulario.preventDefault(); // Evitar el envío del formulario
+        console.log("envio formilario";
+
+        // Validar que todos los campos sean correctos antes de enviar
+        if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
+          // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
+          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+
+        } else {
+          // Si todos los campos son válidos, enviar el formulario
+          const datosFormulario = new FormData(formulario.target);
+          const jsonString = JSON.stringify(Object.fromEntries(datosFormulario));
+          console.log(jsonString);
+
+          try {
+            const respuesta = await fetch('http://localhost:3000/consumible/1', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: jsonString
+            });
+
+            if (!respuesta.ok) {
+              throw new Error(`Error HTTP: ${respuesta.status}`);
+            }
+            const resultado = await respuesta.json();
+            console.log('Datos enviados exitosamente:', resultado);
+            alert('Datos recibidos correctamente.');
+            resetFormulario();
+          } catch (error) {
+            console.error('Error al enviar datos:', error);
+            alert('Hubo un error al enviar los datos.');
+          }
+        }
+
+      }
 
       break;
   }
 
- 
+
 }
 span.onclick = function () {
   modal.style.display = 'none';
@@ -253,118 +364,6 @@ function validacionSelect(select) {
 
     select.target.classList.add('selectOk');
   }
-}
-
-
-//Funcione Para enviar datos
-
-async function formularioImpresoraEnvio(formulario) {
-
-  formulario.preventDefault(); // Evitar el envío del formulario
-  // Validar que todos los campos sean correctos antes de enviar
-  if (inputSerie.value.trim() === '' || inputNombre.value.trim() === '' || inputMarca.value.trim() === '' || inputModelo.value.trim() === '' || inputDireccionIp.value.trim() === '' || selectArea.value === "n" || selectContrato.value === "n") {
-    // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
-    alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-
-  } else {
-    //console.log(formulario.target.value);
-    const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
-    console.log(datosFormulario);
-    // Convertir FormData a un objeto JavaScript
-    const ObjetoDatosDelFormulario = Object.fromEntries(datosFormulario);
-    console.log(ObjetoDatosDelFormulario);
-
-    //Convertir el valor de areaID y contratoID a enteros
-    ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
-    ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
-
-
-
-    console.log(ObjetoDatosDelFormulario.area);
-    console.log(ObjetoDatosDelFormulario.contrato);
-
-
-    // Convertir el objeto JavaScript a una cadena JSON
-    const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
-    console.log(jsonString);
-
-
-    try {
-      const respuesta = await fetch('http://localhost:3000/impresora/1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json' // Importante para JSON
-        },
-        body: jsonString // Convierte el objeto a JSON
-        // serie: datosFormulario.get('serie'),
-        // nombre: datosFormulario.get('nombre'),
-        // marca: datosFormulario.get('marca'),
-        // modelo: datosFormulario.get('modelo'),
-        // direccionIp: datosFormulario.get('direccionIp'),
-        // areaID: datosFormulario.get('area'),
-        // contratoID: datosFormulario.get('contrato')
-        //})
-      });
-
-      if (!respuesta.ok) {
-        throw new Error(`Error HTTP: ${respuesta.status}`);
-      };
-      const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
-      console.log('Datos enviados exitosamente:', resultado);
-      alert('Datos recibidos correctamente.');
-      resetFormulario();
-    }
-    catch (error) {
-
-      console.error('Error al enviar datos:', error);
-      alert('Hubo un error al enviar los datos.');
-    };
-
-
-  }
-
-};
-
-
-//Funcion para enviar Consumibles
-
-async function formularioImpresoraEnvio(formulario) {
-
-  formulario.preventDefault(); // Evitar el envío del formulario
-
-  // Validar que todos los campos sean correctos antes de enviar
-  if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
-    // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
-    alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-
-  } else {
-    // Si todos los campos son válidos, enviar el formulario
-    const datosFormulario = new FormData(formulario.target);
-    const jsonString = JSON.stringify(Object.fromEntries(datosFormulario));
-    console.log(jsonString);
-
-    try {
-      const respuesta = await fetch('http://localhost:3000/consumible/1', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: jsonString
-      });
-
-      if (!respuesta.ok) {
-        throw new Error(`Error HTTP: ${respuesta.status}`);
-      }
-      const resultado = await respuesta.json();
-      console.log('Datos enviados exitosamente:', resultado);
-      alert('Datos recibidos correctamente.');
-      resetFormulario();
-    } catch (error) {
-      console.error('Error al enviar datos:', error);
-      alert('Hubo un error al enviar los datos.');
-    }
-  }
-
 }
 
 //Funcion para resetear el formulario
