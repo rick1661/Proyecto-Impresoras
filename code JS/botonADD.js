@@ -5,13 +5,6 @@
 const modal = document.getElementById('modalForm');
 const btn = document.getElementsByClassName('addBtn')[0];
 const span = document.querySelector('.close');
-const inputSerie = document.querySelector('#form input[name="serie"]');
-const inputNombre = document.querySelector('#form input[name="nombre"]');
-const inputMarca = document.querySelector('#form input[name="marca"]');
-const inputModelo = document.querySelector('#form input[name="modelo"]');
-const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
-const selectArea = document.querySelector('#form select[name="area"]');
-const selectContrato = document.querySelector('#form select[name="contrato"]');
 const formulario = document.querySelector('#form');
 const TituloH2 = document.querySelector('#TituloH2');
 
@@ -28,6 +21,8 @@ btn.onclick = function () {
   //console.log(btn.textContent);
   switch (btn.textContent.trim()) {
     case 'Agregar impresora':
+
+      
       console.log("Agregar impresora");
 
       //Modificamos el titulo del formulario
@@ -50,12 +45,33 @@ btn.onclick = function () {
                         <!-- Agrega más opciones según necesites -->
                     </select>
                     <button type="submit">Guardar</button>`
-
-
+    
       // Cargar las áreas y contratos al abrir el modal
       getAreas();
       // Cargar las áreas y contratos al abrir el modal
       getContratos();
+
+      //Seleccionar los inputs para la validación
+      const inputSerie = document.querySelector('#form input[name="serie"]');
+      const inputNombre = document.querySelector('#form input[name="nombre"]');
+      const inputMarca = document.querySelector('#form input[name="marca"]');
+      const inputModelo = document.querySelector('#form input[name="modelo"]');
+      const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
+      const selectArea = document.querySelector('#form select[name="area"]');
+      const selectContrato = document.querySelector('#form select[name="contrato"]');
+
+      // Asignar eventos
+
+      inputSerie.addEventListener('blur', validacionCampos);
+      inputNombre.addEventListener('blur', validacionCampos);
+      inputMarca.addEventListener('blur', validacionCampos);
+      inputModelo.addEventListener('blur', validacionCampos);
+      inputDireccionIp.addEventListener('blur', validacionCampos);
+      selectArea.addEventListener('blur', validacionSelect);
+      selectContrato.addEventListener('blur', validacionSelect);
+      formulario.addEventListener('submit', formularioImpresoraEnvio);
+
+      
 
       break;
     case 'Agregar consumible':
@@ -67,7 +83,11 @@ btn.onclick = function () {
       //Modificanmos la estructura del formulario para Consumible
       formulario.innerHTML = `
                     <input type="text" name="tij" placeholder="TIJ" required>
-                    <input type="text" name="impresora" placeholder="impresora/serie" required>
+                    <label for="Impresora">Impresora:</label>
+                    <select name="impresora" id="selectImpresora" required>
+                        <option value="n">Selecciona una impresora</option>
+                        <!-- Agrega más opciones según necesites -->
+                    </select>
                     <label for="modelo">Tipo</label>
                     <select name="tipo" id="selectTipo" required>
                         <option value="n">Selecciona un Tipo</option>
@@ -108,22 +128,12 @@ btn.onclick = function () {
                         <option value="cf287jc">cf287jc</option>
                     </select>
                     <button type="submit">Guardar</button>`
+      // Cargar las impresoras al abrir el modal
+      getImpresoraSelect();
       break;
   }
 
-  // Asignar eventos
-
-  inputSerie.addEventListener('blur', validacionCampos);
-  inputNombre.addEventListener('blur', validacionCampos);
-  inputMarca.addEventListener('blur', validacionCampos);
-  inputModelo.addEventListener('blur', validacionCampos);
-  inputDireccionIp.addEventListener('blur', validacionCampos);
-  selectArea.addEventListener('blur', validacionSelect);
-  selectContrato.addEventListener('blur', validacionSelect);
-  formulario.addEventListener('submit', formularioImpresoraEnvio);
-
-
-
+ 
 }
 span.onclick = function () {
   modal.style.display = 'none';
@@ -138,6 +148,26 @@ span.onclick = function () {
 // }
 
 //----------------------------------------------Funciones---------------------------------------------//
+
+//Consltar Impresoras
+function getImpresoraSelect() {
+  fetch('http://localhost:3000/impresora')
+    .then(response => response.json()) // Convierte la respuesta a JSON
+    .then(data => { // en data se guardan la información de la consulta
+      console.log(data);
+      const select = document.querySelector('#selectImpresora');
+      data.forEach(impresora => {
+        const option = document.createElement('option');
+        option.value = impresora.impresoraID;
+        option.textContent = `${impresora.nombre[1]} - ${impresora.serie}`;
+        select.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error al cargar impresoras:', error);
+    });
+}
+
 
 //Consultar Areas
 function getAreas() {
