@@ -233,9 +233,9 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDRQ4W6J3','Ginecologia TJ HP UCIN 01','HP','MFP M428dw','192.168.85.172',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC18OGNG','Ginecologia TJ HP Central Enfermeria 01','HP','E52645','192.168.85.25',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1P1L9','Hemodinamia TJ HP Operacion','HP','E52645','192.168.85.225',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHRL','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHRL','Hospitalizacion 5 TJ HP Central Enfermeria','HP','E52645','192.168.85.193',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S06C','Hospitalizacion TJ HP Central Enfermeria','HP','E52645','192.168.85.230',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC18OG03','Hospitalizacion 5E TJ HP Operaciones 02','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('','','HP','','',,);
@@ -261,8 +261,8 @@ Contratro	Marca	Modelo 	Serie	Nombre	IP	Column1
 23-2023-MPS	
 13-2022-MPS 		
 13-2021-MPS	
-66-2021-MPS	HP	MULTIFUNCIONAL E52645DN,	MXBC19EHRL	Hospitalizacion 5 TJ HP Central Enfermeria / ECP5	192.168.85.193	
-40-2021-MPS	HP	MULTIFUNCIONAL E52645DN	MXBCP1S06C	Hospitalizacion TJ HP Central Enfermeria / ECP4	192.168.85.230	
+66-2021-MPS	
+40-2021-MPS	
 13-2022-MPS 	HP	MULTIFUNCIONAL E52645DN	MXBC18OG03	Hospitalizacion 5E TJ HP Operaciones 02	192.168.85.190	
 47-2021-MPS	HP	MULTIFUNCIONAL E52645DN,	MXBCP1P2CC 	Hospitalizacion TJ HP Admision Hospitalaria /ECP1	192.168.85.234	
 33-2022-MPS	HP	IMPRESORA E50145DN	PHCCP2H0Y8	 HSI TJ HP Almacen	192.168.85.253	

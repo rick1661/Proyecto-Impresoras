@@ -130,6 +130,21 @@ btn.onclick = function () {
                     <button type="submit">Guardar</button>`
       // Cargar las impresoras al abrir el modal
       getImpresoraSelect();
+
+      //Seleccionar los elementos del forms para la validación
+      const inputTij = document.querySelector('#form input[name="tij"]');
+      const selectImpresora = document.querySelector('#form select[name="impresora"]');
+      const selectTipo = document.querySelector('#form select[name="tipo"]');
+      const selectModelo = document.querySelector('#form select[name="modelo"]');
+
+      // Asignar eventos
+      inputTij.addEventListener('blur', validacionCampos);
+      selectImpresora.addEventListener('blur', validacionSelect);
+      selectTipo.addEventListener('blur', validacionSelect);
+      selectModelo.addEventListener('blur', validacionSelect);
+      formulario.addEventListener('submit', formularioImpresoraEnvio);
+
+
       break;
   }
 
@@ -309,6 +324,48 @@ async function formularioImpresoraEnvio(formulario) {
   }
 
 };
+
+
+//Funcion para enviar Consumibles
+
+async function formularioImpresoraEnvio(formulario) {
+
+  formulario.preventDefault(); // Evitar el envío del formulario
+
+  // Validar que todos los campos sean correctos antes de enviar
+  if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
+    // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
+    alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+
+  } else {
+    // Si todos los campos son válidos, enviar el formulario
+    const datosFormulario = new FormData(formulario.target);
+    const jsonString = JSON.stringify(Object.fromEntries(datosFormulario));
+    console.log(jsonString);
+
+    try {
+      const respuesta = await fetch('http://localhost:3000/consumible/1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonString
+      });
+
+      if (!respuesta.ok) {
+        throw new Error(`Error HTTP: ${respuesta.status}`);
+      }
+      const resultado = await respuesta.json();
+      console.log('Datos enviados exitosamente:', resultado);
+      alert('Datos recibidos correctamente.');
+      resetFormulario();
+    } catch (error) {
+      console.error('Error al enviar datos:', error);
+      alert('Hubo un error al enviar los datos.');
+    }
+  }
+
+}
 
 //Funcion para resetear el formulario
 function resetImpresoraFormulario() {
