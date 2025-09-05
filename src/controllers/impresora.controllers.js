@@ -10,7 +10,7 @@ export const getImpresoras = async (req, res) => {
 
 
     const pool = await getConnection();
-    const result = await pool.request().query('SELECT serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID');
+    const result = await pool.request().query('SELECT impresoraID, serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID');
     console.log(result);
     res.json(result.recordset);
 }

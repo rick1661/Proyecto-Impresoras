@@ -59,6 +59,7 @@ FOREIGN KEY (impresoraID) REFERENCES impresora(impresoraID),
 
 );
 
+use ImpresorasBD;
 select * from impresora
 select * from empresa
 select * from contrato;

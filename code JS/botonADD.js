@@ -127,7 +127,7 @@ btn.onclick = function () {
             const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
             console.log('Datos enviados exitosamente:', resultado);
             alert('Datos recibidos correctamente.');
-            resetFormulario();
+            resetImpresoraFormulario();
           }
           catch (error) {
 
@@ -140,8 +140,35 @@ btn.onclick = function () {
 
       };
 
+            //Funcion para resetear el formulario
+      function resetImpresoraFormulario() {
+        inputSerie.value = '';
+        inputNombre.value = '';
+        inputMarca.value = '';
+        inputModelo.value = '';
+        inputDireccionIp.value = '';
+        selectArea.value = 'n';
+        selectContrato.value = 'n';
 
+        //Quitar estilos de error 
+        inputSerie.classList.remove('inputError');
+        inputNombre.classList.remove('inputError');
+        inputMarca.classList.remove('inputError');
+        inputModelo.classList.remove('inputError');
+        inputDireccionIp.classList.remove('inputError');
+        selectArea.classList.remove('selectError');
+        selectContrato.classList.remove('selectError');
 
+        //Quitar estilos de OK
+        inputSerie.classList.remove('inputOk');
+        inputNombre.classList.remove('inputOk');
+        inputMarca.classList.remove('inputOk');
+        inputModelo.classList.remove('inputOk');
+        inputDireccionIp.classList.remove('inputOk');
+        selectArea.classList.remove('selectOk');
+        selectContrato.classList.remove('selectOk');
+
+      }
 
       break;
     case 'Agregar consumible':
@@ -153,8 +180,8 @@ btn.onclick = function () {
       //Modificanmos la estructura del formulario para Consumible
       formulario.innerHTML = `
                     <input type="text" name="tij" placeholder="TIJ" required>
-                    <label for="Impresora">Impresora:</label>
-                    <select name="impresora" id="selectImpresora" required>
+                    <label for="impresoraID">Impresora:</label>
+                    <select name="impresoraID" id="selectImpresora" required>
                         <option value="n">Selecciona una impresora</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -203,7 +230,7 @@ btn.onclick = function () {
 
       //Seleccionar los elementos del forms para la validación
       const inputTij = document.querySelector('#form input[name="tij"]');
-      const selectImpresora = document.querySelector('#form select[name="impresora"]');
+      const selectImpresora = document.querySelector('#form select[name="impresoraID"]');
       const selectTipo = document.querySelector('#form select[name="tipo"]');
       const selectModelo = document.querySelector('#form select[name="modelo"]');
 
@@ -225,10 +252,19 @@ btn.onclick = function () {
           alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
 
         } else {
-          // Si todos los campos son válidos, enviar el formulario
-          const datosFormulario = new FormData(formulario.target);
-          const jsonString = JSON.stringify(Object.fromEntries(datosFormulario));
+          
+
+          const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
+
+          // Convertir FormData a un objeto JavaScript
+          const objetoDatosDelFormulario = Object.fromEntries(datosFormulario)
+          
+          //Convertimos el valor de impresoraID a entero
+          objetoDatosDelFormulario.impresoraID = parseInt(objetoDatosDelFormulario.impresoraID);
+
+          const jsonString = JSON.stringify(objetoDatosDelFormulario);
           console.log(jsonString);
+        
 
           try {
             const respuesta = await fetch('http://localhost:3000/consumible/1', {
@@ -245,7 +281,7 @@ btn.onclick = function () {
             const resultado = await respuesta.json();
             console.log('Datos enviados exitosamente:', resultado);
             alert('Datos recibidos correctamente.');
-            resetFormulario();
+            //resetFormulario();
           } catch (error) {
             console.error('Error al enviar datos:', error);
             alert('Hubo un error al enviar los datos.');
@@ -367,36 +403,7 @@ function validacionSelect(select) {
 
 
 
-//Funcion para enviar Consumibles
 
 
 
-//Funcion para resetear el formulario
-function resetImpresoraFormulario() {
-  inputSerie.value = '';
-  inputNombre.value = '';
-  inputMarca.value = '';
-  inputModelo.value = '';
-  inputDireccionIp.value = '';
-  selectArea.value = 'n';
-  selectContrato.value = 'n';
 
-  //Quitar estilos de error 
-  inputSerie.classList.remove('inputError');
-  inputNombre.classList.remove('inputError');
-  inputMarca.classList.remove('inputError');
-  inputModelo.classList.remove('inputError');
-  inputDireccionIp.classList.remove('inputError');
-  selectArea.classList.remove('selectError');
-  selectContrato.classList.remove('selectError');
-
-  //Quitar estilos de OK
-  inputSerie.classList.remove('inputOk');
-  inputNombre.classList.remove('inputOk');
-  inputMarca.classList.remove('inputOk');
-  inputModelo.classList.remove('inputOk');
-  inputDireccionIp.classList.remove('inputOk');
-  selectArea.classList.remove('selectOk');
-  selectContrato.classList.remove('selectOk');
-
-}
