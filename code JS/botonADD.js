@@ -71,7 +71,7 @@ btn.onclick = function () {
       selectContrato.addEventListener('blur', validacionSelect);
       formulario.addEventListener('submit', formularioImpresoraEnvio);
 
-            //Funcione Para enviar datos
+      //Funcione Para enviar datos
 
       async function formularioImpresoraEnvio(formulario) {
 
@@ -139,6 +139,7 @@ btn.onclick = function () {
         }
 
       };
+
 
 
 
@@ -213,13 +214,10 @@ btn.onclick = function () {
       selectModelo.addEventListener('blur', validacionSelect);
       formulario.addEventListener('submit', formularioConsumibleEnvio);
 
-
-      //Funcion para enviar Consumibles
-
       async function formularioConsumibleEnvio(formulario) {
 
         formulario.preventDefault(); // Evitar el envío del formulario
-        console.log("envio formilario";
+        console.log("envio formilario");
 
         // Validar que todos los campos sean correctos antes de enviar
         if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
@@ -365,6 +363,13 @@ function validacionSelect(select) {
     select.target.classList.add('selectOk');
   }
 }
+
+
+
+
+//Funcion para enviar Consumibles
+
+
 
 //Funcion para resetear el formulario
 function resetImpresoraFormulario() {
