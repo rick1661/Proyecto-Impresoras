@@ -231,6 +231,7 @@ body {
   overflow-x: auto;
   overflow-y: auto;
   margin-bottom: 10px;
+  
  
 }
 .styled-table {
@@ -241,11 +242,13 @@ body {
   background: var(--colorSecundario);
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0,0,0,0.05);
+ 
    
 }
 
 /*Posicionar a la vista  el primer renglon*/
 .styled-table th {
+  
   position: sticky;
   top: 0;
   background-color: var(--colorSecundario); /* Para que no se pegue con el contenido de abajo */
@@ -268,13 +271,16 @@ body {
 }
 
 .styled-table thead{
-  text-align: left;
+ /*text-align: left;*/
+
   font-weight: bold;
   font-size: 1.1rem;
   border-radius: 12px;
   color: #ffffff;
   height: 50px;
 }
+
+
 /*.styled-table tbody{
 }*/
  
@@ -282,6 +288,7 @@ body {
 .styled-table tbody tr {
   border-bottom: 1px solid #dddddd;
   background: #ffffff;
+  text-align: center;
 }
 .styled-table tbody tr:nth-of-type(even) {
   background-color: #f3f3f3;
@@ -293,8 +300,33 @@ body {
 }
 
 
+.editBtn{
+    background-color: var(--colorPrincipal);
+    width: 80px;
+    color:white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
 
+.editBtn:hover{
+    background-color: #005080;
+}
 
+.deleteBtn{
+    background-color: red;
+    width: 80px;
+    color:white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.deleteBtn:hover{
+    background-color: darkred;
+}
 
 /* ...existing code... */
 

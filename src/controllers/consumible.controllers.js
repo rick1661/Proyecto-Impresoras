@@ -1,10 +1,14 @@
 import { getConnection} from "../database/connection.js";
 import sql from 'mssql';
 
+
+// Crea una nueva instancia del objeto Date para obtener la fecha actual
+const fechaActual = new Date();
+
 //Consulta General
 export const getConsumibles =  async (req, res) => {
     const pool = await getConnection();
-    const result = await pool.request().query('SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;');
+    const result = await pool.request().query('SELECT consumibleID, tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;');
     res.json(result.recordset);
 };
 
@@ -29,7 +33,7 @@ export const postOneConsumible = async (req, res) => {
         .input("tipo", sql.VarChar, req.body.tipo)
         .input("modelo", sql.VarChar, req.body.modelo)
         .input("tij", sql.VarChar, req.body.tij)
-        .input("fecha", sql.Date, req.body.fecha)
+        .input("fecha", sql.Date, fechaActual)
         .input("impresoraID", sql.Int, req.body.impresoraID)
         .query("INSERT INTO consumible (tipo, modelo, tij , fecha, impresoraID) VALUES (@tipo, @modelo, @tij, @fecha, @impresoraID); SELECT SCOPE_IDENTITY() AS id;");
     res.json({

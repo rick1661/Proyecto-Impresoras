@@ -245,6 +245,7 @@ btn.onclick = function () {
 
         formulario.preventDefault(); // Evitar el envío del formulario
         console.log("envio formilario");
+        console.log(formulario.target);
 
         // Validar que todos los campos sean correctos antes de enviar
         if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
@@ -253,7 +254,6 @@ btn.onclick = function () {
 
         } else {
           
-
           const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
 
           // Convertir FormData a un objeto JavaScript
@@ -288,6 +288,28 @@ btn.onclick = function () {
           }
         }
 
+        resetConsumibleFormulario();
+
+      }
+
+      //Funcion para resetear el formulario
+      function resetConsumibleFormulario() {
+        inputTij.value = '';
+        selectImpresora.value = 'n';
+        selectTipo.value = 'n';
+        selectModelo.value = 'n';
+
+        //Quitar estilos de error 
+        inputTij.classList.remove('inputError');
+        selectImpresora.classList.remove('selectError');
+        selectTipo.classList.remove('selectError');
+        selectModelo.classList.remove('selectError');
+   
+        //Quitar estilos de OK
+        inputTij.classList.remove('inputOk');
+        selectImpresora.classList.remove('selectOk');
+        selectTipo.classList.remove('selectOk');
+        selectModelo.classList.remove('selectOk');
       }
 
       break;
