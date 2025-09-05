@@ -151,14 +151,24 @@ function getConsumibles() {
 //funcion para Editar y eliminar elementos
 
 function modificacionElemento(e) {
-  console.log(e.target);
-  console.log(e.targer.previousElementSibling);
+
+  //prevenir el comportamiento por defecto
+  e.preventDefault();
+
+
   const target = e.target;
+  console.log(target);
+  //Identificar si se dio click en el boton de editar o eliminar
+
   if (target.classList.contains('editBtn')) {
     const id = target.value;
     // Lógica para editar el elemento con el ID correspondiente
-    e.target.textContent =  'Guardar';
+    e.target.textContent = 'Guardar';
     e.target.style.backgroundColor = 'green';
+    const padre = target.parentNode;
+    console.log(padre);
+    const abuelo = padre.parentNode;
+    console.log(abuelo);
 
 
 
