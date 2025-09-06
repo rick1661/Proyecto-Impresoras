@@ -110,7 +110,7 @@ function getImpresoras() {
           <td>${impresora.nombre[1]}</td>
           <td>${impresora.nombre[2]}</td>
           <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
-          <td><button value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+          <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
         `;
         tbody.appendChild(row);
       });
@@ -137,8 +137,8 @@ function getConsumibles() {
           <td>${consumible.fecha.slice(0, 10)}</td>
           <td>${consumible.nombre}</td>
           <td>${consumible.serie}</td>
-          <td><button value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
-          <td><button value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
+          <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
+          <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
         `;
         tbody.appendChild(row);
       });
@@ -165,17 +165,87 @@ function modificacionElemento(e) {
     // Lógica para editar el elemento con el ID correspondiente
     e.target.textContent = 'Guardar';
     e.target.style.backgroundColor = 'green';
+    e.target.setAttribute('type', 'submit');
     const padre = target.parentNode;
-    console.log(padre);
     const abuelo = padre.parentNode;
+    console.log('este es el abuelo');
     console.log(abuelo);
+    const elementosTd = abuelo.querySelectorAll('td');
+    console.log('estos son los elementos td');
+    console.log(elementosTd);
+
+    ///Indexs
+    //0  Serie
+    //1  Nombre
+    //2  Marca
+    //3  Modelo
+    //4  IP
+    //5  Área
+    //6  Contrato
+    elementosTd.forEach((elemento, index) => {
+
+      if (elemento.firstElementChild === null && index <= 4) {
+        elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
+      } else if (elemento.firstElementChild === null && index === 5) {
+        elemento.innerHTML = `
+                        <select class="selectEdit" name="area" id="selectArea" required>
+                          <option value="n">Area</option>
+                          <!-- Agrega más opciones según necesites -->
+                        </select>`
+        getAreas(elemento);
+      }else if (elemento.firstElementChild === null && index === 6) {
+        elemento.innerHTML = `
+                        <select class="selectEdit" name="contrato" id="selectContrato" required>
+                          <option value="n">Contrato</option>
+                          <!-- Agrega más opciones según necesites -->
+                        </select>`
+        getContratos(elemento);
+      }
 
 
-
-    console.log('Editar elemento con ID:', id);
+    });
   } else if (target.classList.contains('deleteBtn')) {
     const id = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
     console.log('Eliminar elemento con ID:', id);
   }
+}
+
+//funcion para obtener las areas
+
+//Consultar Areas
+function getAreas(elemento) {
+  fetch('http://localhost:3000/area')
+    .then(response => response.json()) // Convierte la respuesta a JSON
+    .then(data => { // en data se guardan la información de la consulta
+      console.log(data);
+      data.forEach(area => {
+        const option = document.createElement('option');
+        option.value = area.areaID;
+        option.textContent = area.nombre;
+        elemento.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error al cargar Areas:', error);
+    });
+}
+
+//Consultar contratos
+
+function getContratos(elemento) {
+  fetch('http://localhost:3000/contrato')
+    .then(response => response.json()) // Convierte la respuesta a JSON
+    .then(data => { // en data se guardan la información de la consulta
+      data.forEach(contrato => {
+        const option = document.createElement('option');
+        option.value = contrato.contratoID;
+        option.textContent = contrato.nombre;
+        elemento.appendChild(option);
+      });
+
+    })
+    .catch(error => {
+      console.error('Error al cargar Contratos:', error);
+    });
 }

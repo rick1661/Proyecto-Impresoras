@@ -328,6 +328,28 @@ body {
     background-color: darkred;
 }
 
+.inputEdit{
+  width: 100%;
+  height: 35px;
+  border: 1px solid var(--colorSecundario);
+  font-size: 1rem;
+  background: white;
+  color: gray;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 4px;
+}
+
+.selectEdit{
+  width: 100%;
+  height: 35px;
+  border: 1px solid var(--colorSecundario);
+  font-size: 1rem;
+  background: white;
+  color: gray;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 4px;
+}
+
 /* ...existing code... */
 
 /* ...tablas responsivas... */
@@ -435,9 +457,9 @@ option::picked {
 }
 
 
-#form input:focus {
+#form input:focus, .selectEdit:focus, #form select:focus, .inputEdit:focus {
   border-color: var(--colorPrincipal);
-  box-shadow: 0 0 0 2px rgba(0,102,156,0.15);
+  box-shadow: 0 0 0 5px rgba(0,102,156,0.15);
   outline: none;
 }
 #form button[type="submit"] {
