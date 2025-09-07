@@ -5,7 +5,8 @@ const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
 const tabla = document.querySelector('.styled-table');
 const botonADD = document.querySelector('.addBtn');
-
+let botonGuardar;
+const tituloH2 = document.querySelector('#TituloH2');
 
 //Cargar listeners
 cargarEventListeners();
@@ -16,6 +17,7 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
+  botonGuardar,addEventListener('click', enviarCambios);
 
 }
 // Agregar evento click al botón de impresoras
@@ -165,11 +167,9 @@ function modificacionElemento(e) {
     // Lógica para editar el elemento con el ID correspondiente
     e.target.textContent = 'Guardar';
     e.target.style.backgroundColor = 'green';
-    e.target.setAttribute('type', 'submit');
-    const padre = target.parentNode;
-    const abuelo = padre.parentNode;
-    console.log('este es el abuelo');
-    console.log(abuelo);
+    e.target.setAttribute('id', 'guardarBtn');
+    botonGuardar = document.getElementById('guardarBtn');
+    const abuelo = target.parentElement.parentElement;
     const elementosTd = abuelo.querySelectorAll('td');
     console.log('estos son los elementos td');
     console.log(elementosTd);
@@ -187,20 +187,26 @@ function modificacionElemento(e) {
       if (elemento.firstElementChild === null && index <= 4) {
         elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
       } else if (elemento.firstElementChild === null && index === 5) {
+        //value = elemento.firstElementChild.value;
+      
         elemento.innerHTML = `
                         <select class="selectEdit" name="area" id="selectArea" required>
-                          <option value="n">Area</option>
+                          <option value="${elemento.value}">${elemento.textContent}</option>
                           <!-- Agrega más opciones según necesites -->
                         </select>`
+        //cargar las areas
         getAreas(elemento);
       }else if (elemento.firstElementChild === null && index === 6) {
         elemento.innerHTML = `
                         <select class="selectEdit" name="contrato" id="selectContrato" required>
-                          <option value="n">Contrato</option>
+                          <option value="${elemento.value}">${elemento.textContent}</option>
                           <!-- Agrega más opciones según necesites -->
                         </select>`
+
+        //cargar los contratos
         getContratos(elemento);
       }
+      
 
 
     });
@@ -248,4 +254,55 @@ function getContratos(elemento) {
     .catch(error => {
       console.error('Error al cargar Contratos:', error);
     });
+}
+
+//funcion para enviar los cambios a la BD
+async function enviarCambios(e) {
+  e.preventDefault();
+  console.log('enviando cambios');
+  //Seleccionar los elementos editables
+  const abuelo = e.target.parentElement.parentElement;
+  const elementosTd = abuelo.querySelectorAll('td');
+  console.log(elementosTd);
+  
+
+  //Verificar si se esta modificando una impresora o un consumible
+  if(tituloH2.textContent==='Agregar impresora' && e.target.textContent==='Guardar'){
+
+    const inputSerie = elementosTd[0].firstElementChild.value;
+    const inputNombre = elementosTd[1].firstElementChild.value;
+    const inputMarca = elementosTd[2].firstElementChild.value;
+    const inputModelo = elementosTd[3].firstElementChild.value;
+    const inputIp = elementosTd[4].firstElementChild.value;
+    const selectArea = elementosTd[5].firstElementChild.value;
+    const selectContrato = elementosTd[6].firstElementChild.value;
+
+    //Validar que no haya campos vacios
+
+    if(inputSerie.trim() ==='' || inputNombre.trim() ==='' || inputMarca.trim() ==='' || inputModelo.trim() ==='' || inputIp.trim() === ''|| selectArea ==='n' || selectContrato ===''){
+
+      alert('Por favor, complete todos los campos antes de guardar.');
+    
+
+    }else{
+      //Crear el objeto con los nuevos datos
+      const datosActualizados = {
+        id: e.target.value,
+        serie: elementosTd[0].firstElementChild.value,
+        nombre: elementosTd[1].firstElementChild.value,
+        marca: elementosTd[2].firstElementChild.value,
+        modelo: elementosTd[3].firstElementChild.value,
+        direccionIp: elementosTd[4].firstElementChild.value,
+        areaID: elementosTd[5].firstElementChild.value,
+        contratoID: elementosTd[6].firstElementChild.value
+      };
+      console.log(datosActualizados);
+
+
+    }
+    
+ 
+  }else if(tituloH2.textContent==='Agregar consumible'){
+
+  }
 }
