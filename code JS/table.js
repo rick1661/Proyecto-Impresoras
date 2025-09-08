@@ -17,7 +17,7 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
-  botonGuardar,addEventListener('click', enviarCambios);
+  //botonGuardar,addEventListener('click', enviarCambios);
 
 }
 // Agregar evento click al botón de impresoras
@@ -167,21 +167,10 @@ function modificacionElemento(e) {
     // Lógica para editar el elemento con el ID correspondiente
     e.target.textContent = 'Guardar';
     e.target.style.backgroundColor = 'green';
-    e.target.setAttribute('id', 'guardarBtn');
     botonGuardar = document.getElementById('guardarBtn');
     const abuelo = target.parentElement.parentElement;
     const elementosTd = abuelo.querySelectorAll('td');
-    console.log('estos son los elementos td');
-    console.log(elementosTd);
 
-    ///Indexs
-    //0  Serie
-    //1  Nombre
-    //2  Marca
-    //3  Modelo
-    //4  IP
-    //5  Área
-    //6  Contrato
     elementosTd.forEach((elemento, index) => {
 
       if (elemento.firstElementChild === null && index <= 4) {
@@ -206,14 +195,15 @@ function modificacionElemento(e) {
         //cargar los contratos
         getContratos(elemento);
       }
-      
-
-
     });
   } else if (target.classList.contains('deleteBtn')) {
     const id = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
     console.log('Eliminar elemento con ID:', id);
+
+  } else if(target.id==='guardarBtn'){
+    enviarCambios(e);
+    console.log('Guardando cambios...');
   }
 }
 
@@ -224,9 +214,11 @@ function getAreas(elemento) {
   fetch('http://localhost:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
+      console.log('Áreas cargadas:');
       console.log(data);
       data.forEach(area => {
         const option = document.createElement('option');
+        console.log(area.areaID);
         option.value = area.areaID;
         option.textContent = area.nombre;
         elemento.appendChild(option);
@@ -263,12 +255,13 @@ async function enviarCambios(e) {
   //Seleccionar los elementos editables
   const abuelo = e.target.parentElement.parentElement;
   const elementosTd = abuelo.querySelectorAll('td');
-  console.log(elementosTd);
+  
   
 
   //Verificar si se esta modificando una impresora o un consumible
   if(tituloH2.textContent==='Agregar impresora' && e.target.textContent==='Guardar'){
 
+    console.log(elementosTd[6].firstElementChild.value);
     const inputSerie = elementosTd[0].firstElementChild.value;
     const inputNombre = elementosTd[1].firstElementChild.value;
     const inputMarca = elementosTd[2].firstElementChild.value;
@@ -281,10 +274,20 @@ async function enviarCambios(e) {
 
     if(inputSerie.trim() ==='' || inputNombre.trim() ==='' || inputMarca.trim() ==='' || inputModelo.trim() ==='' || inputIp.trim() === ''|| selectArea ==='n' || selectContrato ===''){
 
+      elementosTd.forEach(elemento => {
+        if(elemento.firstElementChild.value.trim() ===''){
+          elemento.firstElementChild.style.border = '2px solid red';
+        }else{
+          elemento.firstElementChild.style.border = '1px solid #ccc';
+        }
+      });
       alert('Por favor, complete todos los campos antes de guardar.');
     
 
     }else{
+
+      console.log(selectArea);
+      console.log(selectContrato);
       //Crear el objeto con los nuevos datos
       const datosActualizados = {
         id: e.target.value,
@@ -293,11 +296,14 @@ async function enviarCambios(e) {
         marca: elementosTd[2].firstElementChild.value,
         modelo: elementosTd[3].firstElementChild.value,
         direccionIp: elementosTd[4].firstElementChild.value,
-        areaID: elementosTd[5].firstElementChild.value,
-        contratoID: elementosTd[6].firstElementChild.value
+        areaID: parseInt(selectArea),
+        contratoID: parseInt(selectContrato)
       };
-      console.log(datosActualizados);
-
+      
+      console.log('Datos actualizados:', datosActualizados);
+      //convertimos el objeto a JSON
+      const datosJSON = JSON.stringify(datosActualizados);
+      console.log(datosJSON);
 
     }
     
