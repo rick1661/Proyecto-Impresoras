@@ -300,7 +300,7 @@ body {
 }
 
 
-.editBtn{
+.editBtn, .guardarBtn{
     background-color: var(--colorPrincipal);
     width: 80px;
     color:white;

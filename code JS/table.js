@@ -8,6 +8,9 @@ const botonADD = document.querySelector('.addBtn');
 let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
 
+//array para almacenar areas y contratos
+
+
 //Cargar listeners
 cargarEventListeners();
 
@@ -156,8 +159,6 @@ function modificacionElemento(e) {
 
   //prevenir el comportamiento por defecto
   e.preventDefault();
-
-
   const target = e.target;
   console.log(target);
   //Identificar si se dio click en el boton de editar o eliminar
@@ -167,25 +168,29 @@ function modificacionElemento(e) {
     // Lógica para editar el elemento con el ID correspondiente
     e.target.textContent = 'Guardar';
     e.target.style.backgroundColor = 'green';
+    e.target.setAttribute('class', 'guardarBtn');
     botonGuardar = document.getElementById('guardarBtn');
     const abuelo = target.parentElement.parentElement;
     const elementosTd = abuelo.querySelectorAll('td');
+    console.log(elementosTd);
 
     elementosTd.forEach((elemento, index) => {
 
       if (elemento.firstElementChild === null && index <= 4) {
+
         elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
+
       } else if (elemento.firstElementChild === null && index === 5) {
         //value = elemento.firstElementChild.value;
-      
+
         elemento.innerHTML = `
                         <select class="selectEdit" name="area" id="selectArea" required>
-                          <option value="${elemento.value}">${elemento.textContent}</option>
+                          <option value="">${elemento.textContent}</option>
                           <!-- Agrega más opciones según necesites -->
                         </select>`
         //cargar las areas
-        getAreas(elemento);
-      }else if (elemento.firstElementChild === null && index === 6) {
+        getAreasEdit(elemento.firstElementChild);
+      } else if (elemento.firstElementChild === null && index === 6) {
         elemento.innerHTML = `
                         <select class="selectEdit" name="contrato" id="selectContrato" required>
                           <option value="${elemento.value}">${elemento.textContent}</option>
@@ -193,7 +198,7 @@ function modificacionElemento(e) {
                         </select>`
 
         //cargar los contratos
-        getContratos(elemento);
+        getContratosEdit(elemento.firstElementChild);
       }
     });
   } else if (target.classList.contains('deleteBtn')) {
@@ -201,28 +206,39 @@ function modificacionElemento(e) {
     // Lógica para eliminar el elemento con el ID correspondiente
     console.log('Eliminar elemento con ID:', id);
 
-  } else if(target.id==='guardarBtn'){
-    enviarCambios(e);
+  } else if (target.classList.contains('guardarBtn')) {
+
     console.log('Guardando cambios...');
+
+    enviarCambios(e);
+
   }
 }
 
 //funcion para obtener las areas
 
 //Consultar Areas
-function getAreas(elemento) {
+async function getAreasEdit(elemento) {
+  console.log('funcion getAreasEdit');
+  console.log(elemento.textContent.trim());
   fetch('http://localhost:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log('Áreas cargadas:');
-      console.log(data);
+
       data.forEach(area => {
         const option = document.createElement('option');
-        console.log(area.areaID);
         option.value = area.areaID;
         option.textContent = area.nombre;
         elemento.appendChild(option);
+
+        //Asignamos el valor seleccionado en el select Areas
+        if (elemento.options[elemento.selectedIndex].textContent === area.nombre.trim()) {
+          elemento.value = area.areaID;
+        };
+
       });
+
     })
     .catch(error => {
       console.error('Error al cargar Areas:', error);
@@ -231,7 +247,7 @@ function getAreas(elemento) {
 
 //Consultar contratos
 
-function getContratos(elemento) {
+function getContratosEdit(elemento) {
   fetch('http://localhost:3000/contrato')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
@@ -240,6 +256,13 @@ function getContratos(elemento) {
         option.value = contrato.contratoID;
         option.textContent = contrato.nombre;
         elemento.appendChild(option);
+
+        //Asignamos el valor seleccionado en el select Contratos
+        if (elemento.options[elemento.selectedIndex].textContent === contrato.nombre.trim()) {
+          elemento.value = contrato.contratoID;
+        }
+
+
       });
 
     })
@@ -255,13 +278,13 @@ async function enviarCambios(e) {
   //Seleccionar los elementos editables
   const abuelo = e.target.parentElement.parentElement;
   const elementosTd = abuelo.querySelectorAll('td');
-  
-  
 
+
+//***************************************Modificiacion impresoras**************************************** */
   //Verificar si se esta modificando una impresora o un consumible
-  if(tituloH2.textContent==='Agregar impresora' && e.target.textContent==='Guardar'){
+  if (tituloH2.textContent === 'Agregar impresora') {
 
-    console.log(elementosTd[6].firstElementChild.value);
+
     const inputSerie = elementosTd[0].firstElementChild.value;
     const inputNombre = elementosTd[1].firstElementChild.value;
     const inputMarca = elementosTd[2].firstElementChild.value;
@@ -272,25 +295,24 @@ async function enviarCambios(e) {
 
     //Validar que no haya campos vacios
 
-    if(inputSerie.trim() ==='' || inputNombre.trim() ==='' || inputMarca.trim() ==='' || inputModelo.trim() ==='' || inputIp.trim() === ''|| selectArea ==='n' || selectContrato ===''){
+    if (inputSerie.trim() === '' || inputNombre.trim() === '' || inputMarca.trim() === '' || inputModelo.trim() === '' || inputIp.trim() === '' || selectArea === 'n' || selectContrato === '') {
 
       elementosTd.forEach(elemento => {
-        if(elemento.firstElementChild.value.trim() ===''){
+        if (elemento.firstElementChild.value.trim() === '') {
           elemento.firstElementChild.style.border = '2px solid red';
-        }else{
+        } else {
           elemento.firstElementChild.style.border = '1px solid #ccc';
         }
       });
       alert('Por favor, complete todos los campos antes de guardar.');
-    
 
-    }else{
 
-      console.log(selectArea);
-      console.log(selectContrato);
+    } else {
+
+
       //Crear el objeto con los nuevos datos
       const datosActualizados = {
-        id: e.target.value,
+        id: parseInt(e.target.value),
         serie: elementosTd[0].firstElementChild.value,
         nombre: elementosTd[1].firstElementChild.value,
         marca: elementosTd[2].firstElementChild.value,
@@ -299,16 +321,41 @@ async function enviarCambios(e) {
         areaID: parseInt(selectArea),
         contratoID: parseInt(selectContrato)
       };
-      
+
       console.log('Datos actualizados:', datosActualizados);
       //convertimos el objeto a JSON
       const datosJSON = JSON.stringify(datosActualizados);
       console.log(datosJSON);
 
+      //Enviar los datos a la API
+      try {
+        const response = await fetch(`http://localhost:3000/impresora/${datosActualizados.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: datosJSON
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al actualizar la impresora');
+        }
+
+        const resultado = await response.json();
+        console.log('Respuesta de la API:', resultado);
+        alert('Impresora actualizada correctamente');
+
+        //Volver a cargar la tabla de impresoras
+        getImpresoras();
+
+      } catch (error) {
+        console.error('Error al enviar los datos:', error);
+        alert('Error al actualizar la impresora');
+      }
     }
-    
- 
-  }else if(tituloH2.textContent==='Agregar consumible'){
+
+//***************************************Modificiacion consumibles**************************************** */
+  } else if (tituloH2.textContent === 'Agregar consumible') {
 
   }
 }

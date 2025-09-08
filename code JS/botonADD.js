@@ -127,7 +127,10 @@ btn.onclick = function () {
             const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
             console.log('Datos enviados exitosamente:', resultado);
             alert('Datos recibidos correctamente.');
+
             resetImpresoraFormulario();
+            //Volver a cargar la tabla de impresoras
+            getImpresoras();
           }
           catch (error) {
 
@@ -281,6 +284,9 @@ btn.onclick = function () {
             const resultado = await respuesta.json();
             console.log('Datos enviados exitosamente:', resultado);
             alert('Datos recibidos correctamente.');
+
+            //Volver a cargar la tabla de consumibles
+            getConsumibles();
             //resetFormulario();
           } catch (error) {
             console.error('Error al enviar datos:', error);
