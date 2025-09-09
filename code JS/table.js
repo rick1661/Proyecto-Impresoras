@@ -8,10 +8,11 @@ const botonADD = document.querySelector('.addBtn');
 let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
 
-//array para almacenar areas y contratos
 
 
-//Cargar listeners
+
+
+//Funcion para cargar listeners
 cargarEventListeners();
 
 function cargarEventListeners() {
@@ -23,6 +24,11 @@ function cargarEventListeners() {
   //botonGuardar,addEventListener('click', enviarCambios);
 
 }
+
+
+//*********************************************************************************************************Funciones*************************************************************************//
+
+//***********************Funciona para modificar la estructura de la tabla a impresoras *************************************/
 // Agregar evento click al botón de impresoras
 function cargarTablaimpresoras() {
 
@@ -60,7 +66,36 @@ function cargarTablaimpresoras() {
   getImpresoras();
 };
 
+//***********************************uncion para obtener e insertar las impresoras en la tabla principal****************************************
+function getImpresoras() {
+  fetch('http://localhost:3000/impresora')
+    .then(response => response.json()) // Convierte la respuesta a JSON
+    .then(data => { // en data se guardan la información de la consulta
+      //console.log(data);
+      const tbody = document.querySelector('.styled-table tbody');
+      tbody.innerHTML = ''; // Limpia el contenido actual
+      data.forEach(impresora => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${impresora.serie}</td>
+          <td>${impresora.nombre[0]}</td>
+          <td>${impresora.marca}</td>
+          <td>${impresora.modelo}</td>
+          <td>${impresora.direccionIp}</td>
+          <td>${impresora.nombre[1]}</td>
+          <td>${impresora.nombre[2]}</td>
+          <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
+          <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error('Error al cargar impresoras:', error);
+    });
+}
 
+//************************Funcion para  modificar la estrutura de la tabla a consumibles*****************************/
 function cargarTablaConsumibles() {
 
   // Establecer la sección a consumibles
@@ -94,38 +129,8 @@ function cargarTablaConsumibles() {
   getConsumibles();
 
 };
-//----------------------------------------------Funciones---------------------------------------------//
 
-//Funcion para obtener e insertar las impresoras en la tabla
-function getImpresoras() {
-  fetch('http://localhost:3000/impresora')
-    .then(response => response.json()) // Convierte la respuesta a JSON
-    .then(data => { // en data se guardan la información de la consulta
-      //console.log(data);
-      const tbody = document.querySelector('.styled-table tbody');
-      tbody.innerHTML = ''; // Limpia el contenido actual
-      data.forEach(impresora => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${impresora.serie}</td>
-          <td>${impresora.nombre[0]}</td>
-          <td>${impresora.marca}</td>
-          <td>${impresora.modelo}</td>
-          <td>${impresora.direccionIp}</td>
-          <td>${impresora.nombre[1]}</td>
-          <td>${impresora.nombre[2]}</td>
-          <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
-          <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
-        `;
-        tbody.appendChild(row);
-      });
-    })
-    .catch(error => {
-      console.error('Error al cargar impresoras:', error);
-    });
-}
-
-//funcion para obtener e insertar los consumibles en la tabla
+//**************************************funcion para obtener e insertar los consumibles en la tabla principal**************************************
 function getConsumibles() {
   fetch('http://localhost:3000/consumible')
     .then(response => response.json()) // Convierte la respuesta a JSON
@@ -153,7 +158,7 @@ function getConsumibles() {
     });
 }
 
-//funcion para Editar y eliminar elementos
+//*************************funcion para Editar y eliminar elementos***********************************//
 
 function modificacionElemento(e) {
 
@@ -174,33 +179,23 @@ function modificacionElemento(e) {
     const elementosTd = abuelo.querySelectorAll('td');
     console.log(elementosTd);
 
-    elementosTd.forEach((elemento, index) => {
+    //Evaluar si se esta editando una impresora o un consumible
 
-      if (elemento.firstElementChild === null && index <= 4) {
+    switch (botonADD.textContent.trim()) {
 
-        elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
+      case 'Agregar impresora':
+        console.log("entro aqui");
+        modificarCamposImpresora(elementosTd);
+        break;
 
-      } else if (elemento.firstElementChild === null && index === 5) {
-        //value = elemento.firstElementChild.value;
+      case 'Agregar consumible':
 
-        elemento.innerHTML = `
-                        <select class="selectEdit" name="area" id="selectArea" required>
-                          <option value="">${elemento.textContent}</option>
-                          <!-- Agrega más opciones según necesites -->
-                        </select>`
-        //cargar las areas
-        getAreasEdit(elemento.firstElementChild);
-      } else if (elemento.firstElementChild === null && index === 6) {
-        elemento.innerHTML = `
-                        <select class="selectEdit" name="contrato" id="selectContrato" required>
-                          <option value="${elemento.value}">${elemento.textContent}</option>
-                          <!-- Agrega más opciones según necesites -->
-                        </select>`
+        console.log("entro aca");
+        modificarCamposConsumible(elementosTd);
+        break;
 
-        //cargar los contratos
-        getContratosEdit(elemento.firstElementChild);
-      }
-    });
+    }
+
   } else if (target.classList.contains('deleteBtn')) {
     const id = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
@@ -215,8 +210,45 @@ function modificacionElemento(e) {
   }
 }
 
-//funcion para obtener las areas
+//**************************Funcion para mofificar los campos de en la edicion de una impresora************************
+function modificarCamposImpresora(elementosTd) {
 
+  //Recorrer los elementos td y convertirlos en campos editables
+  elementosTd.forEach((elemento, index) => {
+
+    //Hacer los pimeros 5 campos en input
+    if (elemento.firstElementChild === null && index <= 4) {
+
+      elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
+
+      //Convertir el campo area en un select
+    } else if (elemento.firstElementChild === null && index === 5) {
+
+
+      elemento.innerHTML = `
+                        <select class="selectEdit" name="area" id="selectArea" required>
+                          <option value="">${elemento.textContent}</option>
+                          <!-- Agrega más opciones según necesites -->
+                        </select>`
+      //cargar las areas
+      getAreasEdit(elemento.firstElementChild);
+
+      //Convertir el campo contrato en un select
+    } else if (elemento.firstElementChild === null && index === 6) {
+      elemento.innerHTML = `
+                        <select class="selectEdit" name="contrato" id="selectContrato" required>
+                          <option value="">${elemento.textContent}</option>
+                          <!-- Agrega más opciones según necesites -->
+                        </select>`
+
+      //cargar los contratos
+      getContratosEdit(elemento.firstElementChild);
+    }
+  });
+}
+
+
+//*************************Funcion para obtener las areas de la edificion************************************
 //Consultar Areas
 async function getAreasEdit(elemento) {
   console.log('funcion getAreasEdit');
@@ -245,7 +277,7 @@ async function getAreasEdit(elemento) {
     });
 }
 
-//Consultar contratos
+//************************Funcion para obtener los contratos de la edicion**********************
 
 function getContratosEdit(elemento) {
   fetch('http://localhost:3000/contrato')
@@ -271,7 +303,94 @@ function getContratosEdit(elemento) {
     });
 }
 
-//funcion para enviar los cambios a la BD
+// ********************Funcion para modificar los campos en la edicion de un consumible********************
+function modificarCamposConsumible(elementosTd) {
+
+  //Recorrer los elementos td y convertirlos en campos editables
+  console.log("Funcion moficarCampos Consumible")
+  elementosTd.forEach((elemento, index) => {
+
+    //Convertir los primeros dos campos a Input
+
+    switch (index){
+
+      case 0:
+
+        elemento.innerHTML = `
+                          <select class="selectEdit" name="tipo" id="selectTipo" required>
+                            <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
+                            <!-- Agregar mas opciones segun necesites -->
+                              <option value=1>Toner</option>
+                              <option value=2>Tambor</option>
+                          </select>`;
+        break;
+      
+      case 1:
+
+        elemento.innerHTML = `
+                            <select class="selectEdit" name="modelo" id="selecModelo" required>
+                              <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
+                              <!-- Agregar mas opciones segun necesites -->
+                                <option value="w9008">w9008</option>
+                                <option value="w1330xc">w1330xc</option>
+                                <option value="w1330x">w1330x</option>
+                                <option value="cf258xc">cf258xc</option>
+                                <option value="cf258x">cf258x</option>
+                                <option value="cf280xc">cf280xc</option>
+                                <option value="cf280x">cf280x</option>
+                                <option value="ce285ac">ce285ac</option>
+                                <option value="131a Y">131a Y</option>
+                                <option value="131a M">131a M</option>
+                                <option value="131a C">131a C</option>
+                                <option value="131a K">131a K</option>
+                                <option value="ce255xc">ce255xc</option>
+                                <option value="976yc Y">976yc Y</option>
+                                <option value="976yc M">976yc M</option>
+                                <option value="976yc C">976yc C</option>
+                                <option value="976yc K">976yc K</option>
+                                <option value="w9090mc Y">w9090mc Y</option>
+                                <option value="w9090mc M">w9090mc M</option>
+                                <option value="w9090mc C">w9090mc C</option>
+                                <option value="w9090mc K">w9090mc K</option>
+                                <option value="206X Y">206X Y</option>
+                                <option value="206X M">206X M</option>
+                                <option value="206X C">206X C</option>
+                                <option value="206X K">206X K</option>
+                                <option value="w132ac">w132ac</option>
+                                <option value="cf287jc">cf287jc</option>
+                            </select>`;
+
+        break;
+      
+      case 2:
+        elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
+        break;
+      
+      case  4: 
+        elemento.innerHTML = `
+                          <select class="selectEdit" name="impresoraID" id="seleImpresora" required>
+                            <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
+                            <!-- Agregar mas opciones segun necesites -->
+                            
+                          </select>`;
+
+        break;
+        
+
+    }
+
+  })
+
+
+
+
+
+}
+
+
+
+
+//****************************************Funciones para enviar los cambios a la BD************************************/
 async function enviarCambios(e) {
   e.preventDefault();
   console.log('enviando cambios');
@@ -280,7 +399,7 @@ async function enviarCambios(e) {
   const elementosTd = abuelo.querySelectorAll('td');
 
 
-//***************************************Modificiacion impresoras**************************************** */
+  //***************************************Modificiacion impresoras**************************************** */
   //Verificar si se esta modificando una impresora o un consumible
   if (tituloH2.textContent === 'Agregar impresora') {
 
@@ -354,7 +473,7 @@ async function enviarCambios(e) {
       }
     }
 
-//***************************************Modificiacion consumibles**************************************** */
+    //***************************************Modificiacion consumibles**************************************** */
   } else if (tituloH2.textContent === 'Agregar consumible') {
 
   }

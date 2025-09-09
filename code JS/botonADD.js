@@ -192,8 +192,8 @@ btn.onclick = function () {
                     <select name="tipo" id="selectTipo" required>
                         <option value="n">Selecciona un Tipo</option>
                         <!-- Agrega más opciones según necesites -->
-                        <option value="toner">Toner</option>
-                        <option value="tambor">Tambor</option>
+                        <option value="Toner">Toner</option>
+                        <option value="Tambor">Tambor</option>
                     </select>
                     <label for="modelo">Modelo</label>
                     <select name="modelo" id="selectModelo" required>
