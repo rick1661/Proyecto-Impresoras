@@ -251,12 +251,9 @@ function modificarCamposImpresora(elementosTd) {
 //*************************Funcion para obtener las areas de la edificion************************************
 //Consultar Areas
 async function getAreasEdit(elemento) {
-  console.log('funcion getAreasEdit');
-  console.log(elemento.textContent.trim());
   fetch('http://localhost:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
-      console.log('Áreas cargadas:');
 
       data.forEach(area => {
         const option = document.createElement('option');
@@ -374,18 +371,37 @@ function modificarCamposConsumible(elementosTd) {
                             
                           </select>`;
 
+        //cargar impresoras en el edit
+        getImpresoraSelectEdit(elemento.firstElementChild) 
+
         break;
         
-
     }
 
   })
 
-
-
-
-
 }
+
+//obtener impresoras 
+
+//Consltar Impresoras
+async function getImpresoraSelectEdit(elemento) {
+  fetch('http://localhost:3000/impresora')
+    .then(response => response.json()) // Convierte la respuesta a JSON
+    .then(data => { // en data se guardan la información de la consulta
+ 
+      data.forEach(impresora => {
+        const option = document.createElement('option');
+        option.value = impresora.impresoraID;
+        option.textContent = `${impresora.nombre[1]} - ${impresora.serie}`;
+        elemento.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error('Error al cargar impresoras:', error);
+    });
+}
+
 
 
 
