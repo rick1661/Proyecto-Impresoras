@@ -423,13 +423,13 @@ async function enviarCambios(e) {
 
   elementosTd.forEach(elemento => {
 
-    if (elemento.firstElementChild.value.trim() === '') {
+    if (elemento.firstElementChild !== null && elemento.firstElementChild.value.trim() === '') {
       vacio = true
       elemento.firstElementChild.style.border = '2px solid red';
     } else {
+      
       elemento.firstElementChild.style.border = '1px solid #ccc';
     }
-
   });
 
   switch (vacio) {
