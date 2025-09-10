@@ -8,7 +8,8 @@ const botonADD = document.querySelector('.addBtn');
 let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
 
-
+//variables
+let vacio = false;
 
 
 
@@ -276,7 +277,7 @@ async function getAreasEdit(elemento) {
 
 //************************Funcion para obtener los contratos de la edicion**********************
 
-function getContratosEdit(elemento) {
+async function getContratosEdit(elemento) {
   fetch('http://localhost:3000/contrato')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
@@ -309,7 +310,7 @@ function modificarCamposConsumible(elementosTd) {
 
     //Convertir los primeros dos campos a Input
 
-    switch (index){
+    switch (index) {
 
       case 0:
 
@@ -321,7 +322,7 @@ function modificarCamposConsumible(elementosTd) {
                               <option value=2>Tambor</option>
                           </select>`;
         break;
-      
+
       case 1:
 
         elemento.innerHTML = `
@@ -358,12 +359,12 @@ function modificarCamposConsumible(elementosTd) {
                             </select>`;
 
         break;
-      
+
       case 2:
         elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
         break;
-      
-      case  4: 
+
+      case 4:
         elemento.innerHTML = `
                           <select class="selectEdit" name="impresoraID" id="seleImpresora" required>
                             <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
@@ -372,10 +373,10 @@ function modificarCamposConsumible(elementosTd) {
                           </select>`;
 
         //cargar impresoras en el edit
-        getImpresoraSelectEdit(elemento.firstElementChild) 
+        getImpresoraSelectEdit(elemento.firstElementChild)
 
         break;
-        
+
     }
 
   })
@@ -389,12 +390,19 @@ async function getImpresoraSelectEdit(elemento) {
   fetch('http://localhost:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
- 
+
       data.forEach(impresora => {
         const option = document.createElement('option');
         option.value = impresora.impresoraID;
         option.textContent = `${impresora.nombre[1]} - ${impresora.serie}`;
         elemento.appendChild(option);
+
+        //Asignamos el valor seleccionado en el select de edit impresora
+        if (elemento.options[elemento.selectedIndex].texContent == impresora.nombre[1]) {
+
+          elemento.value = impresora.impresoraID
+
+        }
       });
     })
     .catch(error => {
@@ -402,95 +410,98 @@ async function getImpresoraSelectEdit(elemento) {
     });
 }
 
-
-
-
-
 //****************************************Funciones para enviar los cambios a la BD************************************/
 async function enviarCambios(e) {
   e.preventDefault();
   console.log('enviando cambios');
+  console.log(e)
   //Seleccionar los elementos editables
   const abuelo = e.target.parentElement.parentElement;
   const elementosTd = abuelo.querySelectorAll('td');
 
+  //Validar que no haya campos vacios
 
-  //***************************************Modificiacion impresoras**************************************** */
-  //Verificar si se esta modificando una impresora o un consumible
-  if (tituloH2.textContent === 'Agregar impresora') {
+  elementosTd.forEach(elemento => {
 
-
-    const inputSerie = elementosTd[0].firstElementChild.value;
-    const inputNombre = elementosTd[1].firstElementChild.value;
-    const inputMarca = elementosTd[2].firstElementChild.value;
-    const inputModelo = elementosTd[3].firstElementChild.value;
-    const inputIp = elementosTd[4].firstElementChild.value;
-    const selectArea = elementosTd[5].firstElementChild.value;
-    const selectContrato = elementosTd[6].firstElementChild.value;
-
-    //Validar que no haya campos vacios
-
-    if (inputSerie.trim() === '' || inputNombre.trim() === '' || inputMarca.trim() === '' || inputModelo.trim() === '' || inputIp.trim() === '' || selectArea === 'n' || selectContrato === '') {
-
-      elementosTd.forEach(elemento => {
-        if (elemento.firstElementChild.value.trim() === '') {
-          elemento.firstElementChild.style.border = '2px solid red';
-        } else {
-          elemento.firstElementChild.style.border = '1px solid #ccc';
-        }
-      });
-      alert('Por favor, complete todos los campos antes de guardar.');
-
-
+    if (elemento.firstElementChild.value.trim() === '') {
+      vacio = true
+      elemento.firstElementChild.style.border = '2px solid red';
     } else {
-
-
-      //Crear el objeto con los nuevos datos
-      const datosActualizados = {
-        id: parseInt(e.target.value),
-        serie: elementosTd[0].firstElementChild.value,
-        nombre: elementosTd[1].firstElementChild.value,
-        marca: elementosTd[2].firstElementChild.value,
-        modelo: elementosTd[3].firstElementChild.value,
-        direccionIp: elementosTd[4].firstElementChild.value,
-        areaID: parseInt(selectArea),
-        contratoID: parseInt(selectContrato)
-      };
-
-      console.log('Datos actualizados:', datosActualizados);
-      //convertimos el objeto a JSON
-      const datosJSON = JSON.stringify(datosActualizados);
-      console.log(datosJSON);
-
-      //Enviar los datos a la API
-      try {
-        const response = await fetch(`http://localhost:3000/impresora/${datosActualizados.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: datosJSON
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al actualizar la impresora');
-        }
-
-        const resultado = await response.json();
-        console.log('Respuesta de la API:', resultado);
-        alert('Impresora actualizada correctamente');
-
-        //Volver a cargar la tabla de impresoras
-        getImpresoras();
-
-      } catch (error) {
-        console.error('Error al enviar los datos:', error);
-        alert('Error al actualizar la impresora');
-      }
+      elemento.firstElementChild.style.border = '1px solid #ccc';
     }
 
-    //***************************************Modificiacion consumibles**************************************** */
-  } else if (tituloH2.textContent === 'Agregar consumible') {
+  });
+
+  switch (vacio) {
+
+    case true:
+
+      alert('Por favor, complete todos los campos antes de guardar.');
+      break;
+
+    case false:
+      //***************************************Modificiacion impresoras**************************************** */
+      switch (botonADD.textContent.trim()) {
+
+        case 'Agregar impresora':
+
+          console.log("entro a la preparacion de envio de impresora")
+          //Crear el objeto con los nuevos datos
+          const datosActualizados = {
+            id: parseInt(e.target.value),
+            serie: elementosTd[0].firstElementChild.value,
+            nombre: elementosTd[1].firstElementChild.value,
+            marca: elementosTd[2].firstElementChild.value,
+            modelo: elementosTd[3].firstElementChild.value,
+            direccionIp: elementosTd[4].firstElementChild.value,
+            areaID: parseInt(elementosTd[5].firstElementChild.value),
+            contratoID: parseInt(elementosTd[6].firstElementChild.value)
+          };
+
+          console.log('Datos actualizados:', datosActualizados);
+          //convertimos el objeto a JSON
+          const datosJSON = JSON.stringify(datosActualizados);
+          console.log(datosJSON);
+
+          //Enviar los datos a la API
+          try {
+            const response = await fetch(`http://localhost:3000/impresora/${datosActualizados.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: datosJSON
+            });
+
+            if (!response.ok) {
+              throw new Error('Error al actualizar la impresora');
+            }
+
+            const resultado = await response.json();
+            console.log('Respuesta de la API:', resultado);
+            alert('Impresora actualizada correctamente');
+
+            //Volver a cargar la tabla de impresoras
+            getImpresoras();
+
+          } catch (error) {
+            console.error('Error al enviar los datos:', error);
+            alert('Error al actualizar la impresora');
+          }
+          // }
+          break;
+        //***************************************Modificiacion consumible**************************************** */
+        case 'Agregar consumible':
+
+
+          break;
+
+      }
+      break;
 
   }
+
+  console.log(`vacio ${vacio}`);
+
+
 }

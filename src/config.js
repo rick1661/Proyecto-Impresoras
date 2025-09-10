@@ -16,3 +16,30 @@
 //     })
     
 // }
+
+
+////////////////////////////////
+
+      // const inputSerie = elementosTd[0].firstElementChild.value;
+      // const inputNombre = elementosTd[1].firstElementChild.value;
+      // const inputMarca = elementosTd[2].firstElementChild.value;
+      // const inputModelo = elementosTd[3].firstElementChild.value;
+      // const inputIp = elementosTd[4].firstElementChild.value;
+      // const selectArea = elementosTd[5].firstElementChild.value;
+      // const selectContrato = elementosTd[6].firstElementChild.value;
+
+
+
+      // if (inputSerie.trim() === '' || inputNombre.trim() === '' || inputMarca.trim() === '' || inputModelo.trim() === '' || inputIp.trim() === '' || selectArea === 'n' || selectContrato === '') {
+
+      //   elementosTd.forEach(elemento => {
+      //     if (elemento.firstElementChild.value.trim() === '') {
+      //       elemento.firstElementChild.style.border = '2px solid red';
+      //     } else {
+      //       elemento.firstElementChild.style.border = '1px solid #ccc';
+      //     }
+      //   });
+       
+
+
+      // } else {
