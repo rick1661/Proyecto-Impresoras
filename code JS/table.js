@@ -428,7 +428,7 @@ async function enviarCambios(e) {
       elemento.firstElementChild.style.border = '2px solid red';
     } else {
 
-      elemento.firstElementChild.style.border = '1px solid #ccc';
+      //elemento.firstElementChild.style.border = '1px solid green';
     }
   });
 
@@ -447,7 +447,7 @@ async function enviarCambios(e) {
 
           console.log("entro a la preparacion de envio de impresora")
           //Crear el objeto con los nuevos datos
-          const datosActualizados = {
+          const datosActualizadosI = {
             id: parseInt(e.target.value),
             serie: elementosTd[0].firstElementChild.value,
             nombre: elementosTd[1].firstElementChild.value,
@@ -458,9 +458,9 @@ async function enviarCambios(e) {
             contratoID: parseInt(elementosTd[6].firstElementChild.value)
           };
 
-          console.log('Datos actualizados:', datosActualizados);
+          console.log('Datos actualizados:', datosActualizadosI);
           //convertimos el objeto a JSON
-          const datosJSON = JSON.stringify(datosActualizados);
+          const datosJSON = JSON.stringify(datosActualizadosI);
           console.log(datosJSON);
 
           //Enviar los datos a la API
@@ -495,6 +495,20 @@ async function enviarCambios(e) {
           break;
         //***************************************Modificiacion consumible**************************************** */
         case 'Agregar consumible':
+            
+          //Crear el objeto con los nuevos datos
+          console.log("entro a la preparacion de envio de consumible");
+
+          const datosActualizadosC = {
+
+            id: parseInt(e.target.value),
+            tipo: elementosTd[0].firstElementChild.value,
+            modelo: elementosTd[1].firstElementChild.value,
+            tij: elementosTd[2].firstElementChild.value,
+            impresoraId: elementosTd[4].firstElementChild.value
+          };
+
+          console.log('Datos actualizados')
 
 
           break;
