@@ -427,7 +427,7 @@ async function enviarCambios(e) {
       vacio = true
       elemento.firstElementChild.style.border = '2px solid red';
     } else {
-      
+
       elemento.firstElementChild.style.border = '1px solid #ccc';
     }
   });
@@ -476,6 +476,9 @@ async function enviarCambios(e) {
             if (!response.ok) {
               throw new Error('Error al actualizar la impresora');
             }
+
+
+            
 
             const resultado = await response.json();
             console.log('Respuesta de la API:', resultado);
