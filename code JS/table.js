@@ -394,13 +394,21 @@ async function getImpresoraSelectEdit(elemento) {
       data.forEach(impresora => {
         const option = document.createElement('option');
         option.value = impresora.impresoraID;
-        option.textContent = `${impresora.nombre[1]} - ${impresora.serie}`;
+        option.textContent = `${impresora.nombre[0]} - ${impresora.serie}`;
         elemento.appendChild(option);
 
         //Asignamos el valor seleccionado en el select de edit impresora
-        if (elemento.options[elemento.selectedIndex].texContent == impresora.nombre[1]) {
+        // console.log('antes del if para asignar el valor impresora ID al select');
+        // console.group("elementos")
+        // console.log(elemento.options[elemento.selectedIndex].textContent.trim())
+        // console.log(impresora.nombre[0])
+        if (elemento.options[elemento.selectedIndex].textContent.trim() === impresora.nombre[0]) {
 
-          elemento.value = impresora.impresoraID
+          console.log("entro a la asignacion del ID de la impresora ")
+          console.log(elemento.value);
+          console.log(impresora.impresoraID);
+          elemento.value = impresora.impresoraID;
+          console.log(elemento.value);
 
         }
       });
@@ -428,7 +436,8 @@ async function enviarCambios(e) {
       elemento.firstElementChild.style.border = '2px solid red';
     } else {
 
-      //elemento.firstElementChild.style.border = '1px solid green';
+      if(elemento.firstElementChild !== null)
+      elemento.firstElementChild.style.border = '1px solid green';
     }
   });
 
@@ -449,13 +458,13 @@ async function enviarCambios(e) {
           //Crear el objeto con los nuevos datos
           const datosActualizadosI = {
             id: parseInt(e.target.value),
-            serie: elementosTd[0].firstElementChild.value,
-            nombre: elementosTd[1].firstElementChild.value,
-            marca: elementosTd[2].firstElementChild.value,
-            modelo: elementosTd[3].firstElementChild.value,
-            direccionIp: elementosTd[4].firstElementChild.value,
-            areaID: parseInt(elementosTd[5].firstElementChild.value),
-            contratoID: parseInt(elementosTd[6].firstElementChild.value)
+            serie: elementosTd[0].firstElementChild.value.trim(),
+            nombre: elementosTd[1].firstElementChild.value.trim(),
+            marca: elementosTd[2].firstElementChild.value.trim(),
+            modelo: elementosTd[3].firstElementChild.value.trim(),
+            direccionIp: elementosTd[4].firstElementChild.value.trim(),
+            areaID: parseInt(elementosTd[5].firstElementChild.value.trim()),
+            contratoID: parseInt(elementosTd[6].firstElementChild.value.trim())
           };
 
           console.log('Datos actualizados:', datosActualizadosI);
@@ -465,7 +474,7 @@ async function enviarCambios(e) {
 
           //Enviar los datos a la API
           try {
-            const response = await fetch(`http://localhost:3000/impresora/${datosActualizados.id}`, {
+            const response = await fetch(`http://localhost:3000/impresora/${datosActualizadosI.id}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json'
@@ -477,15 +486,13 @@ async function enviarCambios(e) {
               throw new Error('Error al actualizar la impresora');
             }
 
-
-            
-
             const resultado = await response.json();
             console.log('Respuesta de la API:', resultado);
             alert('Impresora actualizada correctamente');
 
             //Volver a cargar la tabla de impresoras
             getImpresoras();
+            vacio = false;
 
           } catch (error) {
             console.error('Error al enviar los datos:', error);
@@ -502,14 +509,47 @@ async function enviarCambios(e) {
           const datosActualizadosC = {
 
             id: parseInt(e.target.value),
-            tipo: elementosTd[0].firstElementChild.value,
-            modelo: elementosTd[1].firstElementChild.value,
-            tij: elementosTd[2].firstElementChild.value,
-            impresoraId: elementosTd[4].firstElementChild.value
+            tipo: elementosTd[0].firstElementChild.value.trim(),
+            modelo: elementosTd[1].firstElementChild.value.trim(),
+            tij: elementosTd[2].firstElementChild.value.trim(),
+            fecha: elementosTd[3].textContent.trim(),
+            impresoraID: parseInt(elementosTd[4].firstElementChild.value.trim())
           };
 
-          console.log('Datos actualizados')
+          console.log('Datos actualizadosC')
+          console.log(datosActualizadosC)
 
+          //convertimos el objeto a JSON
+          const datosJSONC = JSON.stringify(datosActualizadosC);
+          console.log(datosJSONC);
+
+          //Enviar los datos a la API
+          try{
+            const response = await fetch(`http://localhost:3000/consumible/${datosActualizadosC.id}`,{
+
+              method: 'PUT',
+               headers: {
+                  'Content-Type': 'application/json'
+                },
+              body: datosJSONC
+            });
+            
+             if (!response.ok) {
+              throw new Error('Error al actualizar el consumible');
+            }
+
+            const resultado = await response.json();
+            console.log('Respuesta de la API:', resultado);
+            alert('Consumible actualizado correctamente');
+
+            //Volver a cargar la tabla de impresoras
+            getConsumibles();
+            vacio = false;
+
+          }catch(error){
+            console.error('Error al enviar los datos:', error);
+            alert('Error al actualizar el consumible');
+          }
 
           break;
 

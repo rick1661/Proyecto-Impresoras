@@ -347,7 +347,7 @@ function getImpresoraSelect() {
       data.forEach(impresora => {
         const option = document.createElement('option');
         option.value = impresora.impresoraID;
-        option.textContent = `${impresora.nombre[1]} - ${impresora.serie}`;
+        option.textContent = `${impresora.nombre[0]} - ${impresora.serie}`;
         select.appendChild(option);
       });
     })
