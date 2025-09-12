@@ -22,7 +22,6 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
-  //botonGuardar,addEventListener('click', enviarCambios);
 
 }
 
@@ -200,6 +199,25 @@ function modificacionElemento(e) {
   } else if (target.classList.contains('deleteBtn')) {
     const id = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
+    switch (botonADD.textContent.trim()) {
+      case 'Agregar impresora' :
+
+        //Funcion para eliminar impresora
+        eliminarImpresora();
+
+
+        break;
+      
+      case 'Agregar consumible':
+
+        //Funcion para eliminar impresora
+        eliminarImpresora();
+
+        break;
+    
+    }
+
+
     console.log('Eliminar elemento con ID:', id);
 
   } else if (target.classList.contains('guardarBtn')) {
@@ -210,6 +228,23 @@ function modificacionElemento(e) {
 
   }
 }
+
+//*************************************Funcion eliminar impresora*************************//
+
+async function eliminarImpresora(e){
+
+  
+
+}
+
+
+async function eliminarConsumible(e){
+
+  
+
+}
+
+
 
 //**************************Funcion para mofificar los campos de en la edicion de una impresora************************
 function modificarCamposImpresora(elementosTd) {
