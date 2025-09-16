@@ -519,12 +519,24 @@ option::picked {
 
   background-color: #fff;        /* Fondo blanco para el contenido del modal */
   margin: 10% auto;               /* Centra el modal verticalmente (10% desde arriba) y horizontalmente (auto) */
-                 /* Espacio interno alrededor del contenido */
   border-radius: 8px;             /* Bordes redondeados */
   width: 90%;                     /* Ocupa el 90% del ancho de la pantalla */
   max-width: 500px;               /* Pero nunca más de 500px de ancho */
   position: relative;             /* Permite posicionar elementos hijos de forma absoluta (como el botón de cerrar) */
   height: 150px;
+  font-weight: 200;
+  padding: 15px;
+
+}
+
+.btnContenedor {
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* Espacio entre los botones */
+  align-items: center;
+  /*margin-top: 30px; /* Opcional, para separar de arriba */
+  height: 50px;
+  margin-top: 10px;
 }
 
 .btnDecision{
@@ -540,11 +552,19 @@ option::picked {
 
 }
 
-.btnContenedor {
+.btnDecision:hover{
+    background-color: #005080;
+}
+
+#decisionTextContenedor{
   display: flex;
   justify-content: center;
-  gap: 30px; /* Espacio entre los botones */
-  align-items: center;
-  /*margin-top: 30px; /* Opcional, para separar de arriba */
-  height: 150px;
+  align-items:center;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+#decisionText{
+  font-weight: 500;
+  text-align: center;
 }
