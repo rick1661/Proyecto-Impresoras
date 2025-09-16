@@ -8,10 +8,14 @@ const botonADD = document.querySelector('.addBtn');
 let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
 const decision = document.getElementById('decisionModal')
+const aceptarBtn = document.getElementById('aceptarBtn');
+const cancelarBtn = document.getElementById('cancelarBtn')
+
 
 //variables
 let vacio = false;
 let eliminar = false;
+let idEliminar;
 
 
 
@@ -24,6 +28,8 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
+
+  
 
 }
 
@@ -199,30 +205,13 @@ function modificacionElemento(e) {
     }
 
   } else if (target.classList.contains('deleteBtn')) {
-    const id = target.value;
+    idEliminar = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
     decision.style.display = 'block';
-    switch (botonADD.textContent.trim()) {
-      
-      case 'Agregar impresora' :
-
-        //Funcion para eliminar impresora
-        eliminarImpresora();
-
-
-        break;
-      
-      case 'Agregar consumible':
-
-        //Funcion para eliminar impresora
-        eliminarImpresora();
-
-        break;
-    
-    }
-
-
-    console.log('Eliminar elemento con ID:', id);
+    cancelarBtn.addEventListener('click',cancelarEliminar);
+    aceptarBtn.addEventListener('click', indentificarEliminar);
+   
+    console.log('Eliminar elemento con ID:', idEliminar);
 
   } else if (target.classList.contains('guardarBtn')) {
 
@@ -233,17 +222,106 @@ function modificacionElemento(e) {
   }
 }
 
-//*************************************Funcion eliminar impresora*************************//
+//Fucnion para cerrar el modal de desicion despues de darle click al boton cancelar
+function cancelarEliminar(){
 
-async function eliminarImpresora(e){
+  decision.style.display = 'none';
+
+}
+
+//Funcion para definir si se esta eliminando una impresora o un consumible
+function indentificarEliminar(){
+
+   switch (botonADD.textContent.trim()) {
+      
+      case 'Agregar impresora' :
+
+        console.log('entro a la funcion de identificar')
+        //Funcion para eliminar impresora
+        eliminarImpresora();
 
 
-  
+        break;
+      
+      case 'Agregar consumible':
+
+        //Funcion para eliminar impresora
+        eliminarConsumible();
+
+        break;
+    
+    }
 
 }
 
 
+//*************************************Funcion eliminar impresora*************************//
+
+
+async function eliminarImpresora(e){
+  console.log('entro a la funcion eliminar impresora');
+
+   //Enviar los datos a la API
+          try{
+            const response = await fetch(`http://localhost:3000/impresora/${idEliminar}`,{
+
+              method: 'DELETE',
+              //headers: {
+              //    'Content-Type': 'application/json'
+              //  },
+              //body: datosJSONC
+            });
+            
+             if (!response.ok) {
+              throw new Error('Error al eliminar la impresora');
+            }
+
+            const resultado = await response.json();
+            console.log('Respuesta de la API:', resultado);
+            alert('impresora eliminada correctamente');
+
+            //Volver a cargar la tabla de impresoras
+            decision.style.display = 'none';
+            getImpresoras();
+            
+
+          }catch(error){
+            console.error('Error al enviar los datos:', error);
+            alert('Error al eliminar la impresora');
+          }
+}
+
+
 async function eliminarConsumible(e){
+  console.log('entro a la funcion eliminar consumible')
+   //Enviar los datos a la API
+          try{
+            const response = await fetch(`http://localhost:3000/consumible/${idEliminar}`,{
+
+              method: 'DELETE',
+              //headers: {
+              //    'Content-Type': 'application/json'
+              //  },
+              //body: datosJSONC
+            });
+            
+             if (!response.ok) {
+              throw new Error('Error al eliminar el consumible');
+            }
+
+            const resultado = await response.json();
+            console.log('Respuesta de la API:', resultado);
+            alert('consumible eliminada correctamente');
+
+            //Volver a cargar la tabla de consumibles
+            decision.style.display = 'none';
+            getConsumibles();
+            
+
+          }catch(error){
+            console.error('Error al enviar los datos:', error);
+            alert('Error al eliminar el consumible');
+          }
 
   
 
