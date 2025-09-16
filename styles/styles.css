@@ -504,3 +504,47 @@ option::picked {
 .selectOk{
   outline: 2px solid green;
 }
+
+#decisionModal{
+  display: none;                /* Oculta el modal por defecto */
+  position: fixed;              /* El modal se posiciona fijo respecto a la ventana del navegador */
+  z-index: 1000;                /* Se asegura de que esté por encima de otros elementos */
+  left: 0; top: 0;              /* Lo coloca en la esquina superior izquierda */
+  width: 100%; height: 100%;    /* Ocupa toda la pantalla */
+  overflow: auto;               /* Si el contenido es muy grande, permite hacer scroll */
+  background-color: rgba(0,0,0,0.4); /* Fondo semitransparente oscuro para dar efecto de superposición */
+}
+
+#decisioContenedor{
+
+  background-color: #fff;        /* Fondo blanco para el contenido del modal */
+  margin: 10% auto;               /* Centra el modal verticalmente (10% desde arriba) y horizontalmente (auto) */
+                 /* Espacio interno alrededor del contenido */
+  border-radius: 8px;             /* Bordes redondeados */
+  width: 90%;                     /* Ocupa el 90% del ancho de la pantalla */
+  max-width: 500px;               /* Pero nunca más de 500px de ancho */
+  position: relative;             /* Permite posicionar elementos hijos de forma absoluta (como el botón de cerrar) */
+  height: 150px;
+}
+
+.btnDecision{
+
+    background-color: var(--colorPrincipal);
+    width: 100px;
+    color:white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-align: center;
+
+}
+
+.btnContenedor {
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* Espacio entre los botones */
+  align-items: center;
+  /*margin-top: 30px; /* Opcional, para separar de arriba */
+  height: 150px;
+}

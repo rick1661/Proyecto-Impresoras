@@ -7,9 +7,11 @@ const tabla = document.querySelector('.styled-table');
 const botonADD = document.querySelector('.addBtn');
 let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
+const decision = document.getElementById('decisionModal')
 
 //variables
 let vacio = false;
+let eliminar = false;
 
 
 
@@ -199,7 +201,9 @@ function modificacionElemento(e) {
   } else if (target.classList.contains('deleteBtn')) {
     const id = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
+    decision.style.display = 'block';
     switch (botonADD.textContent.trim()) {
+      
       case 'Agregar impresora' :
 
         //Funcion para eliminar impresora
@@ -232,6 +236,7 @@ function modificacionElemento(e) {
 //*************************************Funcion eliminar impresora*************************//
 
 async function eliminarImpresora(e){
+
 
   
 
