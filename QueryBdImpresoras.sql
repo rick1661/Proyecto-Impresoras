@@ -62,7 +62,7 @@ FOREIGN KEY (impresoraID) REFERENCES impresora(impresoraID),
 use ImpresorasBD;
 select * from impresora
 select * from empresa
-select * from contrato;
+select * from contrato where nombre = '05-2024-MPS';
 select * from area;
 select * from consumible;
 
@@ -74,7 +74,7 @@ INSERT empresa (nombre) VALUES ('SIMNSA')
 INSERT area (nombre, empresaID) VALUES ('Interlab', '2')
 INSERT area (nombre, empresaID) VALUES ('Fundacion', '2')
 INSERT area (nombre, empresaID) VALUES ('Juridico', '2')
-INSERT area (nombre, empresaID) VALUES ('Estancia Infantil', '2')
+INSERT area (nombre, empresaID) VALUES ('Estancia infantil', '2')
 INSERT area (nombre, empresaID) VALUES ('Administracion operaciones', '2')
 INSERT area (nombre, empresaID) VALUES ('Direccion medica S', '2')
 INSERT area (nombre, empresaID) VALUES ('Finanzas', '2')
@@ -87,13 +87,13 @@ INSERT area (nombre, empresaID) VALUES ('Unident', '2')
 INSERT area (nombre, empresaID) VALUES ('Terapia Fisica', '2')
 INSERT area (nombre, empresaID) VALUES ('Salud y bienestar', '2')
 INSERT area (nombre, empresaID) VALUES ('Medyca', '2')
-INSERT area (nombre, empresaID) VALUES ('Clinica Metabolica', '2')
+INSERT area (nombre, empresaID) VALUES ('Clinica metabolica', '2')
 INSERT area (nombre, empresaID) VALUES ('Cardiologia', '2')
 INSERT area (nombre, empresaID) VALUES ('Especialidades', '2')
 INSERT area (nombre, empresaID) VALUES ('Dermalife', '2')
 INSERT area (nombre, empresaID) VALUES ('Bajapet', '2')
 INSERT area (nombre, empresaID) VALUES ('Easy Park', '2')
-INSERT area (nombre, empresaID) VALUES ('Dise�o grafico', '2')
+INSERT area (nombre, empresaID) VALUES ('Diseno grafico', '2')
 INSERT area (nombre, empresaID) VALUES ('Call center', '2')
 INSERT area (nombre, empresaID) VALUES ('Recursos humanos S', '2')
 INSERT area (nombre, empresaID) VALUES ('Atencion a clientes', '2')
@@ -110,7 +110,7 @@ INSERT area (nombre, empresaID) VALUES ('Biomedica', '1')
 INSERT area (nombre, empresaID) VALUES ('Almacen', '1')
 INSERT area (nombre, empresaID) VALUES ('Ginecologia', '1')
 INSERT area (nombre, empresaID) VALUES ('UCI', '1')
-INSERT area (nombre, empresaID) VALUES ('QUIROFANOS', '1')
+INSERT area (nombre, empresaID) VALUES ('Quirofanos', '1')
 INSERT area (nombre, empresaID) VALUES ('Hospitalicacion 4to', '1')
 INSERT area (nombre, empresaID) VALUES ('Administracion', '1')
 INSERT area (nombre, empresaID) VALUES ('Finanzas H', '1')
@@ -122,6 +122,8 @@ INSERT area (nombre, empresaID) VALUES ('Compras H', '1')
 INSERT area (nombre, empresaID) VALUES ('Hospitalizacion 5to', '1')
 INSERT area (nombre, empresaID) VALUES ('Hospitalizacion 6to', '1')
 INSERT area (nombre, empresaID) VALUES ('Direccion General', '2')
+INSERT area (nombre, empresaID) VALUES ('Mexalud', '2')
+INSERT area (nombre, empresaID) VALUES ('Oncologia H', '1')
 
 /*-Insercciones contrato -*/
    INSERT INTO contrato (nombre, empresaID) VALUES ('39-2021-MPS', '1');
@@ -247,19 +249,19 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHRH','Lobby TJ HP Recepcion','HP','MFP E52645','192.168.85.165',34,17);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDRQ4W6SB','Mantenimiento Sotano HSI','HP','MFP M428dw','192.168.85.59',35,2);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCP2H0Z7','Medical Suites TJ HP Consultorios','HP','E50145','192.168.85.145',28,48);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHR2','Medical Suites TJ HP Recepcion','HP','E52645','192.168.85.144',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBCMC61VG','Medyca TJ HP Consultorios 01','HP','E52645','192.168.85.210',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBGQ55162','Medyca TJ HP Consultorios 02','HP','M506','192.168.85.139',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBGQ55164','Medyca TJ HP Consultorios 03','HP','M506','192.168.85.157',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCP2H0ZB','Medyca TJ HP Consultorios 05','HP','E52645','192.168.85.137',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM5Y262','Medyca TJ HP Recepcion','HP','E52645DN','192.168.85.141',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCN9T0LH','Mexsalud TJ HP Operaciones 03','HP','E52645','192.168.85.174',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1PCV9VL','Oncologia TJ HP Hospitalizacion','HP','Laser 408','192.168.85.66',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCP2H0Z0','Pediatria TJ HP Consultorios 01','HP','E50145','192.168.85.185',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM6K1WV','Pediatria TJ HP Recepcion','HP','E52645DN','192.168.85.154',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXFCHC11GZ','Podologia TJ HP Recepcion','HP','MFP M525','192.168.85.106',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCR9V19V','Proyectos TJ HP Operacion','HP','E52645','192.168.85.19',,);
-INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S15R','Quirofano TJ HP Central de enfermeria','HP','E52645','192.168.85.51',,);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC19EHR2','Medical Suites TJ HP Recepcion','HP','MFP E52645','192.168.85.144',28,49);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBCMC61VG','Medyca TJ HP Consultorios 01','HP','MFP E52645','192.168.85.210',16,50);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBGQ55162','Medyca TJ HP Consultorios 02','HP','M506','192.168.85.139',16,51);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBGQ55164','Medyca TJ HP Consultorios 03','HP','M506','192.168.85.157',16,52);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCP2H0ZB','Medyca TJ HP Consultorios 05','HP','MFP E52645','192.168.85.137',16,53);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM5Y262','Medyca TJ HP Recepcion','HP','MFP E52645','192.168.85.141',16,54);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCN9T0LH','Mexsalud TJ HP Operaciones 03','HP','E50145','192.168.85.174',52,55);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBC18OGO3','Oncologia TJ HP Hospitalizacion','HP','MFP E52645','192.168.85.66',53,11);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHCCP2H0Z0','Pediatria TJ HP Consultorios 01','HP','E50145','192.168.85.185',28,56);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCM6K1WV','Pediatria TJ HP Recepcion','HP','MFP E52645','192.168.85.154',28,57);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXFCHC11GZ','Podologia TJ HP Recepcion','HP','MFP M525','192.168.85.106',27,58);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCR9V19V','Proyectos TJ HP Operacion','HP','MFP E52645','192.168.85.19',12,59);
+INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S15R','Quirofano TJ HP Central de enfermeria','HP','MFP E52645','192.168.85.51',40,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNDRQ4W742','Quirofano TJ HP Recepcion','HP','M428DW','192.168.85.158',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('MXBCP1S06L','Quirofano TJ HP Almacen','HP','E52645DN','192.168.85.45',,);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('PHBGQ55138','Recursos Humanos TJ HP Operaciones 01','HP','M506DN','192.168.85.251',,);
