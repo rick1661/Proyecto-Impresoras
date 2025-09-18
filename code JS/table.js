@@ -19,7 +19,6 @@ let eliminar = false;
 let idEliminar;
 
 
-
 //Funcion para cargar listeners
 cargarEventListeners();
 
@@ -30,8 +29,9 @@ function cargarEventListeners() {
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
   buscador.addEventListener('input',buscarElemento);
+ 
 
-  console.log(process.env.DB_USERE);
+  
 }
 
 
