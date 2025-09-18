@@ -568,3 +568,49 @@ option::picked {
   font-weight: 500;
   text-align: center;
 }
+
+#contenedorBuscadorPrincipal{
+  display: flex ;
+  justify-content: center;
+  margin: 15px 0px 15px 0px;
+  
+
+}
+
+#contenedorBuscadorSecundario{
+  
+  display: inline-block; /* Para que el div ocupe el tamaño necesario */
+  position: relative; /* Permite posicionar el icono de forma absoluta */
+}
+
+#busquedaInput{
+  padding: 10px;
+  text-align: left;
+  width: 500px;
+  height: 35px;
+  border: 2px solid var(--colorPrincipal);
+  border-radius: 4px;
+  font-size: 18px;
+  background: white;
+  color: #222;
+  padding-left: 30px; /* Espacio para el icono */
+  padding-top: 5px; /* Ajusta según tus necesidades */
+  padding-bottom: 5px;
+  box-sizing: border-box; /* Incluye el padding en el ancho total */
+
+}
+
+#buscadorIcono{
+  width: 35x;
+  font-weight: 500;
+  font-size: 2em;
+  text-align: center;
+  color: white;
+  background-color: var(--colorSecundario);
+  border-radius: 0px 4px 4px 0px;
+  position: absolute; /* Posiciona el icono dentro del input */
+  top: 50%; /* Centra verticalmente el icono */
+  left: 467px; /* Posición horizontal */
+  transform: translateY(-50%); /* Ajuste fino para centrar verticalmente */
+  pointer-events: none; /* Para que el icono no interfiera con los clics del input */
+}

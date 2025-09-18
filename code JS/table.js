@@ -1,5 +1,4 @@
 
-
 //Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
@@ -9,7 +8,9 @@ let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
 const decision = document.getElementById('decisionModal')
 const aceptarBtn = document.getElementById('aceptarBtn');
-const cancelarBtn = document.getElementById('cancelarBtn')
+const cancelarBtn = document.getElementById('cancelarBtn');
+const buscador = document.getElementById('busquedaInput');
+
 
 
 //variables
@@ -28,9 +29,9 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
+  buscador.addEventListener('input',buscarElemento);
 
-  
-
+  console.log(process.env.DB_USERE);
 }
 
 
@@ -76,6 +77,7 @@ function cargarTablaimpresoras() {
 
 //***********************************uncion para obtener e insertar las impresoras en la tabla principal****************************************
 function getImpresoras() {
+
   fetch('http://localhost:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
@@ -83,13 +85,19 @@ function getImpresoras() {
       const tbody = document.querySelector('.styled-table tbody');
       tbody.innerHTML = ''; // Limpia el contenido actual
       data.forEach(impresora => {
+
+        //Creamos la url de la IP
+        const ip = `https://${impresora.direccionIp}`;
+        const ipUrl = new URL(ip);
         const row = document.createElement('tr');
+
+        //Modificamos el DOM de la tabla de impresoras
         row.innerHTML = `
           <td>${impresora.serie}</td>
           <td>${impresora.nombre[0]}</td>
           <td>${impresora.marca}</td>
           <td>${impresora.modelo}</td>
-          <td>${impresora.direccionIp}</td>
+          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
           <td>${impresora.nombre[1]}</td>
           <td>${impresora.nombre[2]}</td>
           <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
@@ -171,7 +179,7 @@ function getConsumibles() {
 function modificacionElemento(e) {
 
   //prevenir el comportamiento por defecto
-  e.preventDefault();
+  //e.preventDefault();
   const target = e.target;
   console.log(target);
   //Identificar si se dio click en el boton de editar o eliminar
@@ -208,9 +216,9 @@ function modificacionElemento(e) {
     idEliminar = target.value;
     // Lógica para eliminar el elemento con el ID correspondiente
     decision.style.display = 'block';
-    cancelarBtn.addEventListener('click',cancelarEliminar);
+    cancelarBtn.addEventListener('click', cancelarEliminar);
     aceptarBtn.addEventListener('click', indentificarEliminar);
-   
+
     console.log('Eliminar elemento con ID:', idEliminar);
 
   } else if (target.classList.contains('guardarBtn')) {
@@ -223,34 +231,34 @@ function modificacionElemento(e) {
 }
 
 //Fucnion para cerrar el modal de desicion despues de darle click al boton cancelar
-function cancelarEliminar(){
+function cancelarEliminar() {
 
   decision.style.display = 'none';
 
 }
 
 //Funcion para definir si se esta eliminando una impresora o un consumible
-function indentificarEliminar(){
+function indentificarEliminar() {
 
-   switch (botonADD.textContent.trim()) {
-      
-      case 'Agregar impresora' :
+  switch (botonADD.textContent.trim()) {
 
-        console.log('entro a la funcion de identificar')
-        //Funcion para eliminar impresora
-        eliminarImpresora();
+    case 'Agregar impresora':
+
+      console.log('entro a la funcion de identificar')
+      //Funcion para eliminar impresora
+      eliminarImpresora();
 
 
-        break;
-      
-      case 'Agregar consumible':
+      break;
 
-        //Funcion para eliminar impresora
-        eliminarConsumible();
+    case 'Agregar consumible':
 
-        break;
-    
-    }
+      //Funcion para eliminar impresora
+      eliminarConsumible();
+
+      break;
+
+  }
 
 }
 
@@ -258,72 +266,72 @@ function indentificarEliminar(){
 //*************************************Funcion eliminar impresora*************************//
 
 
-async function eliminarImpresora(e){
+async function eliminarImpresora(e) {
   console.log('entro a la funcion eliminar impresora');
 
-   //Enviar los datos a la API
-          try{
-            const response = await fetch(`http://localhost:3000/impresora/${idEliminar}`,{
+  //Enviar los datos a la API
+  try {
+    const response = await fetch(`http://localhost:3000/impresora/${idEliminar}`, {
 
-              method: 'DELETE',
-              //headers: {
-              //    'Content-Type': 'application/json'
-              //  },
-              //body: datosJSONC
-            });
-            
-             if (!response.ok) {
-              throw new Error('Error al eliminar la impresora');
-            }
+      method: 'DELETE',
+      //headers: {
+      //    'Content-Type': 'application/json'
+      //  },
+      //body: datosJSONC
+    });
 
-            const resultado = await response.json();
-            console.log('Respuesta de la API:', resultado);
-            alert('impresora eliminada correctamente');
+    if (!response.ok) {
+      throw new Error('Error al eliminar la impresora');
+    }
 
-            //Volver a cargar la tabla de impresoras
-            decision.style.display = 'none';
-            getImpresoras();
-            
+    const resultado = await response.json();
+    console.log('Respuesta de la API:', resultado);
+    alert('impresora eliminada correctamente');
 
-          }catch(error){
-            console.error('Error al enviar los datos:', error);
-            alert('Error al eliminar la impresora');
-          }
+    //Volver a cargar la tabla de impresoras
+    decision.style.display = 'none';
+    getImpresoras();
+
+
+  } catch (error) {
+    console.error('Error al enviar los datos:', error);
+    alert('Error al eliminar la impresora');
+  }
 }
 
 
-async function eliminarConsumible(e){
+async function eliminarConsumible(e) {
   console.log('entro a la funcion eliminar consumible')
-   //Enviar los datos a la API
-          try{
-            const response = await fetch(`http://localhost:3000/consumible/${idEliminar}`,{
+  //Enviar los datos a la API
+  try {
+    const response = await fetch(`http://localhost:3000/consumible/${idEliminar}`, {
 
-              method: 'DELETE',
-              //headers: {
-              //    'Content-Type': 'application/json'
-              //  },
-              //body: datosJSONC
-            });
-            
-             if (!response.ok) {
-              throw new Error('Error al eliminar el consumible');
-            }
+      method: 'DELETE',
+      //headers: {
+      //    'Content-Type': 'application/json'
+      //  },
+      //body: datosJSONC
+    });
 
-            const resultado = await response.json();
-            console.log('Respuesta de la API:', resultado);
-            alert('consumible eliminada correctamente');
+    if (!response.ok) {
+      throw new Error('Error al eliminar el consumible');
+    }
 
-            //Volver a cargar la tabla de consumibles
-            decision.style.display = 'none';
-            getConsumibles();
-            
+    const resultado = await response.json();
+    console.log('Respuesta de la API:', resultado);
+    alert('consumible eliminada correctamente');
 
-          }catch(error){
-            console.error('Error al enviar los datos:', error);
-            alert('Error al eliminar el consumible');
-          }
+    //Volver a cargar la tabla de consumibles
+    decision.style.display = 'none';
+    getConsumibles();
 
-  
+
+  } catch (error) {
+    console.error('Error al enviar los datos:', error);
+    alert('Error al eliminar el consumible');
+  }
+
+
 
 }
 
@@ -336,13 +344,12 @@ function modificarCamposImpresora(elementosTd) {
   elementosTd.forEach((elemento, index) => {
 
     //Hacer los pimeros 5 campos en input
-    if (elemento.firstElementChild === null && index <= 4) {
+    if (index <= 4) {
 
       elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
 
       //Convertir el campo area en un select
     } else if (elemento.firstElementChild === null && index === 5) {
-
 
       elemento.innerHTML = `
                         <select class="selectEdit" name="area" id="selectArea" required>
@@ -554,8 +561,8 @@ async function enviarCambios(e) {
       elemento.firstElementChild.style.border = '2px solid red';
     } else {
 
-      if(elemento.firstElementChild !== null)
-      elemento.firstElementChild.style.border = '1px solid green';
+      if (elemento.firstElementChild !== null)
+        elemento.firstElementChild.style.border = '1px solid green';
     }
   });
 
@@ -620,7 +627,7 @@ async function enviarCambios(e) {
           break;
         //***************************************Modificiacion consumible**************************************** */
         case 'Agregar consumible':
-            
+
           //Crear el objeto con los nuevos datos
           console.log("entro a la preparacion de envio de consumible");
 
@@ -642,17 +649,17 @@ async function enviarCambios(e) {
           console.log(datosJSONC);
 
           //Enviar los datos a la API
-          try{
-            const response = await fetch(`http://localhost:3000/consumible/${datosActualizadosC.id}`,{
+          try {
+            const response = await fetch(`http://localhost:3000/consumible/${datosActualizadosC.id}`, {
 
               method: 'PUT',
-               headers: {
-                  'Content-Type': 'application/json'
-                },
+              headers: {
+                'Content-Type': 'application/json'
+              },
               body: datosJSONC
             });
-            
-             if (!response.ok) {
+
+            if (!response.ok) {
               throw new Error('Error al actualizar el consumible');
             }
 
@@ -664,7 +671,7 @@ async function enviarCambios(e) {
             getConsumibles();
             vacio = false;
 
-          }catch(error){
+          } catch (error) {
             console.error('Error al enviar los datos:', error);
             alert('Error al actualizar el consumible');
           }
@@ -679,4 +686,14 @@ async function enviarCambios(e) {
   console.log(`vacio ${vacio}`);
 
 
+}
+
+//--------------Funcion de busqueda --------------------
+function buscarElemento() {
+  const filtro = this.value.toLowerCase();
+  const filas = document.querySelectorAll('.styled-table tbody tr');
+  filas.forEach(fila => {
+    const textoFila = fila.textContent.toLowerCase();
+    fila.style.display = textoFila.includes(filtro) ? '' : 'none';
+  });
 }

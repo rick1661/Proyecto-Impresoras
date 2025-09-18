@@ -15,7 +15,7 @@ nombre varchar(20)
 create table area(
 
 areaID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-nombre VARCHAR(30),
+nombre VARCHAR(40),
 empresaID INT NOT NULL,
 FOREIGN KEY (empresaID) REFERENCES empresa(empresaID)
 
@@ -35,7 +35,7 @@ create table impresora(
 
 impresoraID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 serie Varchar(50) NOT NULL,
-nombre VARCHAR(30),
+nombre VARCHAR(100),
 marca VARCHAR(15),
 modelo VARCHAR(30),
 direccionIp VARCHAR(15),
@@ -50,8 +50,8 @@ FOREIGN KEY (contratoID) REFERENCES contrato(contratoID),
 create table consumible(
 
 consumibleID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-tipo VARCHAR(15), 
-modelo VARCHAR(15), 
+tipo VARCHAR(20), 
+modelo VARCHAR(20), 
 tij VARCHAR(15), 
 fecha DATE, 
 impresoraID INT NOT NULL,
