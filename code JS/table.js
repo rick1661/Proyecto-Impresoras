@@ -3,14 +3,14 @@
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
 const tabla = document.querySelector('.styled-table');
-const botonADD = document.querySelector('.addBtn');
+const botonADD = document.getElementById('agregarBtn');
 let botonGuardar;
 const tituloH2 = document.querySelector('#TituloH2');
 const decision = document.getElementById('decisionModal')
 const aceptarBtn = document.getElementById('aceptarBtn');
 const cancelarBtn = document.getElementById('cancelarBtn');
 const buscador = document.getElementById('busquedaInput');
-
+const editarBtn = document.getElementById('editarBtn');
 
 
 //variables
@@ -29,6 +29,7 @@ function cargarEventListeners() {
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
   buscador.addEventListener('input',buscarElemento);
+  editarBtn.addEventListener('click',edicion);
  
 
   
@@ -55,8 +56,6 @@ function cargarTablaimpresoras() {
                     <th>IP</th>
                     <th>Área</th>
                     <th>Contrato</th>
-                    <th>Editar</th>
-                    <th>Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,7 +77,7 @@ function cargarTablaimpresoras() {
 //***********************************uncion para obtener e insertar las impresoras en la tabla principal****************************************
 function getImpresoras() {
 
-  fetch('http://localhost:3000/impresora')
+  fetch('http://192.168.80.9:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       //console.log(data);
@@ -148,7 +147,7 @@ function cargarTablaConsumibles() {
 
 //**************************************funcion para obtener e insertar los consumibles en la tabla principal**************************************
 function getConsumibles() {
-  fetch('http://localhost:3000/consumible')
+  fetch('http://192.168.80.9:3000/consumible')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -271,7 +270,7 @@ async function eliminarImpresora(e) {
 
   //Enviar los datos a la API
   try {
-    const response = await fetch(`http://localhost:3000/impresora/${idEliminar}`, {
+    const response = await fetch(`http://192.168.80.9:3000/impresora/${idEliminar}`, {
 
       method: 'DELETE',
       //headers: {
@@ -304,7 +303,7 @@ async function eliminarConsumible(e) {
   console.log('entro a la funcion eliminar consumible')
   //Enviar los datos a la API
   try {
-    const response = await fetch(`http://localhost:3000/consumible/${idEliminar}`, {
+    const response = await fetch(`http://192.168.80.9:3000/consumible/${idEliminar}`, {
 
       method: 'DELETE',
       //headers: {
@@ -377,7 +376,7 @@ function modificarCamposImpresora(elementosTd) {
 //*************************Funcion para obtener las areas de la edificion************************************
 //Consultar Areas
 async function getAreasEdit(elemento) {
-  fetch('http://localhost:3000/area')
+  fetch('http://192.168.80.9:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
 
@@ -403,7 +402,7 @@ async function getAreasEdit(elemento) {
 //************************Funcion para obtener los contratos de la edicion**********************
 
 async function getContratosEdit(elemento) {
-  fetch('http://localhost:3000/contrato')
+  fetch('http://192.168.80.9:3000/contrato')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       data.forEach(contrato => {
@@ -512,7 +511,7 @@ function modificarCamposConsumible(elementosTd) {
 
 //Consltar Impresoras
 async function getImpresoraSelectEdit(elemento) {
-  fetch('http://localhost:3000/impresora')
+  fetch('http://192.168.80.9:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
 
@@ -696,4 +695,17 @@ function buscarElemento() {
     const textoFila = fila.textContent.toLowerCase();
     fila.style.display = textoFila.includes(filtro) ? '' : 'none';
   });
+}
+
+//---------------Funcion de edicion--------------------------///
+
+function edicion(){
+
+//  editarBtn.firstElementChild.textContent = "Salir";
+
+ // if(botonADD.firstElementChild.textContent.trim() === "Agregar impresora")
+
+
+
+
 }

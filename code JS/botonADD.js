@@ -3,7 +3,7 @@
 
 //Seleccionar elementos del DOM
 const modal = document.getElementById('modalForm');
-const btn = document.getElementsByClassName('addBtn')[0];
+const btn = document.getElementById('agregarBtn');
 const span = document.querySelector('.close');
 const formulario = document.querySelector('#form');
 const TituloH2 = document.querySelector('#TituloH2');
@@ -105,7 +105,7 @@ btn.onclick = function () {
 
 
           try {
-            const respuesta = await fetch('http://localhost:3000/impresora/1', {
+            const respuesta = await fetch('http://192.168.80.9:3000/impresora/1', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json' // Importante para JSON
@@ -270,7 +270,7 @@ btn.onclick = function () {
         
 
           try {
-            const respuesta = await fetch('http://localhost:3000/consumible/1', {
+            const respuesta = await fetch('http://192.168.80.9:3000/consumible/1', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -339,7 +339,7 @@ span.onclick = function () {
 
 //Consltar Impresoras
 function getImpresoraSelect() {
-  fetch('http://localhost:3000/impresora')
+  fetch('http://192.168.80.9:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -359,7 +359,7 @@ function getImpresoraSelect() {
 
 //Consultar Areas
 function getAreas() {
-  fetch('http://localhost:3000/area')
+  fetch('http://192.168.80.9:3000/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -379,7 +379,7 @@ function getAreas() {
 //Consultar contratos
 
 function getContratos() {
-  fetch('http://localhost:3000/contrato')
+  fetch('http://192.168.80.9:3000/contrato')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
