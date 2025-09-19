@@ -184,7 +184,7 @@ btn.onclick = function () {
       formulario.innerHTML = `
                     <input type="text" name="tij" placeholder="TIJ" required>
                     <label for="impresoraID">Impresora:</label>
-                    <select name="impresoraID" id="selectImpresora" required>
+                    <select  name="impresoraID" class="js-example-basic-single" id="selectImpresora" required>
                         <option value="n">Selecciona una impresora</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -287,14 +287,14 @@ btn.onclick = function () {
 
             //Volver a cargar la tabla de consumibles
             getConsumibles();
-            //resetFormulario();
+            resetConsumibleFormulario();
           } catch (error) {
             console.error('Error al enviar datos:', error);
             alert('Hubo un error al enviar los datos.');
           }
         }
 
-        resetConsumibleFormulario();
+        
 
       }
 

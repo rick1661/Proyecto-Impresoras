@@ -7,7 +7,7 @@
 //npm i express mssql cors morgan
 //npm i nodemon -D 
 //npm install dotenv
-
+//npm install select2
 //Correr el server  npm run dev
 //sudo npm install -g nodemon
 
