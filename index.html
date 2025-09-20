@@ -11,8 +11,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search" />
-    <link href="node/select2/dist/css/select2.min.css" rel="stylesheet" />
     <link href="node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <!--<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />-->
 </head>
 
 <body>
@@ -136,11 +136,11 @@
                     <input type="text" name="modelo" placeholder="Modelo" required>
                     <input type="text" name="direccionIp" placeholder="Dirección IP" required>
                     <label for="area">Área:</label>
-                    <select name="area" id="selectArea" required>
+                    <select name="area"  id="selectArea" required>
                         <option value="n">Selecciona un área</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
-                    <label for="area">contrato:</label>
+                    <label for="contrato"> contrato:</label>
                     <select name="contrato" id="selectContrato" required>
                         <option value="n">Selecciona un contrato</option>
                         <!-- Agrega más opciones según necesites -->
@@ -185,10 +185,16 @@
 
 
     <!-- Script -->
+    
     <script src="/code JS/asaid.js"></script>
     <script src="/code JS/table.js"></script>
     <script src="/code JS/botonADD.js"></script>
-    <script src="vendor/select2/dist/js/select2.min.js"></script>
+    <script src="node_modules\jquery\dist\jquery.min.js"></script>
+    <script src="node_modules/select2/dist/js/select2.min.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <!--<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>-->
+
+    
 
 
 </body>

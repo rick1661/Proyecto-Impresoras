@@ -1,5 +1,6 @@
 
-//Seleccionamos elementos del DOOM
+
+  //Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
 const tabla = document.querySelector('.styled-table');
@@ -11,6 +12,7 @@ const aceptarBtn = document.getElementById('aceptarBtn');
 const cancelarBtn = document.getElementById('cancelarBtn');
 const buscador = document.getElementById('busquedaInput');
 const editarBtn = document.getElementById('editarBtn');
+
 
 
 //variables
@@ -705,7 +707,10 @@ function edicion(){
 
  // if(botonADD.firstElementChild.textContent.trim() === "Agregar impresora")
 
-
-
-
 }
+
+
+  
+
+
+

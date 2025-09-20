@@ -184,7 +184,7 @@ btn.onclick = function () {
       formulario.innerHTML = `
                     <input type="text" name="tij" placeholder="TIJ" required>
                     <label for="impresoraID">Impresora:</label>
-                    <select  name="impresoraID" class="js-example-basic-single" id="selectImpresora" required>
+                    <select  name="impresoraID" id="selectImpresora" required>
                         <option value="n">Selecciona una impresora</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -199,33 +199,33 @@ btn.onclick = function () {
                     <select name="modelo" id="selectModelo" required>
                         <option value="n">Selecciona un modelo</option>
                         <!-- Agrega más opciones según necesites -->
-                        <option value="w9008">w9008</option>
-                        <option value="w1330xc">w1330xc</option>
-                        <option value="w1330x">w1330x</option>
-                        <option value="cf258xc">cf258xc</option>
-                        <option value="cf258x">cf258x</option>
-                        <option value="cf280xc">cf280xc</option>
-                        <option value="cf280x">cf280x</option>
-                        <option value="ce285ac">ce285ac</option>
-                        <option value="131a Y">131a Y</option>
-                        <option value="131a M">131a M</option>
-                        <option value="131a C">131a C</option>
-                        <option value="131a K">131a K</option>
-                        <option value="ce255xc">ce255xc</option>
-                        <option value="976yc Y">976yc Y</option>
-                        <option value="976yc M">976yc M</option>
-                        <option value="976yc C">976yc C</option>
-                        <option value="976yc K">976yc K</option>
-                        <option value="w9090mc Y">w9090mc Y</option>
-                        <option value="w9090mc M">w9090mc M</option>
-                        <option value="w9090mc C">w9090mc C</option>
-                        <option value="w9090mc K">w9090mc K</option>
+                        <option value="W9008MC">W9008MC</option>
+                        <option value="W1330XCc">W1330XC</option>
+                        <option value="W1330X">W1330X</option>
+                        <option value="CF258XC">CF258XC</option>
+                        <option value="CF258X">CF258X</option>
+                        <option value="CF280XC">CF280XC</option>
+                        <option value="CF280X">CF280X</option>
+                        <option value="CE285AC">CE285AC</option>
+                        <option value="131A Y">131A Y</option>
+                        <option value="131A M">131A M</option>
+                        <option value="131A C">131A C</option>
+                        <option value="131A K">131A K</option>
+                        <option value="CE255XC">CE255XC</option>
+                        <option value="976YC Y">976YC Y</option>
+                        <option value="976YC M">976YC M</option>
+                        <option value="976YC C">976YC C</option>
+                        <option value="976YC K">976YC K</option>
+                        <option value="W9090MC Y">W9090MC Y</option>
+                        <option value="W9090MC M">W9090MC M</option>
+                        <option value="W9090MC C">W9090MC C</option>
+                        <option value="W9090MC K">W9090MC K</option>
                         <option value="206X Y">206X Y</option>
                         <option value="206X M">206X M</option>
                         <option value="206X C">206X C</option>
                         <option value="206X K">206X K</option>
-                        <option value="w132ac">w132ac</option>
-                        <option value="cf287jc">cf287jc</option>
+                        <option value="W132AC">W132AC</option>
+                        <option value="CF287JC">CF287JC</option>
                     </select>
                     <button type="submit">Guardar</button>`
       // Cargar las impresoras al abrir el modal
