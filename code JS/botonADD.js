@@ -7,6 +7,7 @@ const btn = document.getElementById('agregarBtn');
 const span = document.querySelector('.close');
 const formulario = document.querySelector('#form');
 const TituloH2 = document.querySelector('#TituloH2');
+const selectImpresora = document.querySelector('#selectImpresora');
 
 // document.addEventListener('DOMContentLoaded', function() {
 
@@ -184,7 +185,7 @@ btn.onclick = function () {
       formulario.innerHTML = `
                     <input type="text" name="tij" placeholder="TIJ" required>
                     <label for="impresoraID">Impresora:</label>
-                    <select  name="impresoraID" id="selectImpresora" required>
+                    <select  name="impresoraID" id="selectImpresora"  required>
                         <option value="n">Selecciona una impresora</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -349,11 +350,19 @@ function getImpresoraSelect() {
         option.value = impresora.impresoraID;
         option.textContent = `${impresora.nombre[0]} - ${impresora.serie}`;
         select.appendChild(option);
+
       });
+     
     })
     .catch(error => {
       console.error('Error al cargar impresoras:', error);
     });
+
+  //asignamos la propiedad select2
+  selectImpresora.classList.add(js-example-basic-single);
+  $(document).ready(function() {
+    $('selectImpresora').select2();
+  });
 }
 
 
