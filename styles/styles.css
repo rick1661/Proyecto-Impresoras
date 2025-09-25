@@ -534,6 +534,49 @@ option::picked {
   outline: 2px solid green;
 }
 
+/*Estilos de Select impresoras  en el form de consumible  */
+
+
+/* Cambia el color del borde y el radio del contenedor principal */
+.select2-container--default .select2-selection--single {
+
+  height: 50px !important;
+  padding: 9px;
+  border: 1px solid #cbe4ff !important ;
+  border-radius: 0.25rem !important;
+  border-radius: 6px !important;
+  font-size: 1rem !important;
+  background: #f7fbff !important; 
+  color: #222 !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  
+}
+
+.select2-container--default:focus .select2-selection--single:focus {
+
+border-color: var(--colorPrincipal) !important;
+box-shadow: 0 0 0 5px rgba(0,102,156,0.15) !important;
+outline: none !important;
+  
+}
+
+
+
+/* Aplica estilos al menú desplegable */
+.select2-dropdown {
+  border: 2px solid var(--colorSecundario);
+  border-top: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
+
+/* Cambia el color de fondo cuando pasas el cursor sobre una opción */
+.select2-results__option--highlighted {
+  background: gray;
+  color: white;
+  
+}
+
+
 #decisionModal{
   display: none;                /* Oculta el modal por defecto */
   position: fixed;              /* El modal se posiciona fijo respecto a la ventana del navegador */

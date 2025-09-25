@@ -14,6 +14,8 @@ const selectImpresora = document.querySelector('#selectImpresora');
 
 // });
 
+
+
 //------Eventos onclick------//
 btn.onclick = function () {
   modal.style.display = 'block';
@@ -144,7 +146,7 @@ btn.onclick = function () {
 
       };
 
-            //Funcion para resetear el formulario
+      //Funcion para resetear el formulario
       function resetImpresoraFormulario() {
         inputSerie.value = '';
         inputNombre.value = '';
@@ -185,7 +187,7 @@ btn.onclick = function () {
       formulario.innerHTML = `
                     <input type="text" name="tij" placeholder="TIJ" required>
                     <label for="impresoraID">Impresora:</label>
-                    <select  name="impresoraID" id="selectImpresora"  required>
+                    <select  name="impresoraID" class="js-example-basic-single" id="selectImpresora"  required>
                         <option value="n">Selecciona una impresora</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -257,18 +259,18 @@ btn.onclick = function () {
           alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
 
         } else {
-          
+
           const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
 
           // Convertir FormData a un objeto JavaScript
           const objetoDatosDelFormulario = Object.fromEntries(datosFormulario)
-          
+
           //Convertimos el valor de impresoraID a entero
           objetoDatosDelFormulario.impresoraID = parseInt(objetoDatosDelFormulario.impresoraID);
 
           const jsonString = JSON.stringify(objetoDatosDelFormulario);
           console.log(jsonString);
-        
+
 
           try {
             const respuesta = await fetch('http://192.168.80.9:3000/consumible/1', {
@@ -295,7 +297,7 @@ btn.onclick = function () {
           }
         }
 
-        
+
 
       }
 
@@ -311,7 +313,7 @@ btn.onclick = function () {
         selectImpresora.classList.remove('selectError');
         selectTipo.classList.remove('selectError');
         selectModelo.classList.remove('selectError');
-   
+
         //Quitar estilos de OK
         inputTij.classList.remove('inputOk');
         selectImpresora.classList.remove('selectOk');
@@ -340,6 +342,7 @@ span.onclick = function () {
 
 //Consltar Impresoras
 function getImpresoraSelect() {
+
   fetch('http://192.168.80.9:3000/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
@@ -351,18 +354,22 @@ function getImpresoraSelect() {
         option.textContent = `${impresora.nombre[0]} - ${impresora.serie}`;
         select.appendChild(option);
 
+
       });
-     
+
     })
     .catch(error => {
       console.error('Error al cargar impresoras:', error);
     });
 
-  //asignamos la propiedad select2
-  selectImpresora.classList.add(js-example-basic-single);
-  $(document).ready(function() {
-    $('selectImpresora').select2();
-  });
+    //  //asignamos la propiedad select2
+ 
+    $('#selectImpresora').select2();
+    
+
+
+
+
 }
 
 
