@@ -480,7 +480,7 @@ h2{
 }
 
 /* Ejemplo para personalizar el desplegable */
-option::picked {
+#form select option:hover {
   background-color: var(--colorSecundario);
   color: #fff;
 }
@@ -560,18 +560,21 @@ outline: none !important;
   
 }
 
-
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 44px !important;           /* Ajusta la flecha */
+}
 
 /* Aplica estilos al menú desplegable */
 .select2-dropdown {
   border: 2px solid var(--colorSecundario);
   border-top: none;
-  border-radius: 0 0 0.25rem 0.25rem;
+  border-radius: 0 0 6px 6px;
+  
 }
 
 /* Cambia el color de fondo cuando pasas el cursor sobre una opción */
 .select2-results__option--highlighted {
-  background: gray;
+  background: #8d9399 !important;
   color: white;
   
 }
