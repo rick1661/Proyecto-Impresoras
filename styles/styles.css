@@ -6,6 +6,7 @@
     --colorPrincipal: #00669c;
     --colorSecundario: #151A2D;
     --ColorTerciario: green;
+    --BordeSelect2: #cbe4ff;
 
 }
 
@@ -509,7 +510,7 @@ h2{
 } 
 
 .inputError{
-  outline: 2px solid red;
+  outline: 1px solid red;
   animation: horizontal-shaking 0.3s ease;
 }
 
@@ -522,19 +523,20 @@ h2{
 }
 
 .inputOk{
-  outline: 2px solid green;
+  outline: 1px solid green;
 }
 
 .selectError {
-  outline: 2px solid red;
+  outline: 1px solid red;
   animation: horizontal-shaking 0.3s ease;
 }
 
 .selectOk{
-  outline: 2px solid green;
+  outline: 1px solid green;
 }
 
 /*Estilos de Select impresoras  en el form de consumible  */
+
 
 
 /* Cambia el color del borde y el radio del contenedor principal */
@@ -542,7 +544,7 @@ h2{
 
   height: 50px !important;
   padding: 9px;
-  border: 1px solid #cbe4ff !important ;
+  border: 1px solid var(--BordeSelect2) !important ;
   border-radius: 0.25rem !important;
   border-radius: 6px !important;
   font-size: 1rem !important;
@@ -551,6 +553,8 @@ h2{
   transition: border-color 0.2s, box-shadow 0.2s;
   
 }
+
+
 
 .select2-container--default:focus .select2-selection--single:focus {
 

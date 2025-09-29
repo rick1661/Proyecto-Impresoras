@@ -8,6 +8,7 @@ const span = document.querySelector('.close');
 const formulario = document.querySelector('#form');
 const TituloH2 = document.querySelector('#TituloH2');
 const selectImpresora = document.querySelector('#selectImpresora');
+const root = document.documentElement; // root css
 
 // document.addEventListener('DOMContentLoaded', function() {
 
@@ -38,12 +39,12 @@ btn.onclick = function () {
                     <input type="text" name="modelo" placeholder="Modelo" required>
                     <input type="text" name="direccionIp" placeholder="Dirección IP" required>
                     <label for="area">Área:</label>
-                    <select name="area" id="selectArea" required>
+                    <select name="area" class="js-example-basic-single" id="selectArea" required>
                         <option value="n">Selecciona un área</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
                     <label for="area">contrato:</label>
-                    <select name="contrato" id="selectContrato" required>
+                    <select name="contrato" class="js-example-basic-single" id="selectContrato" required>
                         <option value="n">Selecciona un contrato</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -73,6 +74,19 @@ btn.onclick = function () {
       selectArea.addEventListener('blur', validacionSelect);
       selectContrato.addEventListener('blur', validacionSelect);
       formulario.addEventListener('submit', formularioImpresoraEnvio);
+
+      //Validar Select 2 en tiempo real
+
+      $('#selectArea').on('select2:close', function (e) {
+        // Tu código para validar o ejecutar alguna acción aquí
+        console.log('Select2 se cerró');
+        if (selectImpresora.value === "n") {
+
+
+          root.style.setProperty('--BordeSelect2', 'red');
+        }
+      });
+
 
       //Funcione Para enviar datos
 
@@ -236,16 +250,30 @@ btn.onclick = function () {
 
       //Seleccionar los elementos del forms para la validación
       const inputTij = document.querySelector('#form input[name="tij"]');
-      const selectImpresora = document.querySelector('#form select[name="impresoraID"]');
+      const selectImpresora = document.querySelector('#selectImpresora');
       const selectTipo = document.querySelector('#form select[name="tipo"]');
       const selectModelo = document.querySelector('#form select[name="modelo"]');
+      // const select2 = document.querySelector('.select2-container--default');
 
-      // Asignar eventos
+
+      console.log(selectImpresora);
+      // Asignar eventos para validar los input y select en tiempo real
       inputTij.addEventListener('blur', validacionCampos);
-      selectImpresora.addEventListener('blur', validacionSelect);
+      //selectImpresora.addEventListener('blur', validacionSelect); este ya no funciona por el select2
       selectTipo.addEventListener('blur', validacionSelect);
       selectModelo.addEventListener('blur', validacionSelect);
       formulario.addEventListener('submit', formularioConsumibleEnvio);
+
+      //funcion para validar el select2 en tiempo real
+      $('#selectImpresora').on('select2:close', function (e) {
+        // Tu código para validar o ejecutar alguna acción aquí
+        console.log('Select2 se cerró');
+        if (selectImpresora.value === "n") {
+
+
+          root.style.setProperty('--BordeSelect2', 'red');
+        }
+      });
 
       async function formularioConsumibleEnvio(formulario) {
 
@@ -255,6 +283,8 @@ btn.onclick = function () {
 
         // Validar que todos los campos sean correctos antes de enviar
         if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
+
+
           // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
           alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
 
@@ -362,13 +392,9 @@ function getImpresoraSelect() {
       console.error('Error al cargar impresoras:', error);
     });
 
-    //  //asignamos la propiedad select2
- 
-    $('#selectImpresora').select2();
-    
+  //  //asignamos la propiedad select2
 
-
-
+  $('#selectImpresora').select2();
 
 }
 
@@ -390,8 +416,10 @@ function getAreas() {
     .catch(error => {
       console.error('Error al cargar Areas:', error);
     });
-}
+  //  //asignamos la propiedad select2
 
+  $('#selectArea').select2();
+}
 //Consultar contratos
 
 function getContratos() {
@@ -411,6 +439,8 @@ function getContratos() {
     .catch(error => {
       console.error('Error al cargar Contratos:', error);
     });
+
+  $('#selectContrato').select2();
 }
 
 
@@ -432,8 +462,8 @@ function validacionCampos(input) {
 
 //Funciona para validar los Select
 function validacionSelect(select) {
-  //console.log(select.target);
-  //console.log(select.target.value);
+  console.log(select.target);
+  console.log(select.target.value);
   if (select.target.value === "n") {
     select.target.classList.remove('selectOk');
     select.target.classList.add('selectError');
