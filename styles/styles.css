@@ -7,6 +7,7 @@
     --colorSecundario: #151A2D;
     --ColorTerciario: green;
     --BordeSelect2: #cbe4ff;
+    --AnchoTabla: calc(100% - 290px); 
 
 }
 
@@ -154,67 +155,10 @@ body {
   bottom: 30px;
   width: 100%;
 }
-/* Responsive media query code for small screens */
-@media (max-width: 1024px) {
-  .sidebar {
-    height: 56px;
-    margin: 13px;
-    overflow-y: hidden;
-    scrollbar-width: none;
-    width: calc(100% - 26px);
-    max-height: calc(100vh - 26px);
-  }
-  .sidebar.menu-active {
-    overflow-y: auto;
-  }
-  .sidebar .sidebar-header {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    border-radius: 16px;
-    background: var(--colorSecundario);
-    padding: 8px 10px;
-  }
-  .sidebar-header .header-logo img {
-    width: 40px;
-    height: 40px;
-  }
-  .sidebar-header .sidebar-toggler,
-  .sidebar-nav .nav-item:hover .nav-tooltip {
-    display: none;
-  }
-  
-  .sidebar-header .menu-toggler {
-    display: flex;
-    height: 30px;
-    width: 30px;
-  }
-  .sidebar-header .menu-toggler span {
-    font-size: 1.3rem;
-  }
-  .sidebar .sidebar-nav .nav-list {
-    padding: 0 10px;
-  }
-  .sidebar-nav .nav-link {
-    gap: 10px;
-    padding: 10px;
-    font-size: 0.94rem;
-  }
-  .sidebar-nav .nav-link .nav-icon {
-    font-size: 1.37rem;
-  }
-  .sidebar-nav .secondary-nav {
-    position: relative;
-    bottom: 0;
-    margin: 40px 0 30px;
-  }
-}
 
-
-/* ...existing code... */
 
 .main-content {
-  margin-left: 290px; /* Un poco más que el ancho de la sidebar (270px) */
+  margin-left: 280px; /* Un poco más que el ancho de la sidebar (270px) */
   padding: 32px;
   width: calc(100% - 290px);
   min-height: 100vh;
@@ -224,6 +168,11 @@ body {
   /*max-height: calc(100vh - 500px); */
   
    
+}
+
+.main-content.expanded {
+  margin-left: 90px;
+  width: calc(100% - 0px) ;
 }
 
 
@@ -354,18 +303,7 @@ body {
 
 /* ...existing code... */
 
-/* ...tablas responsivas... */
-@media (max-width: 900px) {
-  .main-content {
-    margin-left: 0;
-    width: 100%;
-    padding: 12px;
-  }
-  .styled-table {
-    min-width: 500px;
-    font-size: 0.95rem;
-  }
-}
+
 
 .inferiorBtn{
 
@@ -378,13 +316,14 @@ body {
   border: 2px solid var(--colorPrincipal);
   border-radius: 8px;
   cursor: pointer;
-  overflow: hidden;
+  /*overflow: hidden;*/
   transition: all 0.3s ease;
   margin-left: 10em;
   margin-right: 10em;
   height: 55px;
-  padding: 10px;
-  width: 250px;
+  /*padding: 10px;*/
+  width: 200px;
+  min-width: 200px;
   
 }
 
@@ -692,4 +631,94 @@ outline: none !important;
   left: 467px; /* Posición horizontal */
   transform: translateY(-50%); /* Ajuste fino para centrar verticalmente */
   pointer-events: none; /* Para que el icono no interfiera con los clics del input */
+}
+
+
+/*Estilos para hacer responsiva la pagina*/'
+
+
+@media (max-width: 1024px) {
+  .main-content {
+  margin-left: 290px; /* Un poco más que el ancho de la sidebar (270px) */
+  padding: 32px;
+  width: var(--AnchotTabla);
+  min-height: 100vh;
+  box-sizing: border-box;
+  transition: all 0.4s ease;
+ 
+  /*max-height: calc(100vh - 500px); */
+  }
+
+}
+
+
+
+/* Responsive media query code for small screens */
+@media (max-width: 1024px) {
+  .sidebar {
+    height: 56px;
+    margin: 13px;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    width: calc(100% - 26px);
+    max-height: calc(100vh - 26px);
+  }
+  .sidebar.menu-active {
+    overflow-y: auto;
+  }
+  .sidebar .sidebar-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-radius: 16px;
+    background: var(--colorSecundario);
+    padding: 8px 10px;
+  }
+  .sidebar-header .header-logo img {
+    width: 40px;
+    height: 40px;
+  }
+  .sidebar-header .sidebar-toggler,
+  .sidebar-nav .nav-item:hover .nav-tooltip {
+    display: none;
+  }
+  
+  .sidebar-header .menu-toggler {
+    display: flex;
+    height: 30px;
+    width: 30px;
+  }
+  .sidebar-header .menu-toggler span {
+    font-size: 1.3rem;
+  }
+  .sidebar .sidebar-nav .nav-list {
+    padding: 0 10px;
+  }
+  .sidebar-nav .nav-link {
+    gap: 10px;
+    padding: 10px;
+    font-size: 0.94rem;
+  }
+  .sidebar-nav .nav-link .nav-icon {
+    font-size: 1.37rem;
+  }
+  .sidebar-nav .secondary-nav {
+    position: relative;
+    bottom: 0;
+    margin: 40px 0 30px;
+  }
+}
+
+
+/* ...tablas responsivas... */
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
+  }
+  .styled-table {
+    min-width: 500px;
+    font-size: 0.95rem;
+  }
 }
