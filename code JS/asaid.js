@@ -12,6 +12,8 @@ const menuToggler = document.querySelector(".menu-toggler");
 const contenedorPrincipal = document.querySelector(".main-content ");
 
 
+
+
 // Asegúrate de que estos valores coincidan con los del CSS
 let collapsedSidebarHeight = "56px"; // Altura de la barra lateral colapsada en móvil
 let fullSidebarHeight = "calc(100vh - 32px)"; // Altura de la barra lateral en pantallas grandes
@@ -32,9 +34,12 @@ const toggleMenu = (isMenuActive) => {
   menuToggler.querySelector("span").innerText = isMenuActive ? "close" : "menu";
 }
 
+
 // Alterna la clase 'menu-active' y ajusta la altura al hacer clic en el botón de menú
 menuToggler.addEventListener("click", () => {
   toggleMenu(sidebar.classList.toggle("menu-active"));
+  contenedorPrincipal.classList.toggle("contracted");
+
 });
 
 
@@ -48,5 +53,7 @@ window.addEventListener("resize", () => {
     sidebar.classList.remove("collapsed");
     sidebar.style.height = "auto";
     toggleMenu(sidebar.classList.contains("menu-active"));
+    
+
   }
 });
