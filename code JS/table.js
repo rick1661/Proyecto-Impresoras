@@ -1,6 +1,6 @@
 
 
-  //Seleccionamos elementos del DOOM
+//Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
 const tabla = document.querySelector('.styled-table');
@@ -13,13 +13,10 @@ const cancelarBtn = document.getElementById('cancelarBtn');
 const buscador = document.getElementById('busquedaInput');
 const editarBtn = document.getElementById('editarBtn');
 
-
-
 //variables
 let vacio = false;
 let eliminar = false;
 let idEliminar;
-
 
 //Funcion para cargar listeners
 cargarEventListeners();
@@ -30,11 +27,8 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
-  buscador.addEventListener('input',buscarElemento);
-  editarBtn.addEventListener('click',edicion);
- 
-
-  
+  buscador.addEventListener('input', buscarElemento);
+  editarBtn.addEventListener('click', edicion);
 }
 
 
@@ -47,9 +41,36 @@ function cargarTablaimpresoras() {
   // Establecer la sección a impresoras
 
 
-  // Cambiar el contenido de la tabla para mostrar las columnas de impresoras  
-  tabla.innerHTML = `
-    <thead>
+  // Cambiar el contenido de la tabla para mostrar las columnas de impresoras 
+
+  if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+
+    tabla.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Serie</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>IP</th>
+                    <th>Área</th>
+                    <th>Contrato</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí puedes agregar filas de datos -->
+                <tr>
+                 
+                </tr>
+                <!-- Más filas aquí -->
+            </tbody>`;
+
+  } else {
+
+    tabla.innerHTML = `
+            <thead>
                 <tr>
                     <th>Serie</th>
                     <th>Nombre</th>
@@ -67,6 +88,12 @@ function cargarTablaimpresoras() {
                 </tr>
                 <!-- Más filas aquí -->
             </tbody>`;
+
+
+  }
+
+
+
 
   // Cambiar el texto del botón para agregar impresoras
   botonADD.innerHTML = `<span>Agregar impresora</span>`;
@@ -93,7 +120,8 @@ function getImpresoras() {
         const row = document.createElement('tr');
 
         //Modificamos el DOM de la tabla de impresoras
-        row.innerHTML = `
+        if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+          row.innerHTML = `
           <td>${impresora.serie}</td>
           <td>${impresora.nombre[0]}</td>
           <td>${impresora.marca}</td>
@@ -104,6 +132,17 @@ function getImpresoras() {
           <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
           <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
         `;
+        } else {
+          row.innerHTML = `
+          <td>${impresora.serie}</td>
+          <td>${impresora.nombre[0]}</td>
+          <td>${impresora.marca}</td>
+          <td>${impresora.modelo}</td>
+          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+          <td>${impresora.nombre[1]}</td>
+          <td>${impresora.nombre[2]}</td>`
+
+        }
         tbody.appendChild(row);
       });
     })
@@ -120,7 +159,9 @@ function cargarTablaConsumibles() {
   console.log('Botón de consumibles clickeado');
 
   // Cambiar el contenido de la tabla para mostrar las columnas de consumibles
-  tabla.innerHTML = `
+
+  if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+    tabla.innerHTML = `
     <thead>
                 <tr>
                     <th>Tipo</th>
@@ -129,8 +170,8 @@ function cargarTablaConsumibles() {
                     <th>Fecha</th>
                     <th>Impresora</th>
                     <th>Serie</th>
-                     <th>Editar</th>
-                    <th>Eliminar</th>
+                    <th>Editar</th>
+                    <th>Salir</th>
                 </tr>
             </thead>
             <tbody>
@@ -140,6 +181,28 @@ function cargarTablaConsumibles() {
                 </tr>
                 <!-- Más filas aquí -->
             </tbody>`;
+  } else {
+
+    tabla.innerHTML = `
+    <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Modelo</th>
+                    <th>TIJ</th>
+                    <th>Fecha</th>
+                    <th>Impresora</th>
+                    <th>Serie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí puedes agregar filas de datos -->
+                <tr>
+                 
+                </tr>
+                <!-- Más filas aquí -->
+            </tbody>`;
+
+  }
   // Cambiar el texto del botón para agregar consumibles
   botonADD.innerHTML = `<span>Agregar consumible</span>`;
   // Llamar a la función para obtener e insertar los consumibles en la tabla
@@ -157,7 +220,8 @@ function getConsumibles() {
       tbody.innerHTML = ''; // Limpia el contenido actual
       data.forEach(consumible => {
         const row = document.createElement('tr');
-        row.innerHTML = `
+        if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+          row.innerHTML = `
           <td>${consumible.tipo}</td>
           <td>${consumible.modelo}</td>
           <td>${consumible.tij}</td>
@@ -167,6 +231,18 @@ function getConsumibles() {
           <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
           <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
         `;
+        }
+        else {
+          row.innerHTML = `
+          <td>${consumible.tipo}</td>
+          <td>${consumible.modelo}</td>
+          <td>${consumible.tij}</td>
+          <td>${consumible.fecha.slice(0, 10)}</td>
+          <td>${consumible.nombre}</td>
+          <td>${consumible.serie}</td>`
+
+        }
+
         tbody.appendChild(row);
       });
     })
@@ -699,18 +775,50 @@ function buscarElemento() {
   });
 }
 
-//---------------Funcion de edicion--------------------------///
 
-function edicion(){
+//-----------------------------------------Funcion Editar---------------------------------------------------------
+function edicion() {
 
-//  editarBtn.firstElementChild.textContent = "Salir";
+  switch (editarBtn.firstElementChild.textContent.trim()) {
 
- // if(botonADD.firstElementChild.textContent.trim() === "Agregar impresora")
+    case "Editar":
 
+      editarBtn.firstElementChild.textContent = "Salir edicion";
+      break;
+
+    case "Salir edicion":
+
+      editarBtn.firstElementChild.textContent = "Editar";
+      break;
+  }
+
+  switch (botonADD.firstElementChild.textContent.trim()) {
+
+    case "Agregar impresora":
+
+      console.log("edicion de impresoras")
+
+      // Llamar a la función para obtener e insertar las impresoras en la tabla
+      cargarTablaimpresoras();
+
+      break;
+
+    case "Agregar consumible":
+
+      console.log("edicion de consumible")
+
+      //Llamar funcion para obtener e insertar los consumibles a la tabla
+      cargarTablaConsumibles()
+      break;
+
+  }
 }
 
 
-  
+
+
+
+
 
 
 

@@ -80,8 +80,7 @@ btn.onclick = function () {
       $('#selectArea').on('select2:close', function (e) {
         // Tu código para validar o ejecutar alguna acción aquí
         console.log('Select2 se cerró');
-        if (selectImpresora.value === "n") {
-
+        if (selectArea.value === "n") {
 
           root.style.setProperty('--BordeSelect2', 'red');
         }
@@ -169,6 +168,8 @@ btn.onclick = function () {
         inputDireccionIp.value = '';
         selectArea.value = 'n';
         selectContrato.value = 'n';
+        $('#selectArea').val('n').trigger('change');
+        $('#selectContrato').val('n').trigger('change');
 
         //Quitar estilos de error 
         inputSerie.classList.remove('inputError');
@@ -335,6 +336,7 @@ btn.onclick = function () {
       function resetConsumibleFormulario() {
         inputTij.value = '';
         selectImpresora.value = 'n';
+        $('#selectImpresora').val('n').trigger('change');
         selectTipo.value = 'n';
         selectModelo.value = 'n';
 
