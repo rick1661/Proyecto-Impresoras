@@ -10,17 +10,9 @@ const TituloH2 = document.querySelector('#TituloH2');
 const selectImpresora = document.querySelector('#selectImpresora');
 const root = document.documentElement; // root css
 
-// document.addEventListener('DOMContentLoaded', function() {
-
-
-// });
-
-
-
 //------Eventos onclick------//
 btn.onclick = function () {
   modal.style.display = 'block';
-
 
   //console.log(btn.textContent);
   switch (btn.textContent.trim()) {
