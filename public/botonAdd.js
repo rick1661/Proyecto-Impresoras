@@ -1,5 +1,6 @@
 //Variables Globales
 
+//const e = require("cors");
 
 //Seleccionar elementos del DOM
 const modal = document.getElementById('modalForm');
@@ -18,9 +19,7 @@ btn.onclick = function () {
   switch (btn.textContent.trim()) {
     case 'Agregar impresora':
 
-
       console.log("Agregar impresora");
-
       //Modificamos el titulo del formulario
       TituloH2.textContent = "Agregar impresora";
 
@@ -40,7 +39,7 @@ btn.onclick = function () {
                         <option value="n">Selecciona un contrato</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
-                    <button type="submit">Guardar</button>`
+                    <button id="btnGuardar" type="submit">Guardar</button>`
 
       // Cargar las áreas y contratos al abrir el modal
       getAreas();
@@ -55,6 +54,7 @@ btn.onclick = function () {
       const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
       const selectArea = document.querySelector('#form select[name="area"]');
       const selectContrato = document.querySelector('#form select[name="contrato"]');
+      //const btnGuardar = document.querySelector('#btnGuardar');
 
       // Asignar eventos
 
@@ -65,125 +65,33 @@ btn.onclick = function () {
       inputDireccionIp.addEventListener('blur', validacionCampos);
       selectArea.addEventListener('blur', validacionSelect);
       selectContrato.addEventListener('blur', validacionSelect);
-      formulario.addEventListener('submit', formularioImpresoraEnvio);
+
 
       //Validar Select 2 en tiempo real
 
-      $('#selectArea').on('select2:close', function (e) {
-        // Tu código para validar o ejecutar alguna acción aquí
-        console.log('Select2 se cerró');
-        if (selectArea.value === "n") {
+      // $('#selectArea').on('select2:close', function (e) {
+      //   // Tu código para validar o ejecutar alguna acción aquí
+      //   // console.log('Select2 se cerró');
+      //   // if (selectArea.value === "n") {
 
-          root.style.setProperty('--BordeSelect2', 'red');
+      //   //   root.style.setProperty('--BordeSelect2', 'red');
+      //   // }
+      // });
+
+      //Llamar a la función para enviar el formulario
+
+      formulario.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log(e.target);
+        const esvalido = validarFormulario(e.target);
+        if (!esvalido) {
+          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+        } else {
+          formularioImpresoraEnvio(e.target)
         }
       });
 
 
-      //Funcione Para enviar datos
-
-      async function formularioImpresoraEnvio(formulario) {
-
-        formulario.preventDefault(); // Evitar el envío del formulario
-        // Validar que todos los campos sean correctos antes de enviar
-        if (inputSerie.value.trim() === '' || inputNombre.value.trim() === '' || inputMarca.value.trim() === '' || inputModelo.value.trim() === '' || inputDireccionIp.value.trim() === '' || selectArea.value === "n" || selectContrato.value === "n") {
-          // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
-          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-
-        } else {
-          //console.log(formulario.target.value);
-          const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
-          console.log(datosFormulario);
-          // Convertir FormData a un objeto JavaScript
-          const ObjetoDatosDelFormulario = Object.fromEntries(datosFormulario);
-          console.log(ObjetoDatosDelFormulario);
-
-          //Convertir el valor de areaID y contratoID a enteros
-          ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
-          ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
-
-
-
-          console.log(ObjetoDatosDelFormulario.area);
-          console.log(ObjetoDatosDelFormulario.contrato);
-
-
-          // Convertir el objeto JavaScript a una cadena JSON
-          const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
-          console.log(jsonString);
-
-
-
-
-          try {
-            const respuesta = await fetch('http://192.168.80.9:3000/impresora/1', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json' // Importante para JSON
-              },
-              body: jsonString // Convierte el objeto a JSON
-              // serie: datosFormulario.get('serie'),
-              // nombre: datosFormulario.get('nombre'),
-              // marca: datosFormulario.get('marca'),
-              // modelo: datosFormulario.get('modelo'),
-              // direccionIp: datosFormulario.get('direccionIp'),
-              // areaID: datosFormulario.get('area'),
-              // contratoID: datosFormulario.get('contrato')
-              //})
-            });
-
-            if (!respuesta.ok) {
-              throw new Error(`Error HTTP: ${respuesta.status}`);
-            };
-            const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
-            console.log('Datos enviados exitosamente:', resultado);
-            alert('Datos recibidos correctamente.');
-
-            resetImpresoraFormulario();
-            //Volver a cargar la tabla de impresoras
-            getImpresoras();
-          }
-          catch (error) {
-
-            console.error('Error al enviar datos:', error);
-            alert('Hubo un error al enviar los datos.');
-          };
-
-
-        }
-
-      };
-
-      //Funcion para resetear el formulario
-      function resetImpresoraFormulario() {
-        inputSerie.value = '';
-        inputNombre.value = '';
-        inputMarca.value = '';
-        inputModelo.value = '';
-        inputDireccionIp.value = '';
-        selectArea.value = 'n';
-        selectContrato.value = 'n';
-        $('#selectArea').val('n').trigger('change');
-        $('#selectContrato').val('n').trigger('change');
-
-        //Quitar estilos de error 
-        inputSerie.classList.remove('inputError');
-        inputNombre.classList.remove('inputError');
-        inputMarca.classList.remove('inputError');
-        inputModelo.classList.remove('inputError');
-        inputDireccionIp.classList.remove('inputError');
-        selectArea.classList.remove('selectError');
-        selectContrato.classList.remove('selectError');
-
-        //Quitar estilos de OK
-        inputSerie.classList.remove('inputOk');
-        inputNombre.classList.remove('inputOk');
-        inputMarca.classList.remove('inputOk');
-        inputModelo.classList.remove('inputOk');
-        inputDireccionIp.classList.remove('inputOk');
-        selectArea.classList.remove('selectOk');
-        selectContrato.classList.remove('selectOk');
-
-      }
 
       break;
     case 'Agregar consumible':
@@ -251,113 +159,38 @@ btn.onclick = function () {
       // const select2 = document.querySelector('.select2-container--default');
 
 
-      console.log(selectImpresora);
       // Asignar eventos para validar los input y select en tiempo real
       inputTij.addEventListener('blur', validacionCampos);
       //selectImpresora.addEventListener('blur', validacionSelect); este ya no funciona por el select2
       selectTipo.addEventListener('blur', validacionSelect);
       selectModelo.addEventListener('blur', validacionSelect);
-      formulario.addEventListener('submit', formularioConsumibleEnvio);
-
-      //funcion para validar el select2 en tiempo real
-      $('#selectImpresora').on('select2:close', function (e) {
-        // Tu código para validar o ejecutar alguna acción aquí
-        console.log('Select2 se cerró');
-        if (selectImpresora.value === "n") {
 
 
-          root.style.setProperty('--BordeSelect2', 'red');
+      // //funcion para validar el select2 en tiempo real
+      // $('#selectImpresora').on('select2:close', function (e) {
+      //   // Tu código para validar o ejecutar alguna acción aquí
+      //   console.log('Select2 se cerró');
+      //   if (selectImpresora.value === "n") {
+
+
+      //     root.style.setProperty('--BordeSelect2', 'red');
+      //   }
+      // });
+
+      // Validar que todos los campos sean correctos antes de enviar
+
+      formulario.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log(e.target);
+        const esvalido = validarFormulario(e.target);
+        if (!esvalido) {
+          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+        } else {
+          formularioConsumibleEnvio(e.target)
         }
       });
-
-      async function formularioConsumibleEnvio(formulario) {
-
-        formulario.preventDefault(); // Evitar el envío del formulario
-        console.log("envio formilario");
-        console.log(formulario.target);
-
-        // Validar que todos los campos sean correctos antes de enviar
-        if (inputTij.value.trim() === '' || selectImpresora.value === "n" || selectTipo.value === "n" || selectModelo.value === "n") {
-
-
-          // Si algún campo no es válido, mostrar un mensaje de error o realizar alguna acción
-          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-
-        } else {
-
-          const datosFormulario = new FormData(formulario.target); // 2. Crear FormData
-
-          // Convertir FormData a un objeto JavaScript
-
-          const objetoDatosDelFormulario = Object.fromEntries(datosFormulario)
-
-          // Convertimos el valor de impresoraID a entero
-          objetoDatosDelFormulario.impresoraID = parseInt(objetoDatosDelFormulario.impresoraID);
-
-          // Agregamos el prefijo 'TIJ ' al campo tij si no lo tiene ya
-          if (objetoDatosDelFormulario.tij && !objetoDatosDelFormulario.tij.startsWith('TIJ')) {
-            objetoDatosDelFormulario.tij = `TIJ ${objetoDatosDelFormulario.tij}`;
-          }
-          
-
-
-          const jsonString = JSON.stringify(objetoDatosDelFormulario);
-          console.log(jsonString);
-
-
-          try {
-            const respuesta = await fetch('http://192.168.80.9:3000/consumible/1', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: jsonString
-            });
-
-            if (!respuesta.ok) {
-              throw new Error(`Error HTTP: ${respuesta.status}`);
-            }
-            const resultado = await respuesta.json();
-            console.log('Datos enviados exitosamente:', resultado);
-            alert('Datos recibidos correctamente.');
-
-            //Volver a cargar la tabla de consumibles
-            getConsumibles();
-            resetConsumibleFormulario();
-          } catch (error) {
-            console.error('Error al enviar datos:', error);
-            alert('Hubo un error al enviar los datos.');
-          }
-        }
-
-
-
-      }
-
-      //Funcion para resetear el formulario
-      function resetConsumibleFormulario() {
-        inputTij.value = '';
-        selectImpresora.value = 'n';
-        $('#selectImpresora').val('n').trigger('change');
-        selectTipo.value = 'n';
-        selectModelo.value = 'n';
-
-        //Quitar estilos de error 
-        inputTij.classList.remove('inputError');
-        selectImpresora.classList.remove('selectError');
-        selectTipo.classList.remove('selectError');
-        selectModelo.classList.remove('selectError');
-
-        //Quitar estilos de OK
-        inputTij.classList.remove('inputOk');
-        selectImpresora.classList.remove('selectOk');
-        selectTipo.classList.remove('selectOk');
-        selectModelo.classList.remove('selectOk');
-      }
-
       break;
   }
-
 
 }
 span.onclick = function () {
@@ -377,7 +210,7 @@ span.onclick = function () {
 //Consltar Impresoras
 function getImpresoraSelect() {
 
-  fetch('http://192.168.80.9:3000/impresora')
+  fetch('https://192.168.80.180:5500/impresora')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -405,7 +238,7 @@ function getImpresoraSelect() {
 
 //Consultar Areas
 function getAreas() {
-  fetch('http://192.168.80.9:3000/area')
+  fetch('https://192.168.80.180:5500/area')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -421,13 +254,12 @@ function getAreas() {
       console.error('Error al cargar Areas:', error);
     });
   //  //asignamos la propiedad select2
-
   $('#selectArea').select2();
 }
 //Consultar contratos
 
 function getContratos() {
-  fetch('http://192.168.80.9:3000/contrato')
+  fetch('https://192.168.80.180:5500/contrato')
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -478,10 +310,155 @@ function validacionSelect(select) {
   }
 }
 
+//Funcion para validar formulario
+function validarFormulario(formulario) {
+  let valido = true;
+  const elementos = formulario.querySelectorAll('input, select');
+  elementos.forEach(elemento => {
+    if (elemento.type === 'text' && elemento.value.trim() === '') {
+      valido = false;
+    }
+    if (elemento.tagName === 'SELECT' && elemento.value === 'n') {
+      valido = false;
+    }
+  });
+  return valido;
+}
+
+
+//Funcione Para enviar datos
+
+async function formularioImpresoraEnvio(formulario) {
+  console.log(formulario);
+  //preventDefault(); // Evitar el envío del formulario
+  // Validar que todos los campos sean correctos antes de enviar
+
+  //console.log(formulario.target.value);
+  const datosFormulario = new FormData(formulario); // 2. Crear FormData
+  console.log(datosFormulario);
+  // Convertir FormData a un objeto JavaScript
+  const ObjetoDatosDelFormulario = Object.fromEntries(datosFormulario);
+  console.log(ObjetoDatosDelFormulario);
+
+  //Convertir el valor de areaID y contratoID a enteros
+  ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
+  ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
+
+  console.log(ObjetoDatosDelFormulario.area);
+  console.log(ObjetoDatosDelFormulario.contrato);
+
+  // Convertir el objeto JavaScript a una cadena JSON
+  const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
+  console.log(jsonString);
+
+  try {
+    const respuesta = await fetch('https://192.168.80.180:5500/impresora/1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' // Importante para JSON
+      },
+      body: jsonString // Convierte el objeto a JSON
+      // serie: datosFormulario.get('serie'),
+      // nombre: datosFormulario.get('nombre'),
+      // marca: datosFormulario.get('marca'),
+      // modelo: datosFormulario.get('modelo'),
+      // direccionIp: datosFormulario.get('direccionIp'),
+      // areaID: datosFormulario.get('area'),
+      // contratoID: datosFormulario.get('contrato')
+      //})
+    });
+
+    if (!respuesta.ok) {
+      throw new Error(`Error https: ${respuesta.status}`);
+    };
+    const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
+    console.log('Datos enviados exitosamente:', resultado);
+    alert('Datos recibidos correctamente.');
+
+    resetFormulario(formulario);
+    //Volver a cargar la tabla de impresoras
+    getImpresoras();
+  }
+  catch (error) {
+    console.error('Error al enviar datos:', error);
+    alert('Hubo un error al enviar los datos.');
+  };
+
+}
 
 
 
 
+//función para enviar el formulario de consumible
+async function formularioConsumibleEnvio(formulario) {
 
+
+  const datosFormulario = new FormData(formulario); // 2. Crear FormData
+
+  // Convertir FormData a un objeto JavaScript
+  const objetoDatosDelFormulario = Object.fromEntries(datosFormulario)
+
+  //Convertimos el valor de impresoraID a entero
+  objetoDatosDelFormulario.impresoraID = parseInt(objetoDatosDelFormulario.impresoraID);
+
+  // Agregamos el prefijo 'TIJ ' al campo tij si no lo tiene ya
+  if (objetoDatosDelFormulario.tij && !objetoDatosDelFormulario.tij.startsWith('TIJ')) {
+    objetoDatosDelFormulario.tij = `TIJ${objetoDatosDelFormulario.tij}`;
+  }
+
+  const jsonString = JSON.stringify(objetoDatosDelFormulario);
+  console.log(jsonString);
+
+
+  try {
+    const respuesta = await fetch('https://192.168.80.180:5500/consumible/1', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: jsonString
+    });
+
+    // if (!respuesta.ok) {
+    //   throw new Error(`Error https: ${respuesta.status}`);
+    // }
+    const resultado = await respuesta.json();
+    console.log('Datos enviados exitosamente:', resultado);
+    alert('Datos recibidos correctamente.');
+
+    //Volver a cargar la tabla de consumibles
+    getConsumibles();
+    resetFormulario(formulario);
+  } catch (error) {
+    console.error('Error al enviar datos:', error);
+    alert('Hubo un error al enviar los datos.');
+  }
+}
+
+function resetFormulario(e) {
+  console.log(e);
+  //resetea los campos del formulario
+  e.reset();
+
+  // Quitar la clase inputError de todos los inputs y selects
+  const elementos = e.querySelectorAll('input, select');
+  elementos.forEach(elemento => {
+    elemento.classList.remove('inputError');
+    elemento.classList.remove('inputOk');
+    if (elemento.tagName === 'SELECT' && elemento.name === "area") {
+      $('#selectArea').val('n').trigger('change');
+    }
+    if (elemento.tagName === 'SELECT' && elemento.name === "contrato") {
+      $('#selectContrato').val('n').trigger('change');
+    }
+    if (elemento.tagName === 'SELECT' && elemento.name === "impresoraID") {
+      $('#selectImpresora').val('n').trigger('change');
+    }
+  });
+}
+
+
+
+//----------------------------------------------Fin funciones---------------------------------------------//
 
 

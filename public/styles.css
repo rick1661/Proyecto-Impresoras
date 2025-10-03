@@ -1,0 +1,914 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+
+  --colorPrincipal: #00669c;
+  --colorSecundario: #151A2D;
+  --ColorTerciario: green;
+  --BordeSelect2: #cbe4ff;
+  --AnchoTabla: calc(100% - 290px);
+
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+
+  min-height: 100vh;
+  background: linear-gradient(#F1FAFF, #CBE4FF);
+  display: flex;
+
+}
+
+
+.sidebar {
+  position: fixed;
+  width: 270px;
+  margin: 16px;
+  border-radius: 16px;
+  background: var(--colorSecundario);
+  height: calc(100vh - 32px);
+  transition: all 0.4s ease;
+}
+
+.sidebar.collapsed {
+  width: 85px;
+}
+
+.sidebar .sidebar-header {
+  display: flex;
+  position: relative;
+  padding: 25px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header .header-logo img {
+  width: 46px;
+  height: 46px;
+  display: block;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.sidebar-header .toggler {
+  height: 35px;
+  width: 35px;
+  color: var(--colorSecundario);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: 0.4s ease;
+}
+
+.sidebar-header .sidebar-toggler {
+  position: absolute;
+  right: 20px;
+}
+
+.sidebar-header .menu-toggler {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-header .toggler {
+  transform: translate(-4px, 65px);
+}
+
+.sidebar-header .toggler:hover {
+  background: #dde4fb;
+}
+
+.sidebar-header .toggler span {
+  font-size: 1.75rem;
+  transition: 0.4s ease;
+}
+
+.sidebar.collapsed .sidebar-header .toggler span {
+  transform: rotate(180deg);
+}
+
+.sidebar-nav .nav-list {
+  list-style: none;
+  display: flex;
+  gap: 4px;
+  padding: 0 15px;
+  flex-direction: column;
+  transform: translateY(15px);
+  transition: 0.4s ease;
+}
+
+.sidebar.collapsed .sidebar-nav .primary-nav {
+  transform: translateY(65px);
+}
+
+.sidebar-nav .nav-link {
+  color: #fff;
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+  border-radius: 8px;
+  padding: 12px 15px;
+  align-items: center;
+  text-decoration: none;
+  transition: 0.4s ease;
+}
+
+.sidebar.collapsed .sidebar-nav .nav-link {
+  border-radius: 12px;
+}
+
+.sidebar .sidebar-nav .nav-link .nav-label {
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-nav .nav-link .nav-label {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-nav .nav-link:hover {
+  color: var(--colorSecundario);
+  background: #fff;
+}
+
+.sidebar-nav .nav-item {
+  position: relative;
+}
+
+.sidebar-nav .nav-tooltip {
+  position: absolute;
+  top: -10px;
+  opacity: 0;
+  color: #151A2D;
+  display: none;
+  pointer-events: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: #fff;
+  left: calc(100% + 25px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  transition: 0s;
+}
+
+.sidebar.collapsed .sidebar-nav .nav-tooltip {
+  display: block;
+}
+
+.sidebar-nav .nav-item:hover .nav-tooltip {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(50%);
+  transition: all 0.4s ease;
+}
+
+.sidebar-nav .secondary-nav {
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+}
+
+
+.main-content {
+  margin-left: 280px;
+  /* Un poco más que el ancho de la sidebar (270px) */
+  padding: 32px;
+  width: calc(100% - 290px);
+  min-height: 100vh;
+  box-sizing: border-box;
+  transition: all 0.4s ease;
+
+
+
+  /*max-height: calc(100vh - 500px); */
+
+
+}
+
+.main-content.expanded {
+  margin-left: 90px;
+  width: calc(100% - 0px);
+}
+
+
+#tableContainer {
+
+  overflow-x: auto;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  max-height: calc(100vh - 135px);
+  min-height: calc(100vh - 130px);
+
+
+}
+
+.styled-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1rem;
+  min-width: 700px;
+  background: var(--colorSecundario);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+
+
+}
+
+/*Posicionar a la vista  el primer renglon*/
+.styled-table th {
+
+  position: sticky;
+  top: 0;
+  background-color: var(--colorSecundario);
+  /* Para que no se pegue con el contenido de abajo */
+  z-index: 1;
+  /* Asegura que el encabezado esté por encima de las filas */
+}
+
+/*Bordes redondos de la tabla*/
+.styled-table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.styled-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 16px;
+  text-align: left;
+  height: 70px;
+
+}
+
+.styled-table thead {
+  /*text-align: left;*/
+
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  color: #ffffff;
+  height: 50px;
+}
+
+
+/*.styled-table tbody{
+}*/
+
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+  background: #ffffff;
+  text-align: center;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid var(--colorSecundario);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+
+.editBtn,
+.guardarBtn {
+  background-color: var(--colorPrincipal);
+  width: 80px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.editBtn:hover {
+  background-color: #005080;
+}
+
+.deleteBtn {
+  background-color: red;
+  width: 80px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background-color: darkred;
+}
+
+.inputEdit {
+  width: 100%;
+  height: 35px;
+  border: 1px solid var(--colorSecundario);
+  font-size: 1rem;
+  background: white;
+  color: gray;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 4px;
+}
+
+.selectEdit {
+  width: 100%;
+  height: 35px;
+  border: 1px solid var(--colorSecundario);
+  font-size: 1rem;
+  background: white;
+  color: gray;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 4px;
+}
+
+/* ...existing code... */
+
+
+
+.inferiorBtn {
+
+  /*position: relative;*/
+  /*padding: 1rem 2rem;*/
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+  /*background-color: white;*/
+  border: 2px solid var(--colorPrincipal);
+  border-radius: 8px;
+  cursor: pointer;
+  /*overflow: hidden;*/
+  transition: all 0.3s ease;
+  margin-left: 10em;
+  margin-right: 10em;
+  height: 55px;
+  /*padding: 10px;*/
+  width: 200px;
+  min-width: 200px;
+
+}
+
+
+.liquidGreen {
+  background: linear-gradient(var(--ColorTerciario) 0 0) no-repeat calc(200% - var(--p, 0%)) 100% / 200% var(--p, 0.2em);
+  transition: 0.15s var(--t, 0s),
+    background-position 0.15s calc(0.15s - var(--t, 0s));
+}
+
+
+.liquidGreen:hover {
+  --p: 100%;
+  --t: 0.15s;
+  color: #fff;
+}
+
+.liquidBlue {
+  background: linear-gradient(var(--colorSecundario) 0 0) no-repeat calc(200% - var(--p, 0%)) 100% / 200% var(--p, 0.2em);
+  transition: 0.15s var(--t, 0s),
+    background-position 0.15s calc(0.15s - var(--t, 0s));
+}
+
+
+.liquidBlue:hover {
+  --p: 100%;
+  --t: 0.15s;
+  color: #fff;
+}
+
+
+#btnsDiv {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 10px
+}
+
+
+.modal {
+  display: none;
+  /* Oculta el modal por defecto */
+  position: fixed;
+  /* El modal se posiciona fijo respecto a la ventana del navegador */
+  z-index: 1000;
+  /* Se asegura de que esté por encima de otros elementos */
+  left: 0;
+  top: 0;
+  /* Lo coloca en la esquina superior izquierda */
+  width: 100%;
+  height: 100%;
+  /* Ocupa toda la pantalla */
+  overflow: auto;
+  /* Si el contenido es muy grande, permite hacer scroll */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Fondo semitransparente oscuro para dar efecto de superposición */
+}
+
+.modal-content {
+  background-color: #fff;
+  /* Fondo blanco para el contenido del modal */
+  margin: 4% auto;
+  /* Centra el modal verticalmente (10% desde arriba) y horizontalmente (auto) */
+  padding: 20px;
+  /* Espacio interno alrededor del contenido */
+  border-radius: 8px;
+  /* Bordes redondeados */
+  width: 90%;
+  /* Ocupa el 90% del ancho de la pantalla */
+  max-width: 500px;
+  /* Pero nunca más de 500px de ancho */
+  position: relative;
+  /* Permite posicionar elementos hijos de forma absoluta (como el botón de cerrar) */
+}
+
+.close {
+  color: #aaa;
+  /* Color gris claro para el ícono/texto de cerrar */
+  position: absolute;
+  /* Posiciona el elemento de forma absoluta dentro de su contenedor */
+  right: 16px;
+  /* Lo coloca a 16 píxeles del borde derecho del contenedor */
+  top: 8px;
+  /* Lo coloca a 8 píxeles del borde superior del contenedor */
+  font-size: 28px;
+  /* Tamaño grande para que sea visible y fácil de clicar */
+  font-weight: bold;
+  /* Hace el símbolo más grueso */
+  cursor: pointer;
+  /* Cambia el cursor a una mano para indicar que es clickeable */
+}
+
+h2 {
+  text-align: center;
+}
+
+.close:hover {
+  color: #000;
+}
+
+#form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 8px 0;
+
+}
+
+#form input[type="text"],
+#form input[type="date"],
+#form input[type="number"],
+#form select {
+  padding: 12px 14px;
+  border: 1px solid #cbe4ff;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f7fbff;
+  color: #222;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Ejemplo para personalizar el desplegable */
+#form select option:hover {
+  background-color: var(--colorSecundario);
+  color: #fff;
+}
+
+
+#form input:focus,
+.selectEdit:focus,
+#form select:focus,
+.inputEdit:focus {
+  border-color: var(--colorPrincipal);
+  box-shadow: 0 0 0 5px rgba(0, 102, 156, 0.15);
+  outline: none;
+}
+
+#form button[type="submit"] {
+  padding: 12px 0;
+  background: var(--colorSecundario);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 102, 156, 0.08);
+}
+
+#form button[type="submit"]:hover {
+  box-shadow: 0 4px 16px rgba(0, 102, 156, 0.15);
+  text-shadow: 0 0 8px #ffffff;
+}
+
+.inputError {
+  outline: 1px solid red;
+  animation: horizontal-shaking 0.3s ease;
+}
+
+@keyframes horizontal-shaking {
+  0% {
+    transform: translateX(0)
+  }
+
+  25% {
+    transform: translateX(5px)
+  }
+
+  50% {
+    transform: translateX(-5px)
+  }
+
+  75% {
+    transform: translateX(5px)
+  }
+
+  100% {
+    transform: translateX(0)
+  }
+}
+
+.inputOk {
+  outline: 1px solid green;
+}
+
+.selectError {
+  outline: 1px solid red;
+  animation: horizontal-shaking 0.3s ease;
+}
+
+.selectOk {
+  outline: 1px solid green;
+}
+
+/*Estilos de Select impresoras  en el form de consumible  */
+
+
+
+/* Cambia el color del borde y el radio del contenedor principal */
+.select2-container--default .select2-selection--single {
+
+  height: 50px !important;
+  padding: 9px;
+  border: 1px solid var(--BordeSelect2) !important;
+  border-radius: 0.25rem !important;
+  border-radius: 6px !important;
+  font-size: 1rem !important;
+  background: #f7fbff !important;
+  color: #222 !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+}
+
+
+
+.select2-container--default:focus .select2-selection--single:focus {
+
+  border-color: var(--colorPrincipal) !important;
+  box-shadow: 0 0 0 5px rgba(0, 102, 156, 0.15) !important;
+  outline: none !important;
+
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 44px !important;
+  /* Ajusta la flecha */
+}
+
+/* Aplica estilos al menú desplegable */
+.select2-dropdown {
+  border: 2px solid var(--colorSecundario);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+
+}
+
+/* Cambia el color de fondo cuando pasas el cursor sobre una opción */
+.select2-results__option--highlighted {
+  background: #8d9399 !important;
+  color: white;
+
+}
+
+
+#decisionModal {
+  display: none;
+  /* Oculta el modal por defecto */
+  position: fixed;
+  /* El modal se posiciona fijo respecto a la ventana del navegador */
+  z-index: 1000;
+  /* Se asegura de que esté por encima de otros elementos */
+  left: 0;
+  top: 0;
+  /* Lo coloca en la esquina superior izquierda */
+  width: 100%;
+  height: 100%;
+  /* Ocupa toda la pantalla */
+  overflow: auto;
+  /* Si el contenido es muy grande, permite hacer scroll */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Fondo semitransparente oscuro para dar efecto de superposición */
+}
+
+#decisioContenedor {
+
+  background-color: #fff;
+  /* Fondo blanco para el contenido del modal */
+  margin: 10% auto;
+  /* Centra el modal verticalmente (10% desde arriba) y horizontalmente (auto) */
+  border-radius: 8px;
+  /* Bordes redondeados */
+  width: 90%;
+  /* Ocupa el 90% del ancho de la pantalla */
+  max-width: 500px;
+  /* Pero nunca más de 500px de ancho */
+  position: relative;
+  /* Permite posicionar elementos hijos de forma absoluta (como el botón de cerrar) */
+  height: 150px;
+  font-weight: 200;
+  padding: 15px;
+
+}
+
+.btnContenedor {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  /* Espacio entre los botones */
+  align-items: center;
+  /*margin-top: 30px; /* Opcional, para separar de arriba */
+  height: 50px;
+  margin-top: 10px;
+}
+
+.btnDecision {
+
+  background-color: var(--colorPrincipal);
+  width: 100px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: center;
+
+}
+
+.btnDecision:hover {
+  background-color: #005080;
+}
+
+#decisionTextContenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+#decisionText {
+  font-weight: 500;
+  text-align: center;
+}
+
+#contenedorBuscadorPrincipal {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0px 15px 0px;
+  background-color: var(--colorSecundario);
+  border-radius: 6px;
+  height: 50px;
+  align-items: center;
+
+}
+
+#contenedorBuscadorSecundario {
+
+  display: inline-block;
+  /* Para que el div ocupe el tamaño necesario */
+  position: relative;
+  /* Permite posicionar el icono de forma absoluta */
+}
+
+#busquedaInput {
+  padding: 10px;
+  text-align: left;
+  width: 500px;
+  height: 35px;
+  /*border: 2px solid var(--colorPrincipal);*/
+  border-radius: 4px;
+  font-size: 18px;
+  background: white;
+  color: #222;
+  padding-left: 30px;
+  /* Espacio para el icono */
+  padding-top: 5px;
+  /* Ajusta según tus necesidades */
+  padding-bottom: 5px;
+  box-sizing: border-box;
+  /* Incluye el padding en el ancho total */
+
+}
+
+#buscadorIcono {
+  width: 35x;
+  font-weight: 500;
+  font-size: 2em;
+  text-align: center;
+  color: white;
+  background-color: var(--colorSecundario);
+  border-radius: 0px 4px 4px 0px;
+  position: absolute;
+  /* Posiciona el icono dentro del input */
+  top: 50%;
+  /* Centra verticalmente el icono */
+  left: 467px;
+  /* Posición horizontal */
+  transform: translateY(-50%);
+  /* Ajuste fino para centrar verticalmente */
+  pointer-events: none;
+  /* Para que el icono no interfiera con los clics del input */
+}
+
+
+/*Estilos para hacer responsiva la pagina*/
+
+
+
+@media (max-width: 1114px) {
+  .main-content {
+    margin-left: 290px;
+    /* Un poco más que el ancho de la sidebar (270px) */
+    padding: 32px;
+    width: var(--AnchotTabla);
+    min-height: 100vh;
+    box-sizing: border-box;
+    transition: all 0.4s ease;
+  }
+
+  .inferiorBtn {
+
+    margin-left: 3em;
+    margin-right: 3em;
+    height: 55px;
+
+  }
+
+  /*max-height: calc(100vh - 500px); */
+}
+
+
+
+
+
+/* Responsive media query code for small screens */
+@media (max-width: 1024px) {
+  .sidebar {
+    height: 56px;
+    margin: 13px;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    width: calc(100% - 26px);
+    max-height: calc(100vh - 26px);
+  }
+
+  .sidebar.menu-active {
+    overflow-y: auto;
+  }
+
+  .sidebar .sidebar-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-radius: 16px;
+    background: var(--colorSecundario);
+    padding: 8px 10px;
+  }
+
+  .sidebar-header .header-logo img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sidebar-header .sidebar-toggler,
+  .sidebar-nav .nav-item:hover .nav-tooltip {
+    display: none;
+  }
+
+  .sidebar-header .menu-toggler {
+    display: flex;
+    height: 30px;
+    width: 30px;
+  }
+
+  .sidebar-header .menu-toggler span {
+    font-size: 1.3rem;
+  }
+
+  .sidebar .sidebar-nav .nav-list {
+    padding: 0 10px;
+  }
+
+  .sidebar-nav .nav-link {
+    gap: 10px;
+    padding: 10px;
+    font-size: 0.94rem;
+  }
+
+  .sidebar-nav .nav-link .nav-icon {
+    font-size: 1.37rem;
+  }
+
+  .sidebar-nav .secondary-nav {
+    position: relative;
+    bottom: 0;
+    margin: 40px 0 30px;
+  }
+
+  .main-content {
+    margin-left: 0px;
+    margin-top: 50px;
+
+  }
+
+  #tableContainer {
+
+    margin-bottom: 10px;
+    max-height: calc(100vh - 135px);
+    min-height: calc(100vh - 130px);
+
+
+  }
+
+  .main-content.contracted {
+    margin-top: 210px;
+  }
+
+}
+
+
+/* ...tablas responsivas... */
+@media (max-width: 900px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .styled-table {
+    min-width: 500px;
+    font-size: 0.95rem;
+  }
+}
+
+
+/* ...tablas responsivas... */
+@media (max-width: 360px) {
+
+  .sidebar {
+    width: 330px
+  }
+
+  .main-content {
+    width: 330px;
+     
+  }
+
+  .styled-table {
+    width: 300px;
+    font-size: 0.95rem;
+  }
+
+  #busquedaInput {
+    width: 300px;
+    
+  
+
+
+  }
+
+  #buscadorIcono {
+
+  /* Posiciona el icono dentro del input */
+  top: 50%;
+  /* Centra verticalmente el icono */
+  left: 267px;
+  /* Posición horizontal */
+  transform: translateY(-50%);
+  /* Ajuste fino para centrar verticalmente */
+  pointer-events: none;
+  /* Para que el icono no interfiera con los clics del input */
+}
+}
