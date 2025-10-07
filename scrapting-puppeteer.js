@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 
-const PRINTER_URL = 'https://192.168.85.110/sws/index.html';
+const PRINTER_URL = 'https://192.168.85.247/sws/index.html';
 
 (async () => {
   const browser = await puppeteer.launch({ headless: true, args: ['--ignore-certificate-errors'] });

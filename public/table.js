@@ -157,7 +157,7 @@ async function getImpresoras() {
       ];
 
       // Modelo 408
-      const modelo408 = ["408dn", "MFP M232"];
+      const modelo408 = ["408dn", "MFP M232","MFP 432","M432"];
 
       // Si el modelo es uno de los de color, usa la función de color, si no, la de negro
       const modelo = (impresora.modelo || '').toUpperCase();
@@ -178,6 +178,7 @@ async function getImpresoras() {
 
       obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
         console.log(obtenerToner(impresora.direccionIp))
+
         const tonerCell = document.getElementById(tonerCellId);
         if (tonerCell) {
           tonerCell.innerHTML = renderBarraToner(nivelTonerValue);
@@ -855,7 +856,7 @@ function edicion() {
 
 async function obtenerNivelTonerNegro(ip) {
   // Aquí puedes agregar la lógica para extraer el nivel de tóner usando SNMP
-  console.log('Extrayendo nivel de tóner...');
+  console.log('Extrayendo nivel de tóner Negro...');
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerNegro/${ip}`);
     const tonerData = await tonerResp.json();
@@ -872,6 +873,7 @@ async function obtenerNivelTonerNegro(ip) {
 
 }
 async function obtenerNivelTonerColor(ip) {
+  console.log('Extrayendo nivel de tóner Color...');
   // Aquí puedes agregar la lógica para extraer el nivel de tóner usando SNMP
   // Obtiene los niveles de tóner de color y los devuelve como objeto {black, cyan, magenta, yellow}
   try {
@@ -889,11 +891,14 @@ async function obtenerNivelTonerColor(ip) {
 }
 
 async function obtenerNivelTonerScraping(ip) {
+  console.log('Extrayendo nivel de tóner pr scriping...');
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerScraping/${ip}`);
     const tonerData = await tonerResp.json();
     if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
+      console.log(tonerData.tonerLevels)
       return tonerData.tonerLevels;
+      
     }
     return '-';
   }
