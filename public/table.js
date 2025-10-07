@@ -157,7 +157,7 @@ async function getImpresoras() {
       ];
 
       // Modelo 408
-      const modelo408 = ["408dn", "MFP 232"];
+      const modelo408 = ["408dn", "MFP M232"];
 
       // Si el modelo es uno de los de color, usa la función de color, si no, la de negro
       const modelo = (impresora.modelo || '').toUpperCase();
@@ -168,7 +168,7 @@ async function getImpresoras() {
         obtenerToner = obtenerNivelTonerColor
       } else if (es408) {
 
-        cobtenerToner = obtenerNivelTonerScraping
+        obtenerToner = obtenerNivelTonerScraping
 
       }
       else {
@@ -177,9 +177,10 @@ async function getImpresoras() {
       //const obtenerToner = esColor ? obtenerNivelTonerColor : obtenerNivelTonerNegro;
 
       obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
+        console.log(obtenerToner(impresora.direccionIp))
         const tonerCell = document.getElementById(tonerCellId);
         if (tonerCell) {
-          tonerCell.innerHTML = nivelTonerValue//renderBarraToner(nivelTonerValue);
+          tonerCell.innerHTML = renderBarraToner(nivelTonerValue);
         }
 
       });
