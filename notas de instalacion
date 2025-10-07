@@ -34,3 +34,24 @@ probar la conexion de la llave en el equipo
  ----
  contenedor docker mssql : 2bfa99364046 
  
+
+ -Instalacion de en el servidor
+
+ npm install nodejs
+ npm install pm2 -g
+
+
+ --Confugar el servicio con pm2
+
+ pm2 start archivoruta --name archivonombre
+
+ ver los servicios 
+
+ pm2 list
+
+ configurar pm2 para que soporte los reinicios
+
+ pm2 startup
+ pm2 save
+
+ npm install net-snmp

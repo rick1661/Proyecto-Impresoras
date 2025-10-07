@@ -5,19 +5,25 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.12.2",
+    "cheerio": "^1.1.2",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jquery": "^3.7.1",
     "morgan": "^1.10.1",
     "mssql": "^11.0.1",
+    "net-snmp": "^3.26.0",
+    "nodejs": "^0.0.0",
     "postcss-import": "^16.1.1",
+    "puppeteer": "^24.23.0",
     "select2": "^4.1.0-rc.0"
   },
   "devDependencies": {
@@ -26,5 +32,13 @@
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.1.12"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rick1661/Proyecto-Impresoras.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rick1661/Proyecto-Impresoras/issues"
+  },
+  "homepage": "https://github.com/rick1661/Proyecto-Impresoras#readme"
 }
