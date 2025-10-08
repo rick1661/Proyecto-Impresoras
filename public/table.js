@@ -179,6 +179,18 @@ async function getImpresoras() {
       obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
         console.log(obtenerToner(impresora.direccionIp))
 
+        // Intercambio de colores solo para modelo P57750
+        if (modelo.includes('P57750')) {
+          if (nivelTonerValue && typeof nivelTonerValue === 'object') {
+            nivelTonerValue = {
+              black: nivelTonerValue.yellow,
+              cyan: nivelTonerValue.magenta,
+              magenta: nivelTonerValue.cyan,
+              yellow: nivelTonerValue.black
+            };
+          }
+        }
+
         const tonerCell = document.getElementById(tonerCellId);
         if (tonerCell) {
           tonerCell.innerHTML = renderBarraToner(nivelTonerValue);
@@ -920,11 +932,10 @@ function renderBarraToner(valor) {
     const num = Number(valor);
     if (isNaN(num)) return '-';
     return `
-      <div style="background:#eee; border-radius:4px; width:100px; height:18px; position:relative;">
-        <div style="background:#4caf50; width:${num}%; height:100%; border-radius:4px;"></div>
-        <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:18px; font-size:12px; color:#222;">
-          ${num}%
-        </span>
+      <div class="barraTonerNegro">
+        <div class="nivel" style="width:${num}%;">
+          <span class="textoNivel">${num}%</span>
+        </div>
       </div>
     `;
   }
@@ -934,18 +945,18 @@ function renderBarraToner(valor) {
     const keys = Object.keys(valor);
     if (keys.length === 2 && keys.includes('black') && keys.includes('image')) {
       const etiquetas = [
-        { key: 'black', label: 'Tóner', color: '#222' },
+        { key: 'black', label: 'Tóner', color: '#4caf50' },
         { key: 'image', label: 'Tambor', color: '#888' }
       ];
       return etiquetas.map(e => {
         const num = Number(valor[e.key]);
         if (isNaN(num)) return '';
         return `
-          <div style="margin-bottom:2px;">
-            <span style="font-size:11px; width:50px; display:inline-block; color:${e.color};">${e.label}</span>
-            <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
-              <div style="background:${e.color}; width:${num}%; height:100%; border-radius:4px;"></div>
-              <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:14px; font-size:11px; color:#222;">
+          <div class="barraScrapingContenedor" style="margin-bottom:2px;">
+            <span class="textoEtiqueta" style="color:${e.color};">${e.label}</span>
+            <div class="barraScraping">
+              <div class="nivel" style="background:${e.color}; width:${num}%;"></div>
+              <span class="textoNivel">
                 ${num}%
               </span>
             </div>

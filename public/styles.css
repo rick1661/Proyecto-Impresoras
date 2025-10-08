@@ -883,7 +883,7 @@ h2 {
 
   .main-content {
     width: 330px;
-     
+
   }
 
   .styled-table {
@@ -893,22 +893,101 @@ h2 {
 
   #busquedaInput {
     width: 300px;
-    
-  
+
+
 
 
   }
 
   #buscadorIcono {
 
-  /* Posiciona el icono dentro del input */
-  top: 50%;
-  /* Centra verticalmente el icono */
-  left: 267px;
-  /* Posición horizontal */
-  transform: translateY(-50%);
-  /* Ajuste fino para centrar verticalmente */
-  pointer-events: none;
-  /* Para que el icono no interfiera con los clics del input */
+    /* Posiciona el icono dentro del input */
+    top: 50%;
+    /* Centra verticalmente el icono */
+    left: 267px;
+    /* Posición horizontal */
+    transform: translateY(-50%);
+    /* Ajuste fino para centrar verticalmente */
+    pointer-events: none;
+    /* Para que el icono no interfiera con los clics del input */
+  }
 }
+
+.barraTonerNegro {
+  background: #eee;
+  height: 14px;
+  width: 80px;
+  border-radius: 4px;
+  margin-top: 2px;
+  position: relative;
+}
+
+.barraTonerNegro .nivel {
+  background: #4caf50;
+  height: 100%;
+  border-radius: 4px;
+  width: 70%;
+  transition: width 0.5s ease-in-out;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.barraTonerNegro .nivel .textoNivel {
+  position: static;
+  width: 100%;
+  text-align: center;
+  line-height: 14px;
+  font-size: 12px;
+  color: black;
+  font-weight: 600;;
+}
+
+.barraScrapingContenedor {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.barraScrapingContenedor .textoEtiqueta {
+  font-size: 12px;
+  width: 60px;
+  color: #333;
+  font-weight: 500;
+  display: inline-block;
+  margin-right: 6px;
+  text-align: right;
+}
+
+.barraScraping {
+  background: #eee;
+  border-radius: 4px;
+  width: 80px;
+  height: 16px;
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+  border: 1px solid #ccc;
+}
+
+.barraScraping .nivel {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s;
+}
+
+.barraScraping .textoNivel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  text-align: center;
+  line-height: 16px;
+  font-size: 12px;
+  color: #222;
+  font-weight: 600;
+  text-shadow: 0 1px 2px #fff;
 }
