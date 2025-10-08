@@ -36,7 +36,11 @@ create table impresora(
 impresoraID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 serie Varchar(50) NOT NULL,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 nombre VARCHAR(100),
+=======
+nombre VARCHAR(50),
+>>>>>>> Stashed changes
 =======
 nombre VARCHAR(50),
 >>>>>>> Stashed changes
