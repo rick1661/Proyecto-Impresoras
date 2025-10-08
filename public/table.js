@@ -891,18 +891,23 @@ async function obtenerNivelTonerColor(ip) {
 }
 
 async function obtenerNivelTonerScraping(ip) {
-  console.log('Extrayendo nivel de tóner pr scriping...');
+  console.log('Extrayendo nivel de tóner por scraping...');
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerScraping/${ip}`);
     const tonerData = await tonerResp.json();
+    // Si el backend devuelve un array de porcentajes en tonerData.niveles
+    if (Array.isArray(tonerData.niveles)) {
+      // Convierte el array a un objeto { black, image }
+      // Puedes ajustar los nombres según lo que representa cada valor
+      const [black, image] = tonerData.niveles.map(v => parseInt(v));
+      return { black, image };
+    }
+    // Si el backend devuelve un objeto tonerLevels
     if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
-      console.log(tonerData.tonerLevels)
       return tonerData.tonerLevels;
-      
     }
     return '-';
-  }
-  catch (error) {
+  } catch (error) {
     return '-';
   }
 
@@ -923,29 +928,54 @@ function renderBarraToner(valor) {
       </div>
     `;
   }
-  // Si es un objeto (impresora color), renderiza una barra por color
+  // Si es un objeto (impresora color o monocromo con drum), renderiza barras según las propiedades presentes
   if (typeof valor === 'object' && valor !== null) {
-    const colores = [
-      { key: 'black', label: 'K', color: '#222' },
-      { key: 'cyan', label: 'C', color: '#00bcd4' },
-      { key: 'magenta', label: 'M', color: '#e91e63' },
-      { key: 'yellow', label: 'Y', color: '#ffeb3b' }
-    ];
-    return colores.map(c => {
-      const num = Number(valor[c.key]);
-      if (isNaN(num)) return '';
-      return `
-        <div style="margin-bottom:2px;">
-          <span style="font-size:11px; width:18px; display:inline-block; color:${c.color === '#ffeb3b' ? '#222' : c.color};">${c.label}</span>
-          <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
-            <div style="background:${c.color}; width:${num}%; height:100%; border-radius:4px;"></div>
-            <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:14px; font-size:11px; color:#222;">
-              ${num}%
-            </span>
+    // Si solo tiene black e image, mostrar etiquetas personalizadas
+    const keys = Object.keys(valor);
+    if (keys.length === 2 && keys.includes('black') && keys.includes('image')) {
+      const etiquetas = [
+        { key: 'black', label: 'Tóner', color: '#222' },
+        { key: 'image', label: 'Tambor', color: '#888' }
+      ];
+      return etiquetas.map(e => {
+        const num = Number(valor[e.key]);
+        if (isNaN(num)) return '';
+        return `
+          <div style="margin-bottom:2px;">
+            <span style="font-size:11px; width:50px; display:inline-block; color:${e.color};">${e.label}</span>
+            <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
+              <div style="background:${e.color}; width:${num}%; height:100%; border-radius:4px;"></div>
+              <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:14px; font-size:11px; color:#222;">
+                ${num}%
+              </span>
+            </div>
           </div>
-        </div>
-      `;
-    }).join('');
+        `;
+      }).join('');
+    } else {
+      // Si es color, mostrar las barras CMYK
+      const colores = [
+        { key: 'black', label: 'K', color: '#222' },
+        { key: 'cyan', label: 'C', color: '#00bcd4' },
+        { key: 'magenta', label: 'M', color: '#e91e63' },
+        { key: 'yellow', label: 'Y', color: '#ffeb3b' }
+      ];
+      return colores.map(c => {
+        const num = Number(valor[c.key]);
+        if (isNaN(num)) return '';
+        return `
+          <div style="margin-bottom:2px;">
+            <span style="font-size:11px; width:18px; display:inline-block; color:${c.color === '#ffeb3b' ? '#222' : c.color};">${c.label}</span>
+            <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
+              <div style="background:${c.color}; width:${num}%; height:100%; border-radius:4px;"></div>
+              <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:14px; font-size:11px; color:#222;">
+                ${num}%
+              </span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
   }
   return '-';
 }
