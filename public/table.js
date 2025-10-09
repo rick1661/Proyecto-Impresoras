@@ -1,4 +1,3 @@
-
 //Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
@@ -16,6 +15,13 @@ const editarBtn = document.getElementById('editarBtn');
 let vacio = false;
 let eliminar = false;
 let idEliminar;
+
+// Variables para caché de datos
+let cacheImpresoras = null;
+let cacheConsumibles = null;
+
+// Caché para niveles de tóner por IP
+const cacheToner = {};
 
 //Funcion para cargar listeners
 cargarEventListeners();
@@ -102,104 +108,116 @@ function cargarTablaimpresoras() {
   console.log('Botón de impresoras clickeado');
 
   // Llamar a la función para obtener e insertar las impresoras en la tabla
-  getImpresoras();
+  if (cacheImpresoras) {
+    renderImpresoras(cacheImpresoras);
+  } else {
+    getImpresoras(true);
+  }
 };
 
 //***********************************funcion para obtener e insertar las impresoras en la tabla principal****************************************
 
 
-async function getImpresoras() {
+async function getImpresoras(guardarCache = false) {
   try {
-    const response = await fetch('https://192.168.80.180:5500/impresora/');
+    const response = await fetch(`https://192.168.80.180:5500/impresora`); // Carga todos
     const data = await response.json();
-    const tbody = document.querySelector('.styled-table tbody');
-    tbody.innerHTML = '';
-    for (const impresora of data) {
-      //Creamos la url de la IP
-      const ip = `http://${impresora.direccionIp}`;
-      const ipUrl = new URL(ip);
-      const row = document.createElement('tr');
-      // Generar un id único para la celda de tóner
-      const tonerCellId = `toner-${impresora.impresoraID}`;
-
-      if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
-        row.innerHTML = `
-          <td>${impresora.serie}</td>
-          <td>${impresora.nombre[0]}</td>
-          <td id="${tonerCellId}">Cargando...</td>
-          <td>${impresora.marca}</td>
-          <td>${impresora.modelo}</td>
-          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
-          <td>${impresora.nombre[1]}</td>
-          <td>${impresora.nombre[2]}</td>
-          <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
-          <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
-        `;
-      } else {
-        row.innerHTML = `
-          <td>${impresora.serie}</td>
-          <td>${impresora.nombre[0]}</td>
-          <td id="${tonerCellId}">Cargando...</td>
-          <td>${impresora.marca}</td>
-          <td>${impresora.modelo}</td>
-          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
-          <td>${impresora.nombre[1]}</td>
-          <td>${impresora.nombre[2]}</td>`;
-      }
-      tbody.appendChild(row);
-
-      // Modelos que usan tóner color
-      const modelosColor = [
-        'E47528',
-        'P57750 XC',
-        'MFP M283fdw',
-        'MFP P57750'
-      ];
-
-      // Modelo 408
-      const modelo408 = ["408dn", "MFP M232","MFP 432","M432"];
-
-      // Si el modelo es uno de los de color, usa la función de color, si no, la de negro
-      const modelo = (impresora.modelo || '').toUpperCase();
-      let obtenerToner
-      const esColor = modelosColor.some(m => modelo.includes(m.toUpperCase()));
-      const es408 = modelo408.some(m => modelo.includes(m.toUpperCase()));
-      if (esColor) {
-        obtenerToner = obtenerNivelTonerColor
-      } else if (es408) {
-
-        obtenerToner = obtenerNivelTonerScraping
-
-      }
-      else {
-        obtenerToner = obtenerNivelTonerNegro
-      }
-      //const obtenerToner = esColor ? obtenerNivelTonerColor : obtenerNivelTonerNegro;
-
-      obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
-        console.log(obtenerToner(impresora.direccionIp))
-
-        // Intercambio de colores solo para modelo P57750
-        if (modelo.includes('P57750')) {
-          if (nivelTonerValue && typeof nivelTonerValue === 'object') {
-            nivelTonerValue = {
-              black: nivelTonerValue.yellow,
-              cyan: nivelTonerValue.magenta,
-              magenta: nivelTonerValue.cyan,
-              yellow: nivelTonerValue.black
-            };
-          }
-        }
-
-        const tonerCell = document.getElementById(tonerCellId);
-        if (tonerCell) {
-          tonerCell.innerHTML = renderBarraToner(nivelTonerValue);
-        }
-
-      });
+    const impresoras = data.impresoras || data;
+    if (guardarCache) {
+      cacheImpresoras = impresoras;
     }
+    renderImpresoras(impresoras);
   } catch (error) {
     console.error('Error al cargar impresoras:', error);
+  }
+}
+
+function renderImpresoras(impresoras) {
+  const tbody = document.querySelector('.styled-table tbody');
+  tbody.innerHTML = '';
+  for (const impresora of impresoras) {
+    //Creamos la url de la IP
+    const ip = `http://${impresora.direccionIp}`;
+    const ipUrl = new URL(ip);
+    const row = document.createElement('tr');
+    // Generar un id único para la celda de tóner
+    const tonerCellId = `toner-${impresora.impresoraID}`;
+
+    if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+      row.innerHTML = `
+        <td>${impresora.serie}</td>
+        <td>${impresora.nombre[0]}</td>
+        <td id="${tonerCellId}">Cargando...</td>
+        <td>${impresora.marca}</td>
+        <td>${impresora.modelo}</td>
+        <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+        <td>${impresora.nombre[1]}</td>
+        <td>${impresora.nombre[2]}</td>
+        <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
+        <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+      `;
+    } else {
+      row.innerHTML = `
+        <td>${impresora.serie}</td>
+        <td>${impresora.nombre[0]}</td>
+        <td id="${tonerCellId}">Cargando...</td>
+        <td>${impresora.marca}</td>
+        <td>${impresora.modelo}</td>
+        <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+        <td>${impresora.nombre[1]}</td>
+        <td>${impresora.nombre[2]}</td>`;
+    }
+    tbody.appendChild(row);
+
+    // Modelos que usan tóner color
+    const modelosColor = [
+      'E47528',
+      'P57750 XC',
+      'MFP M283fdw',
+      'MFP P57750'
+    ];
+
+    // Modelo 408
+    const modelo408 = ["408dn", "MFP M232","MFP 432","M432"];
+
+    // Si el modelo es uno de los de color, usa la función de color, si no, la de negro
+    const modelo = (impresora.modelo || '').toUpperCase();
+    let obtenerToner
+    const esColor = modelosColor.some(m => modelo.includes(m.toUpperCase()));
+    const es408 = modelo408.some(m => modelo.includes(m.toUpperCase()));
+    if (esColor) {
+      obtenerToner = obtenerNivelTonerColor
+    } else if (es408) {
+
+      obtenerToner = obtenerNivelTonerScraping
+
+    }
+    else {
+      obtenerToner = obtenerNivelTonerNegro
+    }
+    //const obtenerToner = esColor ? obtenerNivelTonerColor : obtenerNivelTonerNegro;
+
+    obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
+      console.log(obtenerToner(impresora.direccionIp))
+
+      // Intercambio de colores solo para modelo P57750
+      if (modelo.includes('P57750')) {
+        if (nivelTonerValue && typeof nivelTonerValue === 'object') {
+          nivelTonerValue = {
+            black: nivelTonerValue.yellow,
+            cyan: nivelTonerValue.magenta,
+            magenta: nivelTonerValue.cyan,
+            yellow: nivelTonerValue.black
+          };
+        }
+      }
+
+      const tonerCell = document.getElementById(tonerCellId);
+      if (tonerCell) {
+        tonerCell.innerHTML = renderBarraToner(nivelTonerValue);
+      }
+
+    });
   }
 }
 
@@ -258,49 +276,59 @@ function cargarTablaConsumibles() {
   // Cambiar el texto del botón para agregar consumibles
   botonADD.innerHTML = `<span>Agregar consumible</span>`;
   // Llamar a la función para obtener e insertar los consumibles en la tabla
-  getConsumibles();
-
+  if (cacheConsumibles) {
+    renderConsumibles(cacheConsumibles);
+  } else {
+    getConsumibles(true);
+  }
 };
 
 //**************************************funcion para obtener e insertar los consumibles en la tabla principal**************************************
-function getConsumibles() {
-  fetch('https://192.168.80.180:5500/consumible')
-    .then(response => response.json()) // Convierte la respuesta a JSON
-    .then(data => { // en data se guardan la información de la consulta
-      console.log(data);
-      const tbody = document.querySelector('.styled-table tbody');
-      tbody.innerHTML = ''; // Limpia el contenido actual
-      data.forEach(consumible => {
-        const row = document.createElement('tr');
-        if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
-          row.innerHTML = `
-          <td>${consumible.tipo}</td>
-          <td>${consumible.modelo}</td>
-          <td>${consumible.tij}</td>
-          <td>${consumible.fecha.slice(0, 10)}</td>
-          <td>${consumible.nombre}</td>
-          <td>${consumible.serie}</td>
-          <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
-          <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
-        `;
-        }
-        else {
-          row.innerHTML = `
-          <td>${consumible.tipo}</td>
-          <td>${consumible.modelo}</td>
-          <td>${consumible.tij}</td>
-          <td>${consumible.fecha.slice(0, 10)}</td>
-          <td>${consumible.nombre}</td>
-          <td>${consumible.serie}</td>`
-
-        }
-
-        tbody.appendChild(row);
-      });
+function getConsumibles(guardarCache = false) {
+  fetch(`https://192.168.80.180:5500/consumible`)
+    .then(response => response.json())
+    .then(data => {
+      const consumibles = data.consumibles || data;
+      if (guardarCache) {
+        cacheConsumibles = consumibles;
+      }
+      renderConsumibles(consumibles);
     })
     .catch(error => {
       console.error('Error al cargar consumibles:', error);
     });
+}
+
+function renderConsumibles(consumibles) {
+  const tbody = document.querySelector('.styled-table tbody');
+  tbody.innerHTML = '';
+  consumibles.forEach(consumible => {
+    const row = document.createElement('tr');
+    if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+      row.innerHTML = `
+      <td>${consumible.tipo}</td>
+      <td>${consumible.modelo}</td>
+      <td>${consumible.tij}</td>
+      <td>${consumible.fecha.slice(0, 10)}</td>
+      <td>${consumible.nombre}</td>
+      <td>${consumible.serie}</td>
+      <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
+      <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
+    `;
+    }
+    else {
+      row.innerHTML = `
+      <td>${consumible.tipo}</td>
+      <td>${consumible.modelo}</td>
+      <td>${consumible.tij}</td>
+      <td>${consumible.fecha.slice(0, 10)}</td>
+      <td>${consumible.nombre}</td>
+      <td>${consumible.serie}</td>`
+
+    }
+
+    tbody.appendChild(row);
+  });
 }
 
 //*************************funcion para Editar y eliminar elementos***********************************//
@@ -867,62 +895,70 @@ function edicion() {
 //-----------------------------------------funciones para extraer nivel de toner---------------------------------------------------------
 
 async function obtenerNivelTonerNegro(ip) {
-  // Aquí puedes agregar la lógica para extraer el nivel de tóner usando SNMP
+  if (cacheToner[ip] && cacheToner[ip].negro !== undefined) {
+    return cacheToner[ip].negro;
+  }
   console.log('Extrayendo nivel de tóner Negro...');
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerNegro/${ip}`);
     const tonerData = await tonerResp.json();
+    let nivel;
     if (tonerData.tonerLevels && tonerData.tonerLevels.length > 0) {
-      return tonerData.tonerLevels.map(t => t.value).join(', ');
+      nivel = tonerData.tonerLevels.map(t => t.value).join(', ');
     } else if (tonerData.tonerLevel) {
-      return tonerData.tonerLevel;
+      nivel = tonerData.tonerLevel;
     } else {
-      return '-'
+      nivel = '-';
     }
+    if (!cacheToner[ip]) cacheToner[ip] = {};
+    cacheToner[ip].negro = nivel;
+    return nivel;
   } catch (err) {
     return '-';
   }
-
 }
+
 async function obtenerNivelTonerColor(ip) {
+  if (cacheToner[ip] && cacheToner[ip].color !== undefined) {
+    return cacheToner[ip].color;
+  }
   console.log('Extrayendo nivel de tóner Color...');
-  // Aquí puedes agregar la lógica para extraer el nivel de tóner usando SNMP
-  // Obtiene los niveles de tóner de color y los devuelve como objeto {black, cyan, magenta, yellow}
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonersColor/${ip}`);
     const tonerData = await tonerResp.json();
-    // Espera que la respuesta sea { tonerLevels: { black: X, cyan: Y, magenta: Z, yellow: W } }
+    let nivel = '-';
     if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
-      return tonerData.tonerLevels;
+      nivel = tonerData.tonerLevels;
     }
-    return '-';
+    if (!cacheToner[ip]) cacheToner[ip] = {};
+    cacheToner[ip].color = nivel;
+    return nivel;
   } catch (err) {
     return '-';
   }
-
 }
 
 async function obtenerNivelTonerScraping(ip) {
+  if (cacheToner[ip] && cacheToner[ip].scraping !== undefined) {
+    return cacheToner[ip].scraping;
+  }
   console.log('Extrayendo nivel de tóner por scraping...');
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerScraping/${ip}`);
     const tonerData = await tonerResp.json();
-    // Si el backend devuelve un array de porcentajes en tonerData.niveles
+    let nivel = '-';
     if (Array.isArray(tonerData.niveles)) {
-      // Convierte el array a un objeto { black, image }
-      // Puedes ajustar los nombres según lo que representa cada valor
       const [black, image] = tonerData.niveles.map(v => parseInt(v));
-      return { black, image };
+      nivel = { black, image };
+    } else if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
+      nivel = tonerData.tonerLevels;
     }
-    // Si el backend devuelve un objeto tonerLevels
-    if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
-      return tonerData.tonerLevels;
-    }
-    return '-';
+    if (!cacheToner[ip]) cacheToner[ip] = {};
+    cacheToner[ip].scraping = nivel;
+    return nivel;
   } catch (error) {
     return '-';
   }
-
 }
 
 // Renderiza una barra de porcentaje para el nivel de tóner
