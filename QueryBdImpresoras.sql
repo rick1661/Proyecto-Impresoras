@@ -35,15 +35,7 @@ create table impresora(
 
 impresoraID INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 serie Varchar(50) NOT NULL,
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 nombre VARCHAR(100),
-=======
-nombre VARCHAR(50),
->>>>>>> Stashed changes
-=======
-nombre VARCHAR(50),
->>>>>>> Stashed changes
 marca VARCHAR(15),
 modelo VARCHAR(30),
 direccionIp VARCHAR(15),
@@ -305,11 +297,60 @@ INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contra
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1R8F90D','Unident TJ HP Ortodoncia','HP','408dn','192.168.85.250',13,73);
 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID ) VALUES ('CNB1R6V2JZ','Unident TJ HP Odontopediatria','HP','','192.168.85.242',13,);
 
+Select* from impresora where serie='MXBC19EHR2';
+
+/*Insercciones cosumibles -*/
+
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W2113X', 'TIJ7065', '2025-07-23', 20); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF258XC', 'TIJ6800', '2025-06-09', 81); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF258XC', 'TIJ7222', '2025-08-14', 81); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', '258XC', 'TIJ7435', '2025-09-08', 71); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF287JC', 'TIJ7183', '2025-08-12', 73); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CE255JC', 'TIJ7458', '2025-09-12', 19); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W1330XC', 'TIJ7437', '2025-09-08', 85); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W1330XC', 'TIJ7438', '2025-09-08', 86); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W1330XC', 'TIJ7436', '2025-09-08', 84); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7559', '2025-09-30', 56); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7583', '2025-10-03', 37); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7241', '2025-08-15', 4); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7543', '2025-09-25', 6); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7460', '2025-09-12', 78); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7460', '2025-09-12', 76); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7504', '2025-09-19', 13); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7542', '2025-09-25', 50); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ5816', '2024-12-30', 60); /*Si*/
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7441', '2025-09-09', 66); /*pendiente*/
 
 
 
-SET modelo ='MFP E52645'
-WHERE impresoraID = 6;
+
+
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7126', '2025-08-05', 25);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7311', '2025-08-21', 6);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF287JC', 'TIJ7324', '2025-08-27', 53);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7325', '2025-08-27', 51);
+
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7439', '2025-09-09', 68);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'CF287JC', 'TIJ7457', '2025-09-12', 52);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7310', '2025-08-20', 54);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7485', '2025-09-17', 42);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W1330XC', 'TIJ7493', '2025-09-17', 45);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7503', '2025-09-19', 23);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('Toner', 'W9008MC', 'TIJ7504', '2025-09-19', 13);
+
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBCNC21YC', 'TIJ6003', '2025-02-05', 59);
+
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W900MC', 'MXBCP1P1L9', 'TIJ6452', '2025-04-16', 61);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBC19EHRL', 'TIJ6004', '2025-02-05', 62);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'PHCCP2H0Y8', 'TIJ7187', '2025-08-12', 63);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBCP1S15R', 'TIJ7186', '2025-08-12', 64);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBC19EHRL', 'TIJ7185', '2025-08-12', 62);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBCNC21QP', 'TIJ7460', '2025-09-12', 65);
+
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'PHCCN9T0LK', 'TIJ7461', '2025-09-12', 67);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBCP1P2D5', 'TIJ7462', '2025-09-12', 68);
+INSERT INTO consumible (tipo, modelo, tij, fecha, impresoraID) VALUES ('W9008MC', 'MXBCP1S06C', 'TIJ07553', '2025-09-26', 69);
+
 
 UPDATE impresora
 SET modelo ='MFP E52645'
@@ -333,3 +374,4 @@ use ImpresorasBD;
 SELECT * FROM consumible
 
 SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;
+

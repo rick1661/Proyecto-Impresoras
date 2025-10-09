@@ -144,7 +144,7 @@ btn.onclick = function () {
                         <option value="206X M">206X M</option>
                         <option value="206X C">206X C</option>
                         <option value="206X K">206X K</option>
-                        <option value="W132AC">W132AC</option>
+                        <option value="W1332AC">W1332AC</option>
                         <option value="CF287JC">CF287JC</option>
                     </select>
                     <button type="submit">Guardar</button>`
