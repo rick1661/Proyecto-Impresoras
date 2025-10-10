@@ -8,10 +8,12 @@ import consumibleRoutes from './routes/consumible.routes.js';
 import areaRoutes from './routes/area.routes.js';
 import tonerRoutes from './routes/toner.routes.js';
 
+
 import fs from 'fs';
 import https from 'https';
 import path from 'path';
 import snmp from 'net-snmp';
+import rateLimit from 'express-rate-limit';
 
 const __dirname = path.resolve();
 

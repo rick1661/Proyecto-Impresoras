@@ -23,6 +23,11 @@ let cacheConsumibles = null;
 // Caché para niveles de tóner por IP
 const cacheToner = {};
 
+// Cola de peticiones para nivel de tóner
+const tonerQueue = [];
+let tonerQueueActive = 0;
+const tonerQueueMax = 3;
+
 //Funcion para cargar listeners
 cargarEventListeners();
 
@@ -132,6 +137,23 @@ async function getImpresoras(guardarCache = false) {
   }
 }
 
+function enqueueTonerRequest(fn) {
+  tonerQueue.push(fn);
+  processTonerQueue();
+  console.log(tonerQueue);
+}
+
+function processTonerQueue() {
+  while (tonerQueueActive < tonerQueueMax && tonerQueue.length > 0) {
+    const fn = tonerQueue.shift();
+    tonerQueueActive++;
+    fn().finally(() => {
+      tonerQueueActive--;
+      processTonerQueue();
+    });
+  }
+}
+
 function renderImpresoras(impresoras) {
   const tbody = document.querySelector('.styled-table tbody');
   tbody.innerHTML = '';
@@ -142,6 +164,7 @@ function renderImpresoras(impresoras) {
     const row = document.createElement('tr');
     // Generar un id único para la celda de tóner
     const tonerCellId = `toner-${impresora.impresoraID}`;
+    let obtenerToner;
 
     if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
       row.innerHTML = `
@@ -178,11 +201,10 @@ function renderImpresoras(impresoras) {
     ];
 
     // Modelo 408
-    const modelo408 = ["408dn", "MFP M232","MFP 432","M432"];
+    const modelo408 = ["408dn", "MFP M232", "MFP 432", "M432"];
 
     // Si el modelo es uno de los de color, usa la función de color, si no, la de negro
     const modelo = (impresora.modelo || '').toUpperCase();
-    let obtenerToner
     const esColor = modelosColor.some(m => modelo.includes(m.toUpperCase()));
     const es408 = modelo408.some(m => modelo.includes(m.toUpperCase()));
     if (esColor) {
@@ -197,7 +219,7 @@ function renderImpresoras(impresoras) {
     }
     //const obtenerToner = esColor ? obtenerNivelTonerColor : obtenerNivelTonerNegro;
 
-    obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
+    enqueueTonerRequest(() => obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
       console.log(obtenerToner(impresora.direccionIp))
 
       // Intercambio de colores solo para modelo P57750
@@ -217,7 +239,7 @@ function renderImpresoras(impresoras) {
         tonerCell.innerHTML = renderBarraToner(nivelTonerValue);
       }
 
-    });
+    }));
   }
 }
 
@@ -447,6 +469,8 @@ async function eliminarImpresora(e) {
 
     //Volver a cargar la tabla de impresoras
     decision.style.display = 'none';
+    limpiarCacheToner()
+    cacheImpresoras = null;
     getImpresoras();
 
 
@@ -479,7 +503,9 @@ async function eliminarConsumible(e) {
 
     //Volver a cargar la tabla de consumibles
     decision.style.display = 'none';
+    cacheConsumibles = null;
     getConsumibles();
+
 
 
   } catch (error) {
@@ -769,6 +795,8 @@ async function enviarCambios(e) {
             alert('Impresora actualizada correctamente');
 
             //Volver a cargar la tabla de impresoras
+            cacheImpresoras = null;
+            
             getImpresoras();
             vacio = false;
 
@@ -821,6 +849,7 @@ async function enviarCambios(e) {
             alert('Consumible actualizado correctamente');
 
             //Volver a cargar la tabla de impresoras
+            cacheConsumibles = null;
             getConsumibles();
             vacio = false;
 
@@ -1025,4 +1054,12 @@ function renderBarraToner(valor) {
     }
   }
   return '-';
+}
+
+function limpiarCacheToner() {
+
+  for (const ip in cacheToner) {
+    delete cacheToner[ip];
+  }
+
 }

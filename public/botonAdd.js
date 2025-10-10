@@ -377,6 +377,8 @@ async function formularioImpresoraEnvio(formulario) {
 
     resetFormulario(formulario);
     //Volver a cargar la tabla de impresoras
+    limpiarCacheToner()
+    cacheImpresoras = null;
     getImpresoras();
   }
   catch (error) {
@@ -427,6 +429,7 @@ async function formularioConsumibleEnvio(formulario) {
     alert('Datos recibidos correctamente.');
 
     //Volver a cargar la tabla de consumibles
+    cacheConsumibles = null;
     getConsumibles();
     resetFormulario(formulario);
   } catch (error) {
