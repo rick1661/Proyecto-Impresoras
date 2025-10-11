@@ -103,5 +103,20 @@ export const deleteOneImpresora = async (req, res) => {
         return res.json({ message: "Producto eliminado" });
     }
 
-    
+
+}
+
+// cargar impresoras y modelo de consulta desde la base de datos
+export async function impresoraIpModelo() {
+    // Consulta tu base de datos y devuelve un array de impresoras: [{ direccionIp, Modelo }]
+    const pool = await getConnection();
+    const result = await pool.request().query('SELECT direccionIp, modelo FROM impresora');
+    console.log(result);
+    return result.recordset;
+    // Ejemplo estático:
+    // return [
+    //     { direccionIp: '        192.168.1.1', modelo: 'HP LaserJet Pro' },
+    //     { direccionIp: '        192.168.1.2', modelo: 'Canon PIXMA' },
+    //     { direccionIp: '        192.168.1.3', modelo: 'Epson EcoTank' }
+    // ];       
 }

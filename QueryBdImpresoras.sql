@@ -373,3 +373,5 @@ SELECT * FROM consumible
 
 SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FROM consumible INNER JOIN impresora ON consumible.impresoraID = impresora.impresoraID;
 
+SELECT * FROM impresora;
+SELECT direccionIp, modelo FROM impresora

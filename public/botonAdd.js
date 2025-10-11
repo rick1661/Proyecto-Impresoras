@@ -11,6 +11,28 @@ const TituloH2 = document.querySelector('#TituloH2');
 const selectImpresora = document.querySelector('#selectImpresora');
 const root = document.documentElement; // root css
 
+//Seleccionar los inputs para la validación
+const inputSerie = document.querySelector('#form input[name="serie"]');
+const inputNombre = document.querySelector('#form input[name="nombre"]');
+const inputMarca = document.querySelector('#form input[name="marca"]');
+const inputModelo = document.querySelector('#form input[name="modelo"]');
+const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
+const selectArea = document.querySelector('#form select[name="area"]');
+const selectContrato = document.querySelector('#form select[name="contrato"]');
+//const btnGuardar = document.querySelector('#btnGuardar');
+
+let tipoFormulario = null;
+
+// Asignar eventos
+
+inputSerie.addEventListener('blur', validacionCampos);
+inputNombre.addEventListener('blur', validacionCampos);
+inputMarca.addEventListener('blur', validacionCampos);
+inputModelo.addEventListener('blur', validacionCampos);
+inputDireccionIp.addEventListener('blur', validacionCampos);
+selectArea.addEventListener('blur', validacionSelect);
+selectContrato.addEventListener('blur', validacionSelect);
+
 //------Eventos onclick------//
 btn.onclick = function () {
   modal.style.display = 'block';
@@ -46,52 +68,8 @@ btn.onclick = function () {
       // Cargar las áreas y contratos al abrir el modal
       getContratos();
 
-      //Seleccionar los inputs para la validación
-      const inputSerie = document.querySelector('#form input[name="serie"]');
-      const inputNombre = document.querySelector('#form input[name="nombre"]');
-      const inputMarca = document.querySelector('#form input[name="marca"]');
-      const inputModelo = document.querySelector('#form input[name="modelo"]');
-      const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
-      const selectArea = document.querySelector('#form select[name="area"]');
-      const selectContrato = document.querySelector('#form select[name="contrato"]');
-      //const btnGuardar = document.querySelector('#btnGuardar');
-
-      // Asignar eventos
-
-      inputSerie.addEventListener('blur', validacionCampos);
-      inputNombre.addEventListener('blur', validacionCampos);
-      inputMarca.addEventListener('blur', validacionCampos);
-      inputModelo.addEventListener('blur', validacionCampos);
-      inputDireccionIp.addEventListener('blur', validacionCampos);
-      selectArea.addEventListener('blur', validacionSelect);
-      selectContrato.addEventListener('blur', validacionSelect);
-
-
-      //Validar Select 2 en tiempo real
-
-      // $('#selectArea').on('select2:close', function (e) {
-      //   // Tu código para validar o ejecutar alguna acción aquí
-      //   // console.log('Select2 se cerró');
-      //   // if (selectArea.value === "n") {
-
-      //   //   root.style.setProperty('--BordeSelect2', 'red');
-      //   // }
-      // });
-
       //Llamar a la función para enviar el formulario
-
-      formulario.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log(e.target);
-        const esvalido = validarFormulario(e.target);
-        if (!esvalido) {
-          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-        } else {
-          formularioImpresoraEnvio(e.target)
-        }
-      });
-
-
+      tipoFormulario = 'impresora';
 
       break;
     case 'Agregar consumible':
@@ -164,35 +142,29 @@ btn.onclick = function () {
       //selectImpresora.addEventListener('blur', validacionSelect); este ya no funciona por el select2
       selectTipo.addEventListener('blur', validacionSelect);
       selectModelo.addEventListener('blur', validacionSelect);
-
-
-      // //funcion para validar el select2 en tiempo real
-      // $('#selectImpresora').on('select2:close', function (e) {
-      //   // Tu código para validar o ejecutar alguna acción aquí
-      //   console.log('Select2 se cerró');
-      //   if (selectImpresora.value === "n") {
-
-
-      //     root.style.setProperty('--BordeSelect2', 'red');
-      //   }
-      // });
-
-      // Validar que todos los campos sean correctos antes de enviar
-
-      formulario.addEventListener('submit', (e) => {
-        e.preventDefault();
-        console.log(e.target);
-        const esvalido = validarFormulario(e.target);
-        if (!esvalido) {
-          alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
-        } else {
-          formularioConsumibleEnvio(e.target)
-        }
-      });
+      
+      tipoFormulario = 'consumible';
+    
       break;
   }
 
 }
+
+formulario.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const esvalido = validarFormulario(e.target);
+  if (!esvalido) {
+    alert('Por favor, complete todos los campos correctamente antes de enviar el formulario.');
+    return;
+  }
+  if (tipoFormulario === 'impresora') {
+    formularioImpresoraEnvio(e.target);
+  } else if (tipoFormulario === 'consumible') {
+    formularioConsumibleEnvio(e.target);
+  }
+});
+
+
 span.onclick = function () {
   modal.style.display = 'none';
 }
