@@ -220,7 +220,9 @@ function renderImpresoras(impresoras) {
     //const obtenerToner = esColor ? obtenerNivelTonerColor : obtenerNivelTonerNegro;
 
     enqueueTonerRequest(() => obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
-      console.log(obtenerToner(impresora.direccionIp))
+      // Normalizar IP para scraping (sin sufijos ni puertos)
+      const ipSolo = impresora.direccionIp.split(':')[0];
+      console.log(obtenerToner(ipSolo));
 
       // Intercambio de colores solo para modelo P57750
       if (modelo.includes('P57750')) {

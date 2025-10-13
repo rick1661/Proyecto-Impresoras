@@ -7,7 +7,7 @@ import rateLimit from 'express-rate-limit';
 // Configura el límite: máximo 30 peticiones por minuto por IP
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minuto
-  max: 86, // máximo 86 peticiones
+  max: 200, // máximo 86 peticiones
   message: 'Demasiadas solicitudes desde esta IP, intenta de nuevo más tarde.'
 });
 

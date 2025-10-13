@@ -2,9 +2,9 @@ import snmp from 'net-snmp';
 import puppeteer from 'puppeteer';
 import { impresoraIpModelo } from './impresora.controllers.js';
 
-const tonerCacheColor = {}; // Caché en memoria para niveles de tóner
-const tonerCacheScraping = {}; // Caché en memoria para niveles de tóner
-const tonerCacheNegro = {}; // Caché en memoria para niveles de tóner
+let tonerCacheColor = {}; // Caché en memoria para niveles de tóner
+let tonerCacheScraping = {}; // Caché en memoria para niveles de tóner
+let tonerCacheNegro = {}; // Caché en memoria para niveles de tóner
 
 const modelosColor = [
     'E47528',
@@ -23,32 +23,39 @@ const modelosScraping = [
 // Función para precargar niveles de tóner en caché
 async function precargarNivelesToner() {
     const impresoras = await impresoraIpModelo();
-    impresoras.forEach(element => {
+    impresoras.forEach(async element => {
         if (modelosColor.includes(element.modelo)) {
 
-            tonerCacheColor = obtenerNivelesTonerColor(element.direccionIp);
+             tonerCacheColor[element.direccionIp] = await obtenerNivelesTonerColor(element.direccionIp);
+             console.log(`Niveles de tóner (color) para ${element.direccionIp} modelo ${element.modelo}:`);
+             console.log(tonerCacheColor[element.direccionIp]);
 
         } else if (modelosScraping.includes(element.modelo)) {
 
-            tonerCacheScraping = obtenerNivelesTonerScraping(element.direccionIp);
+            tonerCacheScraping[element.direccionIp] = await obtenerNivelesTonerScraping(element.direccionIp);
+            console.log(`Niveles de tóner (scraping) para ${element.direccionIp} modelo ${element.modelo}:`);
+            console.log(tonerCacheScraping[element.direccionIp]);
         }
         else {
-            tonerCacheNegro = obtenerNivelesTonerNegro(element.direccionIp);
+             tonerCacheNegro[element.direccionIp] = await obtenerNivelesTonerNegro(element.direccionIp);
+            console.log(`Niveles de tóner (negro) para ${element.direccionIp} modelo ${element.modelo}:`);
+            console.log(tonerCacheNegro[element.direccionIp]);
         }
     }); // <-- Add this closing parenthesis for forEach
 
 }
 
 function obtenerNivelesTonerNegro(ip) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const community = 'public';
         const oidNegro = '1.3.6.1.2.1.43.11.1.1.9.1.1'; // OID de tóner negro
-        const session = snmp.createSession(ip, community);
+        const options = { timeout: 5000 };
+        const session = snmp.createSession(ip, community, options);
 
         session.get([oidNegro], (error, varbinds) => {
             if (error) {
                 console.error('Error SNMP:', error);
-                reject(error);
+                resolve('inaccesible');
             } else {
                 const tonerLevel = varbinds[0]?.value;
                 resolve(tonerLevel);
@@ -63,6 +70,7 @@ function obtenerNivelesTonerColor(ip) {
     return new Promise((resolve, reject) => {
         console.log(`Conectando a la impresora con IP: ${ip}`);
         const community = 'public';
+        const options = { timeout: 5000 };
         // OIDs estándar para negro, cyan, magenta, amarillo
         const oids = [
             { color: 'black', oid: '1.3.6.1.2.1.43.11.1.1.9.1.1' },
@@ -70,12 +78,17 @@ function obtenerNivelesTonerColor(ip) {
             { color: 'magenta', oid: '1.3.6.1.2.1.43.11.1.1.9.1.3' },
             { color: 'yellow', oid: '1.3.6.1.2.1.43.11.1.1.9.1.4' }
         ];
-        const session = snmp.createSession(ip, community);
+        const session = snmp.createSession(ip, community, options);
 
         session.get(oids.map(o => o.oid), (error, varbinds) => {
             if (error) {
-                console.error('Error SNMP:', error);
-                reject(error);
+                if (error.name === 'RequestTimedOutError') {
+                    console.error(`SNMP timeout en ${ip}`);
+                    reject(new Error(`La impresora ${ip} no respondió a SNMP (timeout)`));
+                } else {
+                    console.error('Error SNMP:', error);
+                    reject(error);
+                }
             } else {
                 const tonerLevels = {};
                 oids.forEach((o, i) => {
@@ -89,116 +102,143 @@ function obtenerNivelesTonerColor(ip) {
 }
 
 function obtenerNivelesTonerScraping(ip) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         const url = `https://${ip}/sws/index.html`;
         let browser;
-        puppeteer.launch({ headless: true, args: ['--ignore-certificate-errors'] })
-            .then(b => {
-                browser = b;
-                return browser.newPage();
-            })
-            .then(page => {
-                // Bloquear la carga de imágenes, CSS, fuentes y scripts para acelerar el scraping
-                page.setRequestInterception(true);
-                page.on('request', (req) => {
-                    const blockedTypes = ['image', 'stylesheet', 'font', 'script'];
-                    if (blockedTypes.includes(req.resourceType())) {
-                        req.abort();
-                    } else {
-                        req.continue();
-                    }
-                });
-                return page.goto(url, { waitUntil: 'networkidle2' });
-            })
-            .then(page => {
-                // Espera a que aparezca algún elemento con la clase x-column
-                return page.waitForSelector('.x-column', { timeout: 10000 });
-            })
-            .then(() => {
-                // Extrae todos los textos de los elementos .x-column que terminen en %
-                return page.$$eval('.x-column', nodes =>
-                    nodes
-                        .map(n => n.textContent.trim())
-                        .filter(t => /\d{1,3}%$/.test(t))
-                );
-            })
-            .then(niveles => {
-                if (niveles.length > 0) {
-                    resolve({ ip, niveles });
-                } else {
-                    reject(new Error('No se encontraron niveles de tóner'));
-                }
-            })
-            .catch(error => {
-                console.error('Error en el scraping:', error);
-                reject(error);
-            })
-            .finally(() => {
-                if (browser) {
-                    browser.close();
-                }
-            });
+        try {
+            browser = await puppeteer.launch({ headless: true, args: ['--ignore-certificate-errors'] });
+            const page = await browser.newPage();
+            await page.goto(url, { waitUntil: 'networkidle2' });
+
+            // Espera a que aparezca algún elemento con la clase x-column
+            await page.waitForSelector('.x-column', { timeout: 10000 });
+            const niveles = await page.$$eval('.x-column', nodes =>
+                nodes
+                    .map(n => n.textContent.trim())
+                    .filter(t => /\d{1,3}%$/.test(t))
+            );
+            if (niveles.length > 0) {
+                resolve({ ip, niveles });
+            } else {
+                reject(new Error('No se encontraron niveles de tóner'));
+            }
+        } catch (error) {
+            console.error('Error en el scraping:', error);
+            reject(error);
+        } finally {
+            if (browser) {
+                await browser.close();
+            }
+        }
     });
 }
 
 export const getTonerNegro = async (req, res) => {
     const ip = req.params.ip;
-    console.log(`Conectando a la impresora con IP: ${ip}`);
-    const community = 'public';
-    const oidNegro = '1.3.6.1.2.1.43.11.1.1.9.1.1'; // OID de tóner negro
-    const session = snmp.createSession(ip, community);
+    console.log(` SNMP Conectando a la impresora con IP: ${ip}`);
+    const datos = tonerCacheNegro[ip];
+    if (datos) {
+        res.json({ ip, tonerLevel: datos });
+    } else {
+        res.status(404).json({ ip, error: 'No hay datos en cache para esta impresora.' });
+    }
+    // const community = 'public';
+    // const oidNegro = '1.3.6.1.2.1.43.11.1.1.9.1.1'; // OID de tóner negro
+    // const session = snmp.createSession(ip, community);
 
-    session.get([oidNegro], (error, varbinds) => {
-        if (error) {
-            console.error('Error SNMP:', error);
-            res.status(500).json({ error: 'Error al consultar la impresora' });
-        } else {
-            const tonerLevel = varbinds[0]?.value;
-            res.json({ ip, tonerLevel });
-        }
-        session.close();
-    });
-}
+    // session.get([oidNegro], (error, varbinds) => {
+    //     if (error) {
+    //         console.error('Error SNMP:', error);
+    //         res.status(500).json({ error: 'Error al consultar la impresora' });
+    //     } else {
+    //         const tonerLevel = varbinds[0]?.value;
+    //         res.json({ ip, tonerLevel });
+    //     }
+    //     session.close();
+    // });
+};
 
 export const getTonersColor = async (req, res) => {
     const ip = req.params.ip;
-    console.log(`Conectando a la impresora con IP: ${ip}`);
-    const community = 'public';
-    // OIDs estándar para negro, cyan, magenta, amarillo
-    const oids = [
-        { color: 'black', oid: '1.3.6.1.2.1.43.11.1.1.9.1.1' },
-        { color: 'cyan', oid: '1.3.6.1.2.1.43.11.1.1.9.1.2' },
-        { color: 'magenta', oid: '1.3.6.1.2.1.43.11.1.1.9.1.3' },
-        { color: 'yellow', oid: '1.3.6.1.2.1.43.11.1.1.9.1.4' }
-    ];
-    const session = snmp.createSession(ip, community);
+    console.log(`SNMP Color Conectando a la impresora con IP: ${ip}`);
+    const datos = tonerCacheColor[ip];
+    if (datos && datos.tonerLevels) {
+        res.json({ ip, tonerLevels: datos.tonerLevels });
+    } else {
+        res.status(404).json({ ip, error: 'No hay datos en cache para esta impresora.' });
+    }
+    // const community = 'public';
+    // // OIDs estándar para negro, cyan, magenta, amarillo
+    // const oids = [
+    //     { color: 'black', oid: '1.3.6.1.2.1.43.11.1.1.9.1.1' },
+    //     { color: 'cyan', oid: '1.3.6.1.2.1.43.11.1.1.9.1.2' },
+    //     { color: 'magenta', oid: '1.3.6.1.2.1.43.11.1.1.9.1.3' },
+    //     { color: 'yellow', oid: '1.3.6.1.2.1.43.11.1.1.9.1.4' }
+    // ];
+    // const session = snmp.createSession(ip, community);
 
-    session.get(oids.map(o => o.oid), (error, varbinds) => {
-        if (error) {
-            console.error('Error SNMP:', error);
-            res.status(500).json({ error: 'Error al consultar la impresora' });
-        } else {
-            const tonerLevels = {};
-            oids.forEach((o, i) => {
-                tonerLevels[o.color] = varbinds[i]?.value ?? null;
-            });
-            res.json({ ip, tonerLevels });
-        }
-        session.close();
-    });
+    // session.get(oids.map(o => o.oid), (error, varbinds) => {
+    //     if (error) {
+    //         console.error('Error SNMP:', error);
+    //         res.status(500).json({ error: 'Error al consultar la impresora' });
+    //     } else {
+    //         const tonerLevels = {};
+    //         oids.forEach((o, i) => {
+    //             tonerLevels[o.color] = varbinds[i]?.value ?? null;
+    //         });
+    //         res.json({ ip, tonerLevels });
+    //     }
+    //     session.close();
+    // });
 };
 
 
 export const getTonerScraping = async (req, res) => {
     const ip = req.params.ip;
+    console.log("scraping obteniendo datos de la IP: " + ip);
     const datos = tonerCacheScraping[ip];
-    if (datos) {
-        // Devuelve ambos valores
-        res.json({ ip, black: datos.black, image: datos.image });
+    if (datos && datos.niveles) {
+        res.json({ ip, niveles: datos.niveles });
     } else {
         res.status(404).json({ ip, error: 'No hay datos en cache para esta impresora.' });
     }
 };
 
 // Endpoint para obtener niveles de tóner precargados
+precargarNivelesToner();
 setInterval(precargarNivelesToner, 5 * 60 * 1000);
+
+
+
+
+
+// export const getTonerScraping = async (req, res) => {
+//     const ip = req.params.ip;
+//     const url = `https://${ip}/sws/index.html`;
+
+//     try {
+//         const browser = await puppeteer.launch({ headless: true, args: ['--ignore-certificate-errors'] });
+//         const page = await browser.newPage();
+//         await page.goto(url, { waitUntil: 'networkidle2' });
+
+//         // Espera a que aparezca algún elemento con la clase x-column
+//         await page.waitForSelector('.x-column', { timeout: 10000 }).catch(() => {});
+
+//         // Extrae todos los textos de los elementos .x-column que terminen en %
+//         const niveles = await page.$$eval('.x-column', nodes =>
+//             nodes
+//                 .map(n => n.textContent.trim())
+//                 .filter(t => /\d{1,3}%$/.test(t))
+//         );
+
+//         await browser.close();
+
+//         if (niveles.length > 0) {
+//             res.json({ ip, niveles });
+//         } else {
+//             res.status(404).json({ ip, error: 'No se encontró información del nivel de tóner.' });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ ip, error: error.message });
+//     }
+// };
