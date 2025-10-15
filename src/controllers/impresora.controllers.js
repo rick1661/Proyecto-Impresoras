@@ -10,7 +10,7 @@ export const getImpresoras = async (req, res) => {
 
 
     const pool = await getConnection();
-    const result = await pool.request().query('SELECT impresoraID, serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID');
+    const result = await pool.request().query('SELECT impresoraID, serie, impresora.nombre, marca, modelo, direccionIp, area.nombre, contrato.nombre, impresora.toner FROM impresora INNER JOIN area ON impresora.areaID = area.areaID INNER JOIN contrato ON impresora.contratoID = contrato.contratoID');
     console.log(result);
     res.json(result.recordset);
 }
@@ -77,12 +77,12 @@ export const putOneImpresora = async (req, res) => {
         .input("direccionIp", sql.VarChar, req.body.direccionIp)
         .input("areaID", sql.Int, req.body.areaID)
         .input("contratoID", sql.Int, req.body.contratoID)
-        .query("UPDATE impresora SET serie = @serie, nombre = @nombre, marca = @marca, modelo = @modelo, direccionIp = @direccionIp, areaID = @areaID, contratoID = @contratoID WHERE impresoraID = @id ")
+        .input("toner", sql.VarChar, req.body.toner)
+        .query("UPDATE impresora SET serie = @serie, nombre = @nombre, marca = @marca, modelo = @modelo, direccionIp = @direccionIp, areaID = @areaID, contratoID = @contratoID, toner = @toner WHERE impresoraID = @id ")
 
     if (result.rowsAffected === 0) {
         return res.status(404).json({ message: "Impresora no encontrada" });
-    }
-    else {
+    } else {
         res.json('Impresora actualizada');
     }
     res.send('Actualizando impresora');

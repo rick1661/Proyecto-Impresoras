@@ -67,6 +67,7 @@ function cargarTablaimpresoras() {
                     <th>IP</th>
                     <th>Área</th>
                     <th>Contrato</th>
+                    <th>Tóner</th>
                     <th>Editar</th>
                     <th>Eliminar</th>
                 </tr>
@@ -92,6 +93,7 @@ function cargarTablaimpresoras() {
                     <th>IP</th>
                     <th>Área</th>
                     <th>Contrato</th>
+                    <th>Tóner</th>
                 </tr>
             </thead>
             <tbody>
@@ -176,6 +178,7 @@ function renderImpresoras(impresoras) {
         <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
         <td>${impresora.nombre[1]}</td>
         <td>${impresora.nombre[2]}</td>
+        <td>${impresora.toner}</td>
         <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
         <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
       `;
@@ -188,7 +191,8 @@ function renderImpresoras(impresoras) {
         <td>${impresora.modelo}</td>
         <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
         <td>${impresora.nombre[1]}</td>
-        <td>${impresora.nombre[2]}</td>`;
+        <td>${impresora.nombre[2]}</td>
+        <td>${impresora.toner}</td>`
     }
     tbody.appendChild(row);
 
@@ -525,12 +529,12 @@ function modificarCamposImpresora(elementosTd) {
   elementosTd.forEach((elemento, index) => {
 
     //Hacer los pimeros 5 campos en input
-    if (index <= 4) {
+    if (index <= 8 && index !== 2 && index !== 6 && index !== 7) {
 
       elemento.innerHTML = `<input class="inputEdit" type="text" value="${elemento.textContent}">`;
 
       //Convertir el campo area en un select
-    } else if (elemento.firstElementChild === null && index === 5) {
+    } else if (elemento.firstElementChild === null && index === 6) {
 
       elemento.innerHTML = `
                         <select class="selectEdit" name="area" id="selectArea" required>
@@ -541,7 +545,7 @@ function modificarCamposImpresora(elementosTd) {
       getAreasEdit(elemento.firstElementChild);
 
       //Convertir el campo contrato en un select
-    } else if (elemento.firstElementChild === null && index === 6) {
+    } else if (elemento.firstElementChild === null && index === 7) {
       elemento.innerHTML = `
                         <select class="selectEdit" name="contrato" id="selectContrato" required>
                           <option value="">${elemento.textContent}</option>
@@ -635,33 +639,34 @@ function modificarCamposConsumible(elementosTd) {
                             <select class="selectEdit" name="modelo" id="selecModelo" required>
                               <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
                               <!-- Agregar mas opciones segun necesites -->
-                                <option value="w9008">w9008</option>
-                                <option value="w1330xc">w1330xc</option>
-                                <option value="w1330x">w1330x</option>
-                                <option value="cf258xc">cf258xc</option>
-                                <option value="cf258x">cf258x</option>
-                                <option value="cf280xc">cf280xc</option>
-                                <option value="cf280x">cf280x</option>
-                                <option value="ce285ac">ce285ac</option>
-                                <option value="131a Y">131a Y</option>
-                                <option value="131a M">131a M</option>
-                                <option value="131a C">131a C</option>
-                                <option value="131a K">131a K</option>
-                                <option value="ce255xc">ce255xc</option>
-                                <option value="976yc Y">976yc Y</option>
-                                <option value="976yc M">976yc M</option>
-                                <option value="976yc C">976yc C</option>
-                                <option value="976yc K">976yc K</option>
-                                <option value="w9090mc Y">w9090mc Y</option>
-                                <option value="w9090mc M">w9090mc M</option>
-                                <option value="w9090mc C">w9090mc C</option>
-                                <option value="w9090mc K">w9090mc K</option>
-                                <option value="206X Y">206X Y</option>
-                                <option value="206X M">206X M</option>
-                                <option value="206X C">206X C</option>
-                                <option value="206X K">206X K</option>
-                                <option value="w132ac">w132ac</option>
-                                <option value="cf287jc">cf287jc</option>
+                         <option value="W9008MC">W9008MC</option>
+                        <option value="W1330XCc">W1330XC</option>
+                        <option value="W1330X">W1330X</option>
+                        <option value="CF258XC">CF258XC</option>
+                        <option value="CF258X">CF258X</option>
+                        <option value="CF280XC">CF280XC</option>
+                        <option value="CF280X">CF280X</option>
+                        <option value="CE285AC">CE285AC</option>
+                        <option value="131A Y">131A Y</option>
+                        <option value="131A M">131A M</option>
+                        <option value="131A C">131A C</option>
+                        <option value="131A K">131A K</option>
+                        <option value="CE255XC">CE255XC</option>
+                        <option value="976YC Y">976YC Y</option>
+                        <option value="976YC M">976YC M</option>
+                        <option value="976YC C">976YC C</option>
+                        <option value="976YC K">976YC K</option>
+                        <option value="W9090MC Y">W9090MC Y</option>
+                        <option value="W9090MC M">W9090MC M</option>
+                        <option value="W9090MC C">W9090MC C</option>
+                        <option value="W9090MC K">W9090MC K</option>
+                        <option value="206X Y">206X Y</option>
+                        <option value="206X M">206X M</option>
+                        <option value="206X C">206X C</option>
+                        <option value="206X K">206X K</option>
+                        <option value="W1332AC">W1332AC</option>
+                        <option value="CF287JC">CF287JC</option>
+                        <option value="CF226X">CF226X</option>
                             </select>`;
 
         break;
@@ -736,15 +741,20 @@ async function enviarCambios(e) {
   //Validar que no haya campos vacios
 
   elementosTd.forEach(elemento => {
+    console.log(elemento.firstElementChild)
+    if (!elemento.firstElementChild.classList.contains('barra')) {
+      console.log('entro al for each de validacion')
+      if (elemento.firstElementChild !== null && elemento.firstElementChild.value.trim() === '') {
+        vacio = true
+        elemento.firstElementChild.style.border = '2px solid red';
+      } else {
 
-    if (elemento.firstElementChild !== null && elemento.firstElementChild.value.trim() === '') {
-      vacio = true
-      elemento.firstElementChild.style.border = '2px solid red';
-    } else {
+        if (elemento.firstElementChild !== null)
+          elemento.firstElementChild.style.border = '1px solid green';
+      }
 
-      if (elemento.firstElementChild !== null)
-        elemento.firstElementChild.style.border = '1px solid green';
     }
+
   });
 
   switch (vacio) {
@@ -766,11 +776,12 @@ async function enviarCambios(e) {
             id: parseInt(e.target.value),
             serie: elementosTd[0].firstElementChild.value.trim(),
             nombre: elementosTd[1].firstElementChild.value.trim(),
-            marca: elementosTd[2].firstElementChild.value.trim(),
-            modelo: elementosTd[3].firstElementChild.value.trim(),
-            direccionIp: elementosTd[4].firstElementChild.value.trim(),
-            areaID: parseInt(elementosTd[5].firstElementChild.value.trim()),
-            contratoID: parseInt(elementosTd[6].firstElementChild.value.trim())
+            marca: elementosTd[3].firstElementChild.value.trim(),
+            modelo: elementosTd[4].firstElementChild.value.trim(),
+            direccionIp: elementosTd[5].firstElementChild.value.trim(),
+            areaID: parseInt(elementosTd[6].firstElementChild.value.trim()),
+            contratoID: parseInt(elementosTd[7].firstElementChild.value.trim()),
+            toner: elementosTd[8].firstElementChild.value.trim()
           };
 
           console.log('Datos actualizados:', datosActualizadosI);
@@ -798,7 +809,7 @@ async function enviarCambios(e) {
 
             //Volver a cargar la tabla de impresoras
             cacheImpresoras = null;
-            
+
             getImpresoras();
             vacio = false;
 
@@ -999,7 +1010,7 @@ function renderBarraToner(valor) {
     const num = Number(valor);
     if (isNaN(num)) return '-';
     return `
-      <div class="barraTonerNegro">
+      <div class="barraTonerNegro barra">
         <div class="nivel" style="width:${num}%;">
           <span class="textoNivel">${num}%</span>
         </div>
@@ -1019,7 +1030,7 @@ function renderBarraToner(valor) {
         const num = Number(valor[e.key]);
         if (isNaN(num)) return '';
         return `
-          <div class="barraScrapingContenedor" style="margin-bottom:2px;">
+          <div class="barraScrapingContenedor barra" style="margin-bottom:2px;">
             <span class="textoEtiqueta" style="color:${e.color};">${e.label}</span>
             <div class="barraScraping">
               <div class="nivel" style="background:${e.color}; width:${num}%;"></div>
@@ -1042,7 +1053,7 @@ function renderBarraToner(valor) {
         const num = Number(valor[c.key]);
         if (isNaN(num)) return '';
         return `
-          <div style="margin-bottom:2px;">
+          <div style="margin-bottom:2px;" class="barra">
             <span style="font-size:11px; width:18px; display:inline-block; color:${c.color === '#ffeb3b' ? '#222' : c.color};">${c.label}</span>
             <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
               <div style="background:${c.color}; width:${num}%; height:100%; border-radius:4px;"></div>

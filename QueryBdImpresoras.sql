@@ -43,6 +43,7 @@ areaID INT NOT NULL,
 contratoID INT NOT NULL,
 FOREIGN KEY (areaID) REFERENCES area(areaID),
 FOREIGN KEY (contratoID) REFERENCES contrato(contratoID),
+toner VARCHAR(80)
 
 );
 
@@ -375,3 +376,14 @@ SELECT tipo, consumible.modelo, tij, fecha, impresora.nombre, impresora.serie FR
 
 SELECT * FROM impresora;
 SELECT direccionIp, modelo FROM impresora
+
+use ImpresorasBD;
+
+
+UPDATE impresora SET nombre = 'Compras TJ HP Operaciones 02' WHERE serie = 'MXBCR9V19V';
+
+SELECT * FROM impresora;
+
+UPDATE impresora SET toner = 'W9008MC' WHERE modelo = 'E50145DN';
+
+
