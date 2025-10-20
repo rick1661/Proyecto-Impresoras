@@ -1,3 +1,5 @@
+
+
 //Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
@@ -10,11 +12,22 @@ const aceptarBtn = document.getElementById('aceptarBtn');
 const cancelarBtn = document.getElementById('cancelarBtn');
 const buscador = document.getElementById('busquedaInput');
 const editarBtn = document.getElementById('editarBtn');
+const tonerModal = document.getElementById('tonerModal');
+const nombreImpresora = document.querySelector('.nombreImpresora');
+const cerrarModal = document.getElementById('cerrarTonerModal');
+const tablaToner = document.querySelector('.tablaToner tbody');
+
+//Variable que guarda la tabla de consulta de toner a modificar
+let tablaConsultaToner;
+
+//variable que almacena la serie a consultar
+let serieConsultaToner;
 
 //variables
 let vacio = false;
 let eliminar = false;
 let idEliminar;
+
 
 // Variables para caché de datos
 let cacheImpresoras = null;
@@ -38,6 +51,7 @@ function cargarEventListeners() {
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
   buscador.addEventListener('input', buscarElemento);
+  tablaToner.addEventListener('click', eliminacionTonerEspecifico);
   editarBtn.addEventListener('click', edicion);
 
 }
@@ -57,52 +71,52 @@ function cargarTablaimpresoras() {
   if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
 
     tabla.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Serie</th>
-                    <th>Nombre</th>
-                    <th>Pocentaje</th>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>IP</th>
-                    <th>Área</th>
-                    <th>Contrato</th>
-                    <th>Tóner</th>
-                    <th>Editar</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí puedes agregar filas de datos -->
-                <tr>
-                 
-                </tr>
-                <!-- Más filas aquí -->
-            </tbody>`;
+              <thead>
+                  <tr>
+                      <th>Serie</th>
+                      <th>Nombre</th>
+                      <th>Pocentaje</th>
+                      <th>Marca</th>
+                      <th>Modelo</th>
+                      <th>IP</th>
+                      <th>Área</th>
+                      <th>Contrato</th>
+                      <th>Tóner</th>
+                      <th>Editar</th>
+                      <th>Eliminar</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Aquí puedes agregar filas de datos -->
+                  <tr>
+                  
+                  </tr>
+                  <!-- Más filas aquí -->
+              </tbody>`;
 
   } else {
 
     tabla.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Serie</th>
-                    <th>Nombre</th>
-                    <th>Pocentaje</th>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>IP</th>
-                    <th>Área</th>
-                    <th>Contrato</th>
-                    <th>Tóner</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí puedes agregar filas de datos -->
-                <tr>
-                 
-                </tr>
-                <!-- Más filas aquí -->
-            </tbody>`;
+              <thead>
+                  <tr>
+                      <th>Serie</th>
+                      <th>Nombre</th>
+                      <th>Pocentaje</th>
+                      <th>Marca</th>
+                      <th>Modelo</th>
+                      <th>IP</th>
+                      <th>Área</th>
+                      <th>Contrato</th>
+                      <th>Tóner</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Aquí puedes agregar filas de datos -->
+                  <tr>
+                  
+                  </tr>
+                  <!-- Más filas aquí -->
+              </tbody>`;
 
 
   }
@@ -170,29 +184,29 @@ function renderImpresoras(impresoras) {
 
     if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
       row.innerHTML = `
-        <td>${impresora.serie}</td>
-        <td>${impresora.nombre[0]}</td>
-        <td id="${tonerCellId}">Cargando...</td>
-        <td>${impresora.marca}</td>
-        <td>${impresora.modelo}</td>
-        <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
-        <td>${impresora.nombre[1]}</td>
-        <td>${impresora.nombre[2]}</td>
-        <td>${impresora.toner}</td>
-        <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
-        <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
-      `;
+          <td>${impresora.serie}</td>
+          <td>${impresora.nombre[0]}</td>
+          <td id="${tonerCellId}">Cargando...</td>
+          <td>${impresora.marca}</td>
+          <td>${impresora.modelo}</td>
+          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+          <td>${impresora.nombre[1]}</td>
+          <td>${impresora.nombre[2]}</td>
+          <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>
+          <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
+          <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+        `;
     } else {
       row.innerHTML = `
-        <td>${impresora.serie}</td>
-        <td>${impresora.nombre[0]}</td>
-        <td id="${tonerCellId}">Cargando...</td>
-        <td>${impresora.marca}</td>
-        <td>${impresora.modelo}</td>
-        <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
-        <td>${impresora.nombre[1]}</td>
-        <td>${impresora.nombre[2]}</td>
-        <td>${impresora.toner}</td>`
+          <td>${impresora.serie}</td>
+          <td>${impresora.nombre[0]}</td>
+          <td id="${tonerCellId}">Cargando...</td>
+          <td>${impresora.marca}</td>
+          <td>${impresora.modelo}</td>
+          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+          <td>${impresora.nombre[1]}</td>
+          <td>${impresora.nombre[2]}</td>
+          <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>`;
     }
     tbody.appendChild(row);
 
@@ -201,11 +215,13 @@ function renderImpresoras(impresoras) {
       'E47528',
       'P57750 XC',
       'MFP M283fdw',
-      'MFP P57750'
+      'MFP P57750',
+      'MFP P57750 XC',
+      'MFP E47528'
     ];
 
     // Modelo 408
-    const modelo408 = ["408dn", "MFP M232", "MFP 432", "M432"];
+    const modelo408 = ["408dn", "MFP M232", "MFP 432", "M432", "MFP M432"];
 
     // Si el modelo es uno de los de color, usa la función de color, si no, la de negro
     const modelo = (impresora.modelo || '').toUpperCase();
@@ -260,45 +276,45 @@ function cargarTablaConsumibles() {
 
   if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
     tabla.innerHTML = `
-    <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Modelo</th>
-                    <th>TIJ</th>
-                    <th>Fecha</th>
-                    <th>Impresora</th>
-                    <th>Serie</th>
-                    <th>Editar</th>
-                    <th>Salir</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí puedes agregar filas de datos -->
-                <tr>
-                 
-                </tr>
-                <!-- Más filas aquí -->
-            </tbody>`;
+      <thead>
+                  <tr>
+                      <th>Tipo</th>
+                      <th>Modelo</th>
+                      <th>TIJ</th>
+                      <th>Fecha</th>
+                      <th>Impresora</th>
+                      <th>Serie</th>
+                      <th>Editar</th>
+                      <th>Salir</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Aquí puedes agregar filas de datos -->
+                  <tr>
+                  
+                  </tr>
+                  <!-- Más filas aquí -->
+              </tbody>`;
   } else {
 
     tabla.innerHTML = `
-    <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Modelo</th>
-                    <th>TIJ</th>
-                    <th>Fecha</th>
-                    <th>Impresora</th>
-                    <th>Serie</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aquí puedes agregar filas de datos -->
-                <tr>
-                 
-                </tr>
-                <!-- Más filas aquí -->
-            </tbody>`;
+      <thead>
+                  <tr>
+                      <th>Tipo</th>
+                      <th>Modelo</th>
+                      <th>TIJ</th>
+                      <th>Fecha</th>
+                      <th>Impresora</th>
+                      <th>Serie</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Aquí puedes agregar filas de datos -->
+                  <tr>
+                  
+                  </tr>
+                  <!-- Más filas aquí -->
+              </tbody>`;
 
   }
   // Cambiar el texto del botón para agregar consumibles
@@ -334,24 +350,24 @@ function renderConsumibles(consumibles) {
     const row = document.createElement('tr');
     if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
       row.innerHTML = `
-      <td>${consumible.tipo}</td>
-      <td>${consumible.modelo}</td>
-      <td>${consumible.tij}</td>
-      <td>${consumible.fecha.slice(0, 10)}</td>
-      <td>${consumible.nombre}</td>
-      <td>${consumible.serie}</td>
-      <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
-      <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
-    `;
+        <td>${consumible.tipo}</td>
+        <td>${consumible.modelo}</td>
+        <td>${consumible.tij}</td>
+        <td class="fecha">${consumible.fecha.slice(0, 10)}</td>
+        <td>${consumible.nombre}</td>
+        <td>${consumible.serie}</td>
+        <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
+        <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
+      `;
     }
     else {
       row.innerHTML = `
-      <td>${consumible.tipo}</td>
-      <td>${consumible.modelo}</td>
-      <td>${consumible.tij}</td>
-      <td>${consumible.fecha.slice(0, 10)}</td>
-      <td>${consumible.nombre}</td>
-      <td>${consumible.serie}</td>`
+        <td>${consumible.tipo}</td>
+        <td>${consumible.modelo}</td>
+        <td>${consumible.tij}</td>
+        <td class="fecha">${consumible.fecha.slice(0, 10)}</td>
+        <td>${consumible.nombre}</td>
+        <td>${consumible.serie}</td>`
 
     }
 
@@ -399,6 +415,7 @@ function modificacionElemento(e) {
 
   } else if (target.classList.contains('deleteBtn')) {
     idEliminar = target.value;
+    console.log('Botón eliminar clickeado para ID:', target);
     // Lógica para eliminar el elemento con el ID correspondiente
     decision.style.display = 'block';
     cancelarBtn.addEventListener('click', cancelarEliminar);
@@ -413,6 +430,14 @@ function modificacionElemento(e) {
     enviarCambios(e);
 
   }
+
+  //Mostrar toner al dar click en la celda de toner
+  if (target.classList.contains('toner-cell')) {
+    consultaToner(e);
+  }
+
+
+
 }
 
 //Fucnion para cerrar el modal de desicion despues de darle click al boton cancelar
@@ -510,10 +535,13 @@ async function eliminarConsumible(e) {
     //Volver a cargar la tabla de consumibles
     decision.style.display = 'none';
     cacheConsumibles = null;
-    getConsumibles();
 
-
-
+    if (botonADD.textContent.trim() === 'Agregar consumible') {
+      getConsumibles();
+    }else if (botonADD.textContent.trim() === 'Agregar impresora') {    
+      getImpresoras();
+      getTonerEspecifico(serieConsultaToner);
+    }
   } catch (error) {
     console.error('Error al enviar los datos:', error);
     alert('Error al eliminar el consumible');
@@ -537,20 +565,20 @@ function modificarCamposImpresora(elementosTd) {
     } else if (elemento.firstElementChild === null && index === 6) {
 
       elemento.innerHTML = `
-                        <select class="selectEdit" name="area" id="selectArea" required>
-                          <option value="">${elemento.textContent}</option>
-                          <!-- Agrega más opciones según necesites -->
-                        </select>`
+                          <select class="selectEdit" name="area" id="selectArea" required>
+                            <option value="">${elemento.textContent}</option>
+                            <!-- Agrega más opciones según necesites -->
+                          </select>`
       //cargar las areas
       getAreasEdit(elemento.firstElementChild);
 
       //Convertir el campo contrato en un select
     } else if (elemento.firstElementChild === null && index === 7) {
       elemento.innerHTML = `
-                        <select class="selectEdit" name="contrato" id="selectContrato" required>
-                          <option value="">${elemento.textContent}</option>
-                          <!-- Agrega más opciones según necesites -->
-                        </select>`
+                          <select class="selectEdit" name="contrato" id="selectContrato" required>
+                            <option value="">${elemento.textContent}</option>
+                            <!-- Agrega más opciones según necesites -->
+                          </select>`
 
       //cargar los contratos
       getContratosEdit(elemento.firstElementChild);
@@ -625,49 +653,50 @@ function modificarCamposConsumible(elementosTd) {
       case 0:
 
         elemento.innerHTML = `
-                          <select class="selectEdit" name="tipo" id="selectTipo" required>
-                            <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
-                            <!-- Agregar mas opciones segun necesites -->
-                              <option value=1>Toner</option>
-                              <option value=2>Tambor</option>
-                          </select>`;
+                            <select class="selectEdit" name="tipo" id="selectTipo" required>
+                              <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
+                              <!-- Agregar mas opciones segun necesites -->
+                                <option value=1>Toner</option>
+                                <option value=2>Tambor</option>
+                            </select>`;
         break;
 
       case 1:
 
         elemento.innerHTML = `
-                            <select class="selectEdit" name="modelo" id="selecModelo" required>
-                              <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
-                              <!-- Agregar mas opciones segun necesites -->
-                         <option value="W9008MC">W9008MC</option>
-                        <option value="W1330XCc">W1330XC</option>
-                        <option value="W1330X">W1330X</option>
-                        <option value="CF258XC">CF258XC</option>
-                        <option value="CF258X">CF258X</option>
-                        <option value="CF280XC">CF280XC</option>
-                        <option value="CF280X">CF280X</option>
-                        <option value="CE285AC">CE285AC</option>
-                        <option value="131A Y">131A Y</option>
-                        <option value="131A M">131A M</option>
-                        <option value="131A C">131A C</option>
-                        <option value="131A K">131A K</option>
-                        <option value="CE255XC">CE255XC</option>
-                        <option value="976YC Y">976YC Y</option>
-                        <option value="976YC M">976YC M</option>
-                        <option value="976YC C">976YC C</option>
-                        <option value="976YC K">976YC K</option>
-                        <option value="W9090MC Y">W9090MC Y</option>
-                        <option value="W9090MC M">W9090MC M</option>
-                        <option value="W9090MC C">W9090MC C</option>
-                        <option value="W9090MC K">W9090MC K</option>
-                        <option value="206X Y">206X Y</option>
-                        <option value="206X M">206X M</option>
-                        <option value="206X C">206X C</option>
-                        <option value="206X K">206X K</option>
-                        <option value="W1332AC">W1332AC</option>
-                        <option value="CF287JC">CF287JC</option>
-                        <option value="CF226X">CF226X</option>
-                            </select>`;
+                              <select class="selectEdit" name="modelo" id="selecModelo" required>
+                                <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
+                                <!-- Agregar mas opciones segun necesites -->
+                          <option value="W9008MC">W9008MC</option>
+                          <option value="W1330XCc">W1330XC</option>
+                          <option value="W1330X">W1330X</option>
+                          <option value="CF258XC">CF258XC</option>
+                          <option value="CF258X">CF258X</option>
+                          <option value="CF280XC">CF280XC</option>
+                          <option value="CF280X">CF280X</option>
+                          <option value="CE285AC">CE285AC</option>
+                          <option value="131A Y">131A Y</option>
+                          <option value="131A M">131A M</option>
+                          <option value="131A C">131A C</option>
+                          <option value="131A K">131A K</option>
+                          <option value="CE255XC">CE255XC</option>
+                          <option value="976YC Y">976YC Y</option>
+                          <option value="976YC M">976YC M</option>
+                          <option value="976YC C">976YC C</option>
+                          <option value="976YC K">976YC K</option>
+                          <option value="W9090MC Y">W9090MC Y</option>
+                          <option value="W9090MC M">W9090MC M</option>
+                          <option value="W9090MC C">W9090MC C</option>
+                          <option value="W9090MC K">W9090MC K</option>
+                          <option value="206X Y">206X Y</option>
+                          <option value="206X M">206X M</option>
+                          <option value="206X C">206X C</option>
+                          <option value="206X K">206X K</option>
+                          <option value="W1332AC">W1332AC</option>
+                          <option value="CF287XC">CF287XC</option>
+                          <option value="CF287JC">CF287JC</option>
+                          <option value="CF226X">CF226X</option>
+                              </select>`;
 
         break;
 
@@ -677,11 +706,11 @@ function modificarCamposConsumible(elementosTd) {
 
       case 4:
         elemento.innerHTML = `
-                          <select class="selectEdit" name="impresoraID" id="seleImpresora" required>
-                            <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
-                            <!-- Agregar mas opciones segun necesites -->
-                            
-                          </select>`;
+                            <select class="selectEdit" name="impresoraID" id="seleImpresora" required>
+                              <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
+                              <!-- Agregar mas opciones segun necesites -->
+                              
+                            </select>`;
 
         //cargar impresoras en el edit
         getImpresoraSelectEdit(elemento.firstElementChild)
@@ -741,17 +770,24 @@ async function enviarCambios(e) {
   //Validar que no haya campos vacios
 
   elementosTd.forEach(elemento => {
+    console.log(elemento);
     console.log(elemento.firstElementChild)
-    if (!elemento.firstElementChild.classList.contains('barra')) {
-      console.log('entro al for each de validacion')
-      if (elemento.firstElementChild !== null && elemento.firstElementChild.value.trim() === '') {
-        vacio = true
-        elemento.firstElementChild.style.border = '2px solid red';
-      } else {
 
-        if (elemento.firstElementChild !== null)
-          elemento.firstElementChild.style.border = '1px solid green';
+    if (elemento.firstElementChild != null) {
+
+      if (!elemento.firstElementChild.classList.contains('barra')) {
+        console.log('entro al for each de validacion')
+        if (elemento.firstElementChild !== null && elemento.firstElementChild.value.trim() === '') {
+          vacio = true
+          elemento.firstElementChild.style.border = '2px solid red';
+        } else {
+
+          if (elemento.firstElementChild !== null)
+            elemento.firstElementChild.style.border = '1px solid green';
+        }
+
       }
+
 
     }
 
@@ -1010,12 +1046,12 @@ function renderBarraToner(valor) {
     const num = Number(valor);
     if (isNaN(num)) return '-';
     return `
-      <div class="barraTonerNegro barra">
-        <div class="nivel" style="width:${num}%;">
-          <span class="textoNivel">${num}%</span>
+        <div class="barraTonerNegro barra">
+          <div class="nivel" style="width:${num}%;">
+            <span class="textoNivel">${num}%</span>
+          </div>
         </div>
-      </div>
-    `;
+      `;
   }
   // Si es un objeto (impresora color o monocromo con drum), renderiza barras según las propiedades presentes
   if (typeof valor === 'object' && valor !== null) {
@@ -1030,16 +1066,16 @@ function renderBarraToner(valor) {
         const num = Number(valor[e.key]);
         if (isNaN(num)) return '';
         return `
-          <div class="barraScrapingContenedor barra" style="margin-bottom:2px;">
-            <span class="textoEtiqueta" style="color:${e.color};">${e.label}</span>
-            <div class="barraScraping">
-              <div class="nivel" style="background:${e.color}; width:${num}%;"></div>
-              <span class="textoNivel">
-                ${num}%
-              </span>
+            <div class="barraScrapingContenedor barra" style="margin-bottom:2px;">
+              <span class="textoEtiqueta" style="color:${e.color};">${e.label}</span>
+              <div class="barraScraping">
+                <div class="nivel" style="background:${e.color}; width:${num}%;"></div>
+                <span class="textoNivel">
+                  ${num}%
+                </span>
+              </div>
             </div>
-          </div>
-        `;
+          `;
       }).join('');
     } else {
       // Si es color, mostrar las barras CMYK
@@ -1053,16 +1089,16 @@ function renderBarraToner(valor) {
         const num = Number(valor[c.key]);
         if (isNaN(num)) return '';
         return `
-          <div style="margin-bottom:2px;" class="barra">
-            <span style="font-size:11px; width:18px; display:inline-block; color:${c.color === '#ffeb3b' ? '#222' : c.color};">${c.label}</span>
-            <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
-              <div style="background:${c.color}; width:${num}%; height:100%; border-radius:4px;"></div>
-              <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:14px; font-size:11px; color:#222;">
-                ${num}%
-              </span>
+            <div style="margin-bottom:2px;" class="barra">
+              <span style="font-size:11px; width:18px; display:inline-block; color:${c.color === '#ffeb3b' ? '#222' : c.color};">${c.label}</span>
+              <div style="background:#eee; border-radius:4px; width:80px; height:14px; display:inline-block; position:relative; vertical-align:middle;">
+                <div style="background:${c.color}; width:${num}%; height:100%; border-radius:4px;"></div>
+                <span style="position:absolute; left:0; right:0; top:0; bottom:0; text-align:center; line-height:14px; font-size:11px; color:#222;">
+                  ${num}%
+                </span>
+              </div>
             </div>
-          </div>
-        `;
+          `;
       }).join('');
     }
   }
@@ -1075,4 +1111,125 @@ function limpiarCacheToner() {
     delete cacheToner[ip];
   }
 
+}
+
+function consultaToner(e) {
+  console.log('consulta toner');
+  console.log(e.target);
+  tonerModal.style.display = 'block';
+
+  //Definimos el ID de la impresora
+   serieConsultaToner = e.target.id;
+  console.log('Impresora serie:', serieConsultaToner);
+
+  //Definimos el nombre de la impresora
+  const fila = e.target.parentElement;
+  const nombre = fila.children[1].textContent;
+  document.getElementById('TituloH1').textContent = `Tóners de la impresora: ${nombre}`;
+
+  // Llamar a la función para obtener el tóner específico
+
+  getTonerEspecifico(serieConsultaToner);
+
+}
+
+cerrarModal.onclick = function () {
+  tonerModal.style.display = 'none';
+
+}
+
+async function getTonerEspecifico(serie) {
+
+  //Limpiar la tabla antes de agregar nuevos datos
+  const tbody = document.querySelector('.tablaToner tbody');
+  tbody.innerHTML = '';
+
+  try {
+    console.log('Obteniendo tóner específico para serie:', serie);
+    // Aquí iría la lógica para obtener el tóner específico
+    const response = await fetch(`https://192.168.80.180:5500/consumible/${serie}`);
+
+    // Si la respuesta no es OK, devolver null
+    if (!response.ok) {
+      console.warn('Respuesta no OK al solicitar consumible:', response.status);
+      renderTonerUnico(null);
+      return null;
+    }
+
+    const data = await response.json();
+    const tonerEspecifico = data.consumibles || data;
+
+    // Si no hay datos válidos, devolver null
+    if (!tonerEspecifico || (Array.isArray(tonerEspecifico) && tonerEspecifico.length === 0)) {
+      console.warn('No se encontraron consumibles para la impresora serie:', serie);
+        renderTonerUnico(null);
+        return null;
+    }
+
+    renderTonerUnico(tonerEspecifico);
+    return tonerEspecifico;
+  } catch (error) {
+    console.error('Error al obtener tóner específico:', error);
+    renderTonerUnico(null);
+    return null;
+  }
+
+}
+
+function renderTonerUnico(tonerEspecifico) {
+  console.log('Renderizando tóner específico:', tonerEspecifico);
+  // Asegurarnos de limpiar antes de renderizar
+  const tbody = document.querySelector('.tablaToner tbody');
+   tbody.innerHTML = '';
+
+  // No renderizar si no se recibió dato (undefined o null)
+  if (tonerEspecifico === undefined || tonerEspecifico === null) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td colspan="4" style="text-align:center;">No existen consumibles para la impresora seleccionada.</td>
+    `;
+    tbody.appendChild(row);
+
+  } else {
+    if (Array.isArray(tonerEspecifico)) {
+
+      console.log("Entro al for each de toner especifico")
+      tonerEspecifico.forEach(toner => {
+        const row = document.createElement('tr');
+        console.log(toner.fecha);
+        row.innerHTML = `
+        <td>${toner.tipo}</td>
+        <td>${toner.modelo}</td>
+        <td>${toner.tij}</td>
+        <td>${toner.fecha.slice(0, 10)}</td>
+        <td class="eliminar-td ${toner.consumibleID}"><button class="eliminar-btn">X</button></td>
+      `;
+        tbody.appendChild(row);
+      });
+    } else {
+
+      console.log("Noooo Entro al for each de toner especifico")
+      const row = document.createElement('tr');      row.innerHTML = `
+      <td>${tonerEspecifico.tipo}</td>
+      <td>${tonerEspecifico.modelo}</td>
+      <td>${tonerEspecifico.tij}</td>
+      <td>${tonerEspecifico.fecha.slice(0, 10)}</td>
+      <td class="eliminar-td ${tonerEspecifico.consumibleID}"><button class="eliminar-btn">X</button></td>
+    `;
+      tbody.appendChild(row);
+    }
+  }
+}
+
+function eliminacionTonerEspecifico(event) {
+  if (event.target.classList.contains('eliminar-btn')) {
+    const fila = event.target.closest('tr');
+    let id = fila.querySelector('.eliminar-td').classList[1];
+    id = parseInt(id);
+    console.log('Eliminar tóner específico con ID:', id);
+    // Aquí iría la lógica para eliminar el tóner específico
+    idEliminar = id;
+    eliminarConsumible();
+  
+  }
 }

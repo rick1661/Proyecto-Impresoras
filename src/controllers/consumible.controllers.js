@@ -14,17 +14,33 @@ export const getConsumibles =  async (req, res) => {
 
 //Consulta unica
 export const getOneConsumible =  async (req, res) => {
-    const pool = await getConnection();
-    const result = await pool.request()
-        .input('id', sql.Int, req.params.id)
-        .query('SELECT * FROM consumible WHERE consumibleID = @id');
+    try {
+        const pool = await getConnection();
+        const serieParam = (req.params.id || '').trim();
 
-    if(result.rowsAffected[0]===0){
-        return res.status(404).json({message:"Consumible no encontrado"});
-    }else{
-        return res.json(result.recordset[0]);
+        const result = await pool.request()
+            // ajustar tamaño si lo deseas, por ejemplo VarChar(50)
+            .input('serie', sql.VarChar(50), serieParam)
+            .query(`
+                SELECT c.consumibleID, c.tipo, c.modelo, c.tij, c.fecha
+                FROM consumible c
+                INNER JOIN impresora i ON c.impresoraID = i.impresoraID
+                WHERE UPPER(RTRIM(LTRIM(i.serie))) = UPPER(@serie);
+            `);
+
+        if (!result.recordset || result.recordset.length === 0) {
+            return res.status(404).json({ message: 'Consumible no encontrado', consumibles: [] });
+        }
+
+        // Devolver array bajo la clave consumibles para mantener compatibilidad con el frontend
+        return res.json({ consumibles: result.recordset });
+    } catch (error) {
+        console.error('Error en getOneConsumible:', error);
+        return res.status(500).json({ message: 'Error interno del servidor' });
     }
 };
+
+
 
 //Creacion unica;
 export const postOneConsumible = async (req, res) => {

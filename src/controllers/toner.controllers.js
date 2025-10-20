@@ -10,38 +10,51 @@ const modelosColor = [
     'E47528',
     'P57750 XC',
     'MFP M283fdw',
-    'MFP P57750'
+    'MFP P57750',
+    'MFP E47528',
+    'MFP P57750 XC'
 ];
 
 const modelosScraping = [
     "408dn",
     "MFP M232",
     "MFP 432",
-    "M432"
+    "M432",
+    "MFP M432"
 ];
 
 // Función para precargar niveles de tóner en caché
 async function precargarNivelesToner() {
     const impresoras = await impresoraIpModelo();
-    impresoras.forEach(async element => {
-        if (modelosColor.includes(element.modelo)) {
+    // Usar un bucle for...of y await para asegurarnos de que las instancias de Puppeteer
+    // se cierran antes de iniciar la siguiente petición y evitar procesos/ventanas huérfanas.
+    for (const element of impresoras) {
+        try {
+            if (modelosColor.includes(element.modelo)) {
+                tonerCacheColor[element.direccionIp] = await obtenerNivelesTonerColor(element.direccionIp);
+                console.log(`Niveles de tóner (color) para ${element.direccionIp} modelo ${element.modelo}:`);
+                console.log(tonerCacheColor[element.direccionIp]);
 
-             tonerCacheColor[element.direccionIp] = await obtenerNivelesTonerColor(element.direccionIp);
-             console.log(`Niveles de tóner (color) para ${element.direccionIp} modelo ${element.modelo}:`);
-             console.log(tonerCacheColor[element.direccionIp]);
-
-        } else if (modelosScraping.includes(element.modelo)) {
-
-            tonerCacheScraping[element.direccionIp] = await obtenerNivelesTonerScraping(element.direccionIp);
-            console.log(`Niveles de tóner (scraping) para ${element.direccionIp} modelo ${element.modelo}:`);
-            console.log(tonerCacheScraping[element.direccionIp]);
+            } else if (modelosScraping.includes(element.modelo)) {
+                try {
+                    // obtenerNivelesTonerScraping maneja el cierre del browser en su finally
+                    tonerCacheScraping[element.direccionIp] = await obtenerNivelesTonerScraping(element.direccionIp);
+                    console.log(`Niveles de tóner (scraping) para ${element.direccionIp} modelo ${element.modelo}:`);
+                    console.log(tonerCacheScraping[element.direccionIp]);
+                } catch (err) {
+                    console.warn(`Scraping falló para ${element.direccionIp}:`, err.message || err);
+                    // Guardar valor nulo o un estado de error para que consumers sepan que falló
+                    tonerCacheScraping[element.direccionIp] = null;
+                }
+            } else {
+                tonerCacheNegro[element.direccionIp] = await obtenerNivelesTonerNegro(element.direccionIp);
+                console.log(`Niveles de tóner (negro) para ${element.direccionIp} modelo ${element.modelo}:`);
+                console.log(tonerCacheNegro[element.direccionIp]);
+            }
+        } catch (error) {
+            console.error('Error precargando niveles para', element.direccionIp, error);
         }
-        else {
-             tonerCacheNegro[element.direccionIp] = await obtenerNivelesTonerNegro(element.direccionIp);
-            console.log(`Niveles de tóner (negro) para ${element.direccionIp} modelo ${element.modelo}:`);
-            console.log(tonerCacheNegro[element.direccionIp]);
-        }
-    }); // <-- Add this closing parenthesis for forEach
+    }
 
 }
 
@@ -206,7 +219,7 @@ export const getTonerScraping = async (req, res) => {
 
 // Endpoint para obtener niveles de tóner precargados
 precargarNivelesToner();
-setInterval(precargarNivelesToner, 5 * 60 * 1000);
+setInterval(precargarNivelesToner, 10 * 60 * 1000);
 
 
 

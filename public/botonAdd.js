@@ -123,7 +123,9 @@ btn.onclick = function () {
                         <option value="206X C">206X C</option>
                         <option value="206X K">206X K</option>
                         <option value="W1332AC">W1332AC</option>
+                        <option value="CF287XC">CF287XC</option>
                         <option value="CF287JC">CF287JC</option>
+                        <option value="CF226X">CF226X</option>
                     </select>
                     <button type="submit">Guardar</button>`
       // Cargar las impresoras al abrir el modal
@@ -167,6 +169,7 @@ formulario.addEventListener('submit', (e) => {
 
 span.onclick = function () {
   modal.style.display = 'none';
+
 }
 
 // Quita el formulario dandole click a cualquier parte fuera de la ventana

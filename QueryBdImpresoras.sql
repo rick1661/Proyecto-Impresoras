@@ -382,8 +382,9 @@ use ImpresorasBD;
 
 UPDATE impresora SET nombre = 'Compras TJ HP Operaciones 02' WHERE serie = 'MXBCR9V19V';
 
-SELECT * FROM impresora;
+SELECT * FROM impresora where impresoraID = 80;
 
 UPDATE impresora SET toner = 'W9008MC' WHERE modelo = 'E50145DN';
 
 
+SELECT c.tipo, c.modelo, c.tij, c.fecha FROM consumible c INNER JOIN impresora i ON c.impresoraID = i.impresoraID WHERE i.serie = 'MXBCP1P2D5'; 

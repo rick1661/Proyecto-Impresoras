@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impresoras SIMNSA</title>
-    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=search" />
     <!--<link href="../node_modules/select2/dist/css/select2.min.css" rel="stylesheet" />-->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
@@ -100,10 +102,11 @@
             <table class="styled-table">
                 <div id="contenedorBuscadorPrincipal">
                     <div id="contenedorBuscadorSecundario">
-                        <input type="text" id="busquedaInput" placeholder="Buscar elemento"> <span id="buscadorIcono" class="material-symbols-outlined"> search</span>
+                        <input type="text" id="busquedaInput" placeholder="Buscar elemento"> <span id="buscadorIcono"
+                            class="material-symbols-outlined"> search</span>
                     </div>
-                    
-                </div> 
+
+                </div>
                 <thead>
                     <tr>
                         <th>Serie</th>
@@ -138,7 +141,7 @@
                     <input type="text" name="modelo" placeholder="Modelo" required>
                     <input type="text" name="direccionIp" placeholder="Dirección IP" required>
                     <label for="area">Área:</label>
-                    <select name="area"  id="selectArea" required>
+                    <select name="area" id="selectArea" required>
                         <option value="n">Selecciona un área</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
@@ -154,26 +157,26 @@
 
         <div id="btnsDiv">
 
-            <button  id="agregarBtn" class="inferiorBtn liquidGreen">
+            <button id="agregarBtn" class="inferiorBtn liquidGreen">
                 <span>Agregar impresora</span>
             </button>
 
             <button id="editarBtn" class="inferiorBtn liquidBlue">
-                 <span>Editar</span>
+                <span>Editar</span>
             </button>
 
         </div>
 
-      
 
-        <div id="decisionModal" >
-            
-            <div id ="decisioContenedor">
+
+        <div id="decisionModal">
+
+            <div id="decisioContenedor">
                 <div id="decisionTextContenedor">
-                     <span id="decisionText">¿Estás seguro de eliminar el registro?</span>
+                    <span id="decisionText">¿Estás seguro de eliminar el registro?</span>
                 </div>
                 <div class="btnContenedor">
-                   <button id="aceptarBtn" class="btnDecision">
+                    <button id="aceptarBtn" class="btnDecision">
                         <span>Aceptar</span>
                     </button>
                     <button id="cancelarBtn" class="btnDecision">
@@ -185,18 +188,44 @@
 
     </div>
 
+    <div id="tonerModal" class="modal">
+        <div class="tablaTonerContent">
+            <span id="cerrarTonerModal" class="close">&times;</span>
+            <h2 id="TituloH1">Tóner de la impresora:</h2>
+            <table class="tablaToner">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Modelo</th>
+                        <th>TIJ</th>
+                        <th>Fecha</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody id="tonerTableBody">
 
-    <!-- Script -->
-    
-    <script src="asaid.js"></script>
-    <script src="table.js"></script>
-    <script src="botonADD.js"></script>
-    <!--<script src="../node_modules/jquery/dist/jquery.min.js"></script> 
+                    <!-- Aquí puedes agregar filas de datos -->
+                    <tr>
+
+
+                    </tr>
+                    <!-- Más filas aquí -->
+
+                </tbody>
+        </div>
+
+
+        <!-- Script -->
+
+        <script src="asaid.js"></script>
+        <script src="table.js"></script>
+        <script src="botonADD.js"></script>
+        <!--<script src="../node_modules/jquery/dist/jquery.min.js"></script> 
     <script src="../node_modules/select2/dist/js/select2.min.js"></script>-->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    
+
 
 
 </body>

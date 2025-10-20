@@ -399,21 +399,21 @@ body {
 
 .modal {
   display: none;
-  /* Oculta el modal por defecto */
+
+}
+
+
+.modal {
+  /* Oculta el modal por defecto y posiciona la superposición */
+  display: none;
   position: fixed;
-  /* El modal se posiciona fijo respecto a la ventana del navegador */
   z-index: 1000;
-  /* Se asegura de que esté por encima de otros elementos */
   left: 0;
   top: 0;
-  /* Lo coloca en la esquina superior izquierda */
   width: 100%;
   height: 100%;
-  /* Ocupa toda la pantalla */
   overflow: auto;
-  /* Si el contenido es muy grande, permite hacer scroll */
   background-color: rgba(0, 0, 0, 0.4);
-  /* Fondo semitransparente oscuro para dar efecto de superposición */
 }
 
 .modal-content {
@@ -990,4 +990,106 @@ h2 {
   color: #222;
   font-weight: 600;
   text-shadow: 0 1px 2px #fff;
+}
+
+#tonerModal {
+  display: none;
+  /* Oculta el modal por defecto */
+  position: fixed;
+  /* El modal se posiciona fijo respecto a la ventana del navegador */
+  z-index: 1000;
+  /* Se asegura de que esté por encima de otros elementos */
+  left: 0;
+  top: 0;
+  /* Lo coloca en la esquina superior izquierda */
+  width: 100%;
+  height: 100%;
+  /* Ocupa toda la pantalla */
+  overflow: auto;
+  /* Si el contenido es muy grande, permite hacer scroll */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Fondo semitransparente oscuro para dar efecto de superposición */
+}
+
+/* Hacer las celdas de la columna Tóner claramente clicables */
+.styled-table td.toner-cell {
+  cursor: pointer; /* cursor de mano para indicar interactividad */
+  transition: background-color 0.15s ease;
+}
+.styled-table td.toner-cell:hover {
+  background-color: rgba(0, 102, 156, 0.06);
+}
+
+.tablaTonerContent {
+  background-color: #fff;
+  /* Fondo blanco para el contenido del modal */
+  margin: 4% auto;
+  /* Centra el modal verticalmente (10% desde arriba) y horizontalmente (auto) */
+  padding: 20px;
+  /* Espacio interno alrededor del contenido */
+  border-radius: 8px;
+  /* Bordes redondeados */
+  width: 90%;
+  /* Ocupa el 90% del ancho de la pantalla */
+  max-width: 1000px;
+  /* Pero nunca más de 1000px de ancho */
+  position: relative;
+  /* Permite posicionar elementos hijos de forma absoluta (como el botón de cerrar) */
+  min-height: 500px;
+}
+
+
+.tablaToner {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1rem;
+  min-width: 700px;
+  background:#ffffff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+ 
+}
+
+.tablaToner thead {
+  background: var(--colorPrincipal);
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  color: #ffffff;
+  height: 50px;
+}
+
+
+.tablaToner tbody tr {
+  border-bottom: 1px solid #dddddd;
+  background: #ffffff;
+  text-align: center;
+} 
+
+/* Estilos para el botón eliminar dentro del modal de tóner */
+.eliminar-td {
+  text-align: center;
+  height: 40px;
+}
+.eliminar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.08s ease, background 0.12s ease;
+}
+.eliminar-btn:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+.eliminar-btn:focus {
+  outline: 2px solid rgba(0,0,0,0.08);
 }
