@@ -1,6 +1,7 @@
 
 //Importacion de la conexion a la BD
 import { getConnection } from '../database/connection.js';
+import { insertarEvento } from '../utils/audit.js';
 import sql from 'mssql';
 
 //Funciones para los metodos get y put
@@ -38,27 +39,70 @@ export const postOneImpresora = async (req, res) => {
 
     console.log(req.body);
     const pool = await getConnection();
-    const result = await pool.request()
-        .input("id", sql.Int, req.params.id)
-        .input("serie", sql.VarChar, req.body.serie)
-        .input("nombre", sql.VarChar, req.body.nombre)
-        .input("marca", sql.VarChar, req.body.marca)
-        .input("modelo", sql.VarChar, req.body.modelo)
-        .input("direccionIp", sql.VarChar, req.body.direccionIp)
-        .input("areaID", sql.Int, req.body.area)
-        .input("contratoID", sql.Int, req.body.contrato)
-        .query(`INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID) VALUES (@serie, @nombre, @marca, @modelo, @direccionIp, @areaID, @contratoID); SELECT SCOPE_IDENTITY() AS id;`);
-    console.log(result);
-    res.json({
-        id: result.recordset[0].id,
-        serie: req.body.serie,
-        nombre: req.body.nombre,
-        marca: req.body.marca,
-        modelo: req.body.modelo,
-        direccionIP: req.body.direccionIP,
-        areaID: req.body.areaID,
-        contratoID: req.body.contratoID
-    })
+    const transaction = new sql.Transaction(pool);
+    try {
+        await transaction.begin();
+        const reqT = new sql.Request(transaction);
+
+        //INsert para la tabla impresora
+        const result = await reqT
+
+            .input("id", sql.Int, req.params.id)
+            .input("serie", sql.VarChar, req.body.serie)
+            .input("nombre", sql.VarChar, req.body.nombre)
+            .input("marca", sql.VarChar, req.body.marca)
+            .input("modelo", sql.VarChar, req.body.modelo)
+            .input("direccionIp", sql.VarChar, req.body.direccionIp)
+            .input("areaID", sql.Int, req.body.area)
+            .input("contratoID", sql.Int, req.body.contrato)
+            .input("toner", sql.VarChar, req.body.toner)
+            .query(`
+                INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID, toner)
+                 VALUES (@serie, @nombre, @marca, @modelo, @direccionIp, @areaID, @contratoID, @toner); 
+                 SELECT SCOPE_IDENTITY() AS id;
+                 `);
+
+        console.log(result);
+        res.json({
+            id: result.recordset[0].id,
+            serie: req.body.serie,
+            nombre: req.body.nombre,
+            marca: req.body.marca,
+            modelo: req.body.modelo,
+            direccionIP: req.body.direccionIP,
+            areaID: req.body.areaID,
+            contratoID: req.body.contratoID
+        })
+
+        const impresoraId = result.recordset[0].id;
+
+        //Insetar Evento
+        await insertarEvento({
+            tipo: 'CREATE_IMPRESORA',
+            recurso: 'impresora',
+            recursoId: impresoraId,
+            usuarioId: req.user?.id ?? null,
+            usuarioNombre: req.user?.name ?? null,
+            detalles: { body: req.body },
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            requestId: req.headers['x-request-id'] ?? null,
+            resultado: 'SUCCESS',
+            mensaje: null
+        }, transaction);
+
+        await transaction.commit();
+        res.status(201).json({ id: impresoraId });
+    } catch (err) {
+        // intentar rollback de forma segura
+        try {
+            await transaction.rollback();
+        } catch (rbErr) {
+            console.error('Rollback failed:', rbErr);
+        }
+        console.error('Error crearImpresoraController:', err);
+        res.status(500).json({ error: 'Error creando impresora' });
+    }
 
 }
 

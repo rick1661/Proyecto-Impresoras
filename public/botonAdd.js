@@ -19,6 +19,7 @@ const inputModelo = document.querySelector('#form input[name="modelo"]');
 const inputDireccionIp = document.querySelector('#form input[name="direccionIp"]')
 const selectArea = document.querySelector('#form select[name="area"]');
 const selectContrato = document.querySelector('#form select[name="contrato"]');
+const selectToner = document.querySelector('#form select[name="toner"]');
 //const btnGuardar = document.querySelector('#btnGuardar');
 
 let tipoFormulario = null;
@@ -32,6 +33,7 @@ inputModelo.addEventListener('blur', validacionCampos);
 inputDireccionIp.addEventListener('blur', validacionCampos);
 selectArea.addEventListener('blur', validacionSelect);
 selectContrato.addEventListener('blur', validacionSelect);
+selectToner.addEventListener('blur', validacionSelect);
 
 //------Eventos onclick------//
 btn.onclick = function () {
@@ -60,6 +62,40 @@ btn.onclick = function () {
                     <select name="contrato" class="js-example-basic-single" id="selectContrato" required>
                         <option value="n">Selecciona un contrato</option>
                         <!-- Agrega más opciones según necesites -->
+                    </select>
+                    <label for="toner">Toner:</label>
+                      <select name="toner" id="selectToner" required>
+                        <option value="n">Selecciona un tóner</option>
+                        <!-- Agrega más opciones según necesites -->
+                         <option value="W9008MC">W9008MC</option>
+                        <option value="W1330XCc">W1330XC</option>
+                        <option value="W1330X">W1330X</option>
+                        <option value="CF258XC">CF258XC</option>
+                        <option value="CF258X">CF258X</option>
+                        <option value="CF280XC">CF280XC</option>
+                        <option value="CF280X">CF280X</option>
+                        <option value="CE285AC">CE285AC</option>
+                        <option value="131A Y">131A Y</option>
+                        <option value="131A M">131A M</option>
+                        <option value="131A C">131A C</option>
+                        <option value="131A K">131A K</option>
+                        <option value="CE255XC">CE255XC</option>
+                        <option value="976YC Y">976YC Y</option>
+                        <option value="976YC M">976YC M</option>
+                        <option value="976YC C">976YC C</option>
+                        <option value="976YC K">976YC K</option>
+                        <option value="W9090MC Y">W9090MC Y</option>
+                        <option value="W9090MC M">W9090MC M</option>
+                        <option value="W9090MC C">W9090MC C</option>
+                        <option value="W9090MC K">W9090MC K</option>
+                        <option value="206X Y">206X Y</option>
+                        <option value="206X M">206X M</option>
+                        <option value="206X C">206X C</option>
+                        <option value="206X K">206X K</option>
+                        <option value="W1332AC">W1332AC</option>
+                        <option value="CF287XC">CF287XC</option>
+                        <option value="CF287JC">CF287JC</option>
+                        <option value="CF226X">CF226X</option>
                     </select>
                     <button id="btnGuardar" type="submit">Guardar</button>`
 
@@ -340,6 +376,7 @@ async function formularioImpresoraEnvio(formulario) {
       // direccionIp: datosFormulario.get('direccionIp'),
       // areaID: datosFormulario.get('area'),
       // contratoID: datosFormulario.get('contrato')
+      // toner: datosFormulario.get('toner')
       //})
     });
 

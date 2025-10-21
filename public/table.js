@@ -174,9 +174,20 @@ function renderImpresoras(impresoras) {
   const tbody = document.querySelector('.styled-table tbody');
   tbody.innerHTML = '';
   for (const impresora of impresoras) {
-    //Creamos la url de la IP
-    const ip = `http://${impresora.direccionIp}`;
-    const ipUrl = new URL(ip);
+    // Creamos la url de la IP de forma segura (evitar excepción si ip inválida)
+    console.log(impresora);
+    const ip = impresora.direccionIp || '';
+    let ipHref = null;
+    try {
+      // Si la dirección ya contiene protocolo, úsala; si no, prepende http://
+      const candidate = ip.startsWith('http://') || ip.startsWith('https://') ? ip : `http://${ip}`;
+      const urlObj = new URL(candidate);
+      ipHref = urlObj.href;
+    } catch (err) {
+      // dirección inválida -> no crear enlace, mostrar solo texto
+      console.warn('IP inválida, no se creará enlace:', impresora.direccionIp);
+      ipHref = null;
+    }
     const row = document.createElement('tr');
     // Generar un id único para la celda de tóner
     const tonerCellId = `toner-${impresora.impresoraID}`;
@@ -189,7 +200,7 @@ function renderImpresoras(impresoras) {
           <td id="${tonerCellId}">Cargando...</td>
           <td>${impresora.marca}</td>
           <td>${impresora.modelo}</td>
-          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+          <td>${ipHref ? `<a href="${ipHref}" target="_blank">${impresora.direccionIp}</a>` : `${impresora.direccionIp}`}</td>
           <td>${impresora.nombre[1]}</td>
           <td>${impresora.nombre[2]}</td>
           <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>
@@ -203,7 +214,7 @@ function renderImpresoras(impresoras) {
           <td id="${tonerCellId}">Cargando...</td>
           <td>${impresora.marca}</td>
           <td>${impresora.modelo}</td>
-          <td><a href="${ipUrl}" target="_blank">${impresora.direccionIp}</a></td>
+          <td>${ipHref ? `<a href="${ipHref}" target="_blank">${impresora.direccionIp}</a>` : `${impresora.direccionIp}`}</td>
           <td>${impresora.nombre[1]}</td>
           <td>${impresora.nombre[2]}</td>
           <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>`;
