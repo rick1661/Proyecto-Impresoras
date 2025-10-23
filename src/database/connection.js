@@ -19,20 +19,35 @@ const dbSettings = {
     }
 }
 
+// Pool de conexiones global
+let pool = null;
+
 // Funcion de conexion
-
-
-export const getConnection = async () =>{
-
-    try{
-
-        const pool = await sql.connect(dbSettings);
+export const getConnection = async () => {
+    try {
+        if (!pool) {
+            pool = new sql.ConnectionPool(dbSettings);
+            await pool.connect();
+            
+            // Manejar eventos del pool
+            pool.on('error', err => {
+                console.error('Database pool error:', err);
+                pool = null;
+            });
+        }
         return pool;
-
-    }catch (error){
-
-        console.error(error);
+    } catch (error) {
+        console.error('Error connecting to database:', error);
+        pool = null;
+        throw error;
     }
+}
 
+// Función para cerrar el pool cuando sea necesario
+export const closeConnection = async () => {
+    if (pool) {
+        await pool.close();
+        pool = null;
+    }
 }
 

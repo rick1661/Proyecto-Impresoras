@@ -44,10 +44,8 @@ export const postOneImpresora = async (req, res) => {
         await transaction.begin();
         const reqT = new sql.Request(transaction);
 
-        //INsert para la tabla impresora
+        //INSERT para la tabla impresora
         const result = await reqT
-
-            .input("id", sql.Int, req.params.id)
             .input("serie", sql.VarChar, req.body.serie)
             .input("nombre", sql.VarChar, req.body.nombre)
             .input("marca", sql.VarChar, req.body.marca)
@@ -63,20 +61,9 @@ export const postOneImpresora = async (req, res) => {
                  `);
 
         console.log(result);
-        res.json({
-            id: result.recordset[0].id,
-            serie: req.body.serie,
-            nombre: req.body.nombre,
-            marca: req.body.marca,
-            modelo: req.body.modelo,
-            direccionIP: req.body.direccionIP,
-            areaID: req.body.areaID,
-            contratoID: req.body.contratoID
-        })
-
         const impresoraId = result.recordset[0].id;
 
-        //Insetar Evento
+        //Insertar Evento
         await insertarEvento({
             tipo: 'CREATE_IMPRESORA',
             recurso: 'impresora',
@@ -92,7 +79,19 @@ export const postOneImpresora = async (req, res) => {
         }, transaction);
 
         await transaction.commit();
-        res.status(201).json({ id: impresoraId });
+        
+        // Una sola respuesta al final
+        res.status(201).json({
+            id: impresoraId,
+            serie: req.body.serie,
+            nombre: req.body.nombre,
+            marca: req.body.marca,
+            modelo: req.body.modelo,
+            direccionIp: req.body.direccionIp,
+            areaID: req.body.area,
+            contratoID: req.body.contrato,
+            toner: req.body.toner
+        });
     } catch (err) {
         // intentar rollback de forma segura
         try {
@@ -112,42 +111,112 @@ export const postOneImpresora = async (req, res) => {
 export const putOneImpresora = async (req, res) => {
 
     const pool = await getConnection();
-    const result = await pool.request()
-        .input("id", sql.Int, req.params.id)
-        .input("serie", sql.VarChar, req.body.serie)
-        .input("nombre", sql.VarChar, req.body.nombre)
-        .input("marca", sql.VarChar, req.body.marca)
-        .input("modelo", sql.VarChar, req.body.modelo)
-        .input("direccionIp", sql.VarChar, req.body.direccionIp)
-        .input("areaID", sql.Int, req.body.areaID)
-        .input("contratoID", sql.Int, req.body.contratoID)
-        .input("toner", sql.VarChar, req.body.toner)
-        .query("UPDATE impresora SET serie = @serie, nombre = @nombre, marca = @marca, modelo = @modelo, direccionIp = @direccionIp, areaID = @areaID, contratoID = @contratoID, toner = @toner WHERE impresoraID = @id ")
+    const transaction = new sql.Transaction(pool);
+    try {
+        await transaction.begin();
+        const reqT = new sql.Request(transaction);
 
-    if (result.rowsAffected === 0) {
-        return res.status(404).json({ message: "Impresora no encontrada" });
-    } else {
-        res.json('Impresora actualizada');
+        //Actualización para la tabla impresora
+        const result = await reqT
+            .input("id", sql.Int, req.params.id)
+            .input("serie", sql.VarChar, req.body.serie)
+            .input("nombre", sql.VarChar, req.body.nombre)
+            .input("marca", sql.VarChar, req.body.marca)
+            .input("modelo", sql.VarChar, req.body.modelo)
+            .input("direccionIp", sql.VarChar, req.body.direccionIp)
+            .input("areaID", sql.Int, req.body.areaID)
+            .input("contratoID", sql.Int, req.body.contratoID)
+            .input("toner", sql.VarChar, req.body.toner)
+            .query("UPDATE impresora SET serie = @serie, nombre = @nombre, marca = @marca, modelo = @modelo, direccionIp = @direccionIp, areaID = @areaID, contratoID = @contratoID, toner = @toner WHERE impresoraID = @id ");
+
+        // Verificar si se actualizó algún registro
+        if (result.rowsAffected[0] === 0) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Impresora no encontrada" });
+        }
+
+        //insertar Evento
+        await insertarEvento({
+            tipo: 'UPDATE_IMPRESORA',
+            recurso: 'impresora',
+            recursoId: req.params.id,
+            usuarioId: req.user?.id ?? null,
+            usuarioNombre: req.user?.name ?? null,
+            detalles: { body: req.body },
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            requestId: req.headers['x-request-id'] ?? null,
+            resultado: 'SUCCESS',
+            mensaje: null
+        }, transaction);
+
+        await transaction.commit();
+        res.status(200).json({ message: "Impresora actualizada" });
+    } catch (err) {
+        // intentar rollback de forma segura
+        try {
+            await transaction.rollback();
+        } catch (rbErr) {
+            console.error('Rollback failed:', rbErr);
+        }
+        console.error('Error putOneImpresora:', err);
+        res.status(500).json({ error: 'Error actualizando impresora' });
     }
-    res.send('Actualizando impresora');
-
 }
 
 //Eliminacion unica
 export const deleteOneImpresora = async (req, res) => {
 
     const pool = await getConnection();
-    const result = await pool.request()
-        .input('id', sql.Int, req.params.id)
-        .query("DELETE FROM impresora WHERE impresoraID = @id");
+    const transaction = new sql.Transaction(pool)
 
-    if (result.rowsAffected[0] === 0) {
-        return res.status(404).json({ message: "Impresora no encontrada" });
-    } else {
-        return res.json({ message: "Producto eliminado" });
+    try {
+        await transaction.begin();
+        const reqT = new sql.Request(transaction);
+
+        //Sentencias SQL para la eliminacion
+        const result = await reqT
+            .input('id', sql.Int, req.params.id)
+            .query("DELETE FROM impresora WHERE impresoraID = @id");
+
+        // Verificar si se eliminó algún registro
+        if (result.rowsAffected[0] === 0) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Impresora no encontrada" });
+        }
+
+        const impresoraId = req.params.id;
+        //Insertar Evento
+        await insertarEvento({
+            tipo: 'DELETE_IMPRESORA',
+            recurso: 'impresora',
+            recursoId: impresoraId,
+            usuarioId: req.user?.id ?? null,
+            usuarioNombre: req.user?.name ?? null,
+            detalles: { 
+                impresoraId: impresoraId,
+                body: req.body 
+            },
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            requestId: req.headers['x-request-id'] ?? null,
+            resultado: 'SUCCESS',
+            mensaje: null
+        }, transaction);
+        
+        await transaction.commit();
+        res.status(200).json({ message: "Impresora eliminada correctamente" });
+    } catch (err) {
+        // intentar rollback de forma segura
+        try {
+            await transaction.rollback();
+        } catch (rbErr) {
+            console.error('Rollback failed:', rbErr);
+        }
+        console.error('Error deleteOneImpresora:', err);
+        res.status(500).json({ error: 'Error eliminando impresora' });
+
     }
-
-
 }
 
 // cargar impresoras y modelo de consulta desde la base de datos

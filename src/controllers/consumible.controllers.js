@@ -1,4 +1,5 @@
 import { getConnection} from "../database/connection.js";
+import { insertarEvento } from '../utils/audit.js';
 import sql from 'mssql';
 
 
@@ -45,53 +46,151 @@ export const getOneConsumible =  async (req, res) => {
 //Creacion unica;
 export const postOneConsumible = async (req, res) => {
     const pool = await getConnection();
-    const result = await pool.request()
-        .input("tipo", sql.VarChar, req.body.tipo)
-        .input("modelo", sql.VarChar, req.body.modelo)
-        .input("tij", sql.VarChar, req.body.tij)
-        .input("fecha", sql.Date, fechaActual)
-        .input("impresoraID", sql.Int, req.body.impresoraID)
-        .query("INSERT INTO consumible (tipo, modelo, tij , fecha, impresoraID) VALUES (@tipo, @modelo, @tij, @fecha, @impresoraID); SELECT SCOPE_IDENTITY() AS id;");
-    res.json({
-        id: result.recordset[0].id,
-        tipo: req.body.tipo,
-        modelo: req.body.modelo,
-        impresoraID: req.body.impresoraID,
-        tij: req.body.tij,
-        fecha: req.body.fecha
-    });
+    const transaction = new sql.Transaction(pool);
+    try {
+        await transaction.begin();
+        const reqT = new sql.Request(transaction);
+
+        const result = await reqT
+            .input("tipo", sql.VarChar, req.body.tipo)
+            .input("modelo", sql.VarChar, req.body.modelo)
+            .input("tij", sql.VarChar, req.body.tij)
+            .input("fecha", sql.Date, fechaActual)
+            .input("impresoraID", sql.Int, req.body.impresoraID)
+            .query("INSERT INTO consumible (tipo, modelo, tij , fecha, impresoraID) VALUES (@tipo, @modelo, @tij, @fecha, @impresoraID); SELECT SCOPE_IDENTITY() AS id;");
+
+        const consumibleId = result.recordset[0].id;
+
+        // Insertar evento
+        await insertarEvento({
+            tipo: 'CREATE_CONSUMIBLE',
+            recurso: 'consumible',
+            recursoId: consumibleId,
+            usuarioId: req.user?.id ?? null,
+            usuarioNombre: req.user?.name ?? null,
+            detalles: { body: req.body },
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            requestId: req.headers['x-request-id'] ?? null,
+            resultado: 'SUCCESS',
+            mensaje: null
+        }, transaction);
+
+        await transaction.commit();
+        res.status(201).json({
+            id: consumibleId,
+            tipo: req.body.tipo,
+            modelo: req.body.modelo,
+            impresoraID: req.body.impresoraID,
+            tij: req.body.tij,
+            fecha: fechaActual
+        });
+    } catch (err) {
+        try {
+            await transaction.rollback();
+        } catch (rbErr) {
+            console.error('Rollback failed:', rbErr);
+        }
+        console.error('Error postOneConsumible:', err);
+        res.status(500).json({ error: 'Error creando consumible' });
+    }
 };
 
 //Actualizacion unica
 export const putOneConsumible = async (req, res) => {
     const pool = await getConnection();
-    const result = await pool.request()
-        .input("consumibleID", sql.Int, req.params.id)
-        .input("tipo", sql.VarChar, req.body.tipo)
-        .input("modelo", sql.VarChar, req.body.modelo)
-        .input("tij", sql.VarChar, req.body.tij)
-        .input("fecha", sql.Date, req.body.fecha)
-        .input("impresoraID", sql.Int, req.body.impresoraID)
-        .query("UPDATE consumible SET tipo = @tipo, modelo = @modelo, tij = @tij, fecha = @fecha, impresoraID = @impresoraID WHERE consumibleID = @consumibleID");
+    const transaction = new sql.Transaction(pool);
+    try {
+        await transaction.begin();
+        const reqT = new sql.Request(transaction);
 
-    if(result.rowsAffected[0] === 0){
-        return res.status(404).json({message: "Consumible no encontrado"});
-    }
-    else{
-        res.json('Consumible actualizado');
+        const result = await reqT
+            .input("consumibleID", sql.Int, req.params.id)
+            .input("tipo", sql.VarChar, req.body.tipo)
+            .input("modelo", sql.VarChar, req.body.modelo)
+            .input("tij", sql.VarChar, req.body.tij)
+            .input("fecha", sql.Date, req.body.fecha)
+            .input("impresoraID", sql.Int, req.body.impresoraID)
+            .query("UPDATE consumible SET tipo = @tipo, modelo = @modelo, tij = @tij, fecha = @fecha, impresoraID = @impresoraID WHERE consumibleID = @consumibleID");
+
+        if(result.rowsAffected[0] === 0){
+            await transaction.rollback();
+            return res.status(404).json({message: "Consumible no encontrado"});
+        }
+
+        // Insertar evento
+        await insertarEvento({
+            tipo: 'UPDATE_CONSUMIBLE',
+            recurso: 'consumible',
+            recursoId: req.params.id,
+            usuarioId: req.user?.id ?? null,
+            usuarioNombre: req.user?.name ?? null,
+            detalles: { body: req.body },
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            requestId: req.headers['x-request-id'] ?? null,
+            resultado: 'SUCCESS',
+            mensaje: null
+        }, transaction);
+
+        await transaction.commit();
+        res.status(200).json({ message: 'Consumible actualizado' });
+    } catch (err) {
+        try {
+            await transaction.rollback();
+        } catch (rbErr) {
+            console.error('Rollback failed:', rbErr);
+        }
+        console.error('Error putOneConsumible:', err);
+        res.status(500).json({ error: 'Error actualizando consumible' });
     }
 };  
 
 //Eliminacion unica
-export const deleteOneConsumible = async (req, res) =>{
+export const deleteOneConsumible = async (req, res) => {
     const pool = await getConnection();
-    const result = await pool.request()
-        .input('id', sql.Int, req.params.id)
-        .query("DELETE FROM consumible WHERE consumibleID = @id");
+    const transaction = new sql.Transaction(pool);
+    try {
+        await transaction.begin();
+        const reqT = new sql.Request(transaction);
 
-    if(result.rowsAffected[0] === 0){
-        return res.status(404).json({message: "Consumible no encontrado"});
-    }else{
-        return res.json({message: "Consumible eliminado"});
+        const result = await reqT
+            .input('id', sql.Int, req.params.id)
+            .query("DELETE FROM consumible WHERE consumibleID = @id");
+
+        if(result.rowsAffected[0] === 0){
+            await transaction.rollback();
+            return res.status(404).json({message: "Consumible no encontrado"});
+        }
+
+        const consumibleId = req.params.id;
+        // Insertar evento
+        await insertarEvento({
+            tipo: 'DELETE_CONSUMIBLE',
+            recurso: 'consumible',
+            recursoId: consumibleId,
+            usuarioId: req.user?.id ?? null,
+            usuarioNombre: req.user?.name ?? null,
+            detalles: { 
+                consumibleId: consumibleId,
+                body: req.body 
+            },
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            requestId: req.headers['x-request-id'] ?? null,
+            resultado: 'SUCCESS',
+            mensaje: null
+        }, transaction);
+
+        await transaction.commit();
+        res.status(200).json({message: "Consumible eliminado correctamente"});
+    } catch (err) {
+        try {
+            await transaction.rollback();
+        } catch (rbErr) {
+            console.error('Rollback failed:', rbErr);
+        }
+        console.error('Error deleteOneConsumible:', err);
+        res.status(500).json({ error: 'Error eliminando consumible' });
     }
 };
