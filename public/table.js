@@ -156,7 +156,7 @@ async function getImpresoras(guardarCache = false) {
 function enqueueTonerRequest(fn) {
   tonerQueue.push(fn);
   processTonerQueue();
-  console.log(tonerQueue);
+
 }
 
 function processTonerQueue() {
@@ -175,7 +175,7 @@ function renderImpresoras(impresoras) {
   tbody.innerHTML = '';
   for (const impresora of impresoras) {
     // Creamos la url de la IP de forma segura (evitar excepción si ip inválida)
-    console.log(impresora);
+   
     const ip = impresora.direccionIp || '';
     let ipHref = null;
     try {
@@ -205,7 +205,7 @@ function renderImpresoras(impresoras) {
           <td>${impresora.nombre[2]}</td>
           <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>
           <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
-          <td><button type="submit" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+          <td><button type="button" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
         `;
     } else {
       row.innerHTML = `
@@ -253,7 +253,6 @@ function renderImpresoras(impresoras) {
     enqueueTonerRequest(() => obtenerToner(impresora.direccionIp).then(nivelTonerValue => {
       // Normalizar IP para scraping (sin sufijos ni puertos)
       const ipSolo = impresora.direccionIp.split(':')[0];
-      console.log(obtenerToner(ipSolo));
 
       // Intercambio de colores solo para modelo P57750
       if (modelo.includes('P57750')) {
@@ -368,7 +367,7 @@ function renderConsumibles(consumibles) {
         <td>${consumible.nombre}</td>
         <td>${consumible.serie}</td>
         <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
-        <td><button type="submit" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
+        <td><button type="button" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
       `;
     }
     else {
@@ -961,7 +960,7 @@ function edicion() {
 
     case "Agregar impresora":
 
-      console.log("edicion de impresoras")
+      
 
       // Llamar a la función para obtener e insertar las impresoras en la tabla
       cargarTablaimpresoras();
@@ -970,7 +969,7 @@ function edicion() {
 
     case "Agregar consumible":
 
-      console.log("edicion de consumible")
+      
 
       //Llamar funcion para obtener e insertar los consumibles a la tabla
       cargarTablaConsumibles()
@@ -987,17 +986,20 @@ async function obtenerNivelTonerNegro(ip) {
   if (cacheToner[ip] && cacheToner[ip].negro !== undefined) {
     return cacheToner[ip].negro;
   }
-  console.log('Extrayendo nivel de tóner Negro...');
+  
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerNegro/${ip}`);
     const tonerData = await tonerResp.json();
     let nivel;
     if (tonerData.tonerLevels && tonerData.tonerLevels.length > 0) {
       nivel = tonerData.tonerLevels.map(t => t.value).join(', ');
-    } else if (tonerData.tonerLevel) {
+    } else if (tonerData.tonerLevel !== undefined && tonerData.tonerLevel !== null) {
+      if (tonerData.tonerLevel < 0) {
+        tonerData.tonerLevel = 0;
+      }
       nivel = tonerData.tonerLevel;
     } else {
-      nivel = '-';
+      nivel = "No accesible";
     }
     if (!cacheToner[ip]) cacheToner[ip] = {};
     cacheToner[ip].negro = nivel;
@@ -1011,7 +1013,7 @@ async function obtenerNivelTonerColor(ip) {
   if (cacheToner[ip] && cacheToner[ip].color !== undefined) {
     return cacheToner[ip].color;
   }
-  console.log('Extrayendo nivel de tóner Color...');
+  
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonersColor/${ip}`);
     const tonerData = await tonerResp.json();
@@ -1031,7 +1033,7 @@ async function obtenerNivelTonerScraping(ip) {
   if (cacheToner[ip] && cacheToner[ip].scraping !== undefined) {
     return cacheToner[ip].scraping;
   }
-  console.log('Extrayendo nivel de tóner por scraping...');
+  
   try {
     const tonerResp = await fetch(`https://192.168.80.180:5500/tonerScraping/${ip}`);
     const tonerData = await tonerResp.json();
