@@ -38,26 +38,26 @@ let cacheConsumibles = null;
 // Caché con TTL para niveles de tóner
 const cacheConTTL = {
   datos: {},
-  
+
   set(clave, valor, ttlMinutos = 11) {
     this.datos[clave] = {
       valor,
       expiracion: Date.now() + (ttlMinutos * 60 * 1000)
     };
   },
-  
+
   get(clave) {
     const entrada = this.datos[clave];
     if (!entrada) return null;
-    
+
     if (Date.now() > entrada.expiracion) {
       delete this.datos[clave]; // Limpia datos expirados
       return null;
     }
-    
+
     return entrada.valor;
   },
-  
+
   limpiarExpirados() {
     const ahora = Date.now();
     for (const clave in this.datos) {
@@ -73,6 +73,43 @@ const tonerQueue = [];
 let tonerQueueActive = 0;
 const tonerQueueMax = 3;
 
+//********************* Funciones auxiliares para manejo de estado de edición *********************
+
+// Función auxiliar para verificar si está en modo edición
+function estaModoEdicion() {
+  return editarBtn.firstElementChild.textContent.trim() === "Salir edicion";
+}
+
+// Función auxiliar para obtener el estado actual del botón
+function obtenerEstadoEdicion() {
+  return editarBtn.firstElementChild.textContent.trim();
+}
+
+// Función auxiliar para cambiar el estado del botón de edición
+function cambiarEstadoEdicion(nuevoEstado) {
+  editarBtn.firstElementChild.textContent = nuevoEstado;
+}
+
+// Función auxiliar para alternar entre estados de edición
+function alternarModoEdicion() {
+  const nuevoEstado = estaModoEdicion() ? "Editar" : "Salir edicion";
+  cambiarEstadoEdicion(nuevoEstado);
+}
+
+// Función auxiliar para aplicar visibilidad de elementos editables
+function aplicarVisibilidadElementosEditables() {
+  const elementos = document.querySelectorAll('.elementoEditable');
+  elementos.forEach(elemento => {
+    if (estaModoEdicion()) {
+      elemento.classList.remove('toggleHiddenEdicion');
+    } else {
+      elemento.classList.add('toggleHiddenEdicion');
+    }
+  });
+}
+
+//********************* Fin de funciones auxiliares *********************
+
 //Funcion para cargar listeners
 cargarEventListeners();
 
@@ -84,7 +121,8 @@ function cargarEventListeners() {
   tabla.addEventListener('click', modificacionElemento);
   buscador.addEventListener('input', buscarElemento);
   tablaToner.addEventListener('click', eliminacionTonerEspecifico);
-  editarBtn.addEventListener('click', edicion);
+  editarBtn.addEventListener('click', activarEdicion);
+
 
 }
 
@@ -100,9 +138,8 @@ function cargarTablaimpresoras() {
 
   // Cambiar el contenido de la tabla para mostrar las columnas de impresoras 
 
-  if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
 
-    tabla.innerHTML = `
+  tabla.innerHTML = `
               <thead>
                   <tr>
                       <th>Serie</th>
@@ -114,8 +151,8 @@ function cargarTablaimpresoras() {
                       <th>Área</th>
                       <th>Contrato</th>
                       <th>Tóner</th>
-                      <th>Editar</th>
-                      <th>Eliminar</th>
+                      <th class="elementoEditable toggleHiddenEdicion">Editar</th>
+                      <th class="elementoEditable toggleHiddenEdicion">Eliminar</th>
                   </tr>
               </thead>
               <tbody>
@@ -126,32 +163,6 @@ function cargarTablaimpresoras() {
                   <!-- Más filas aquí -->
               </tbody>`;
 
-  } else {
-
-    tabla.innerHTML = `
-              <thead>
-                  <tr>
-                      <th>Serie</th>
-                      <th>Nombre</th>
-                      <th>Pocentaje</th>
-                      <th>Marca</th>
-                      <th>Modelo</th>
-                      <th>IP</th>
-                      <th>Área</th>
-                      <th>Contrato</th>
-                      <th>Tóner</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <!-- Aquí puedes agregar filas de datos -->
-                  <tr>
-                  
-                  </tr>
-                  <!-- Más filas aquí -->
-              </tbody>`;
-
-
-  }
 
 
 
@@ -207,7 +218,7 @@ function renderImpresoras(impresoras) {
   tbody.innerHTML = '';
   for (const impresora of impresoras) {
     // Creamos la url de la IP de forma segura (evitar excepción si ip inválida)
-   
+
     const ip = impresora.direccionIp || '';
     let ipHref = null;
     try {
@@ -225,7 +236,7 @@ function renderImpresoras(impresoras) {
     const tonerCellId = `toner-${impresora.impresoraID}`;
     let obtenerToner;
 
-    if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
+    if (estaModoEdicion()) {
       row.innerHTML = `
           <td>${impresora.serie}</td>
           <td>${impresora.nombre[0]}</td>
@@ -236,8 +247,8 @@ function renderImpresoras(impresoras) {
           <td>${impresora.nombre[1]}</td>
           <td>${impresora.nombre[2]}</td>
           <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>
-          <td><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
-          <td><button type="button" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+          <td class="elementoEditable"><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
+          <td class="elementoEditable"><button type="button" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
         `;
     } else {
       row.innerHTML = `
@@ -249,8 +260,12 @@ function renderImpresoras(impresoras) {
           <td>${ipHref ? `<a href="${ipHref}" target="_blank">${impresora.direccionIp}</a>` : `${impresora.direccionIp}`}</td>
           <td>${impresora.nombre[1]}</td>
           <td>${impresora.nombre[2]}</td>
-          <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>`;
+          <td id="${impresora.serie}" class="toner-cell">${impresora.toner}</td>
+          <td class="elementoEditable toggleHiddenEdicion"><button value="${impresora.impresoraID}" class="editBtn">Editar</button></td>
+          <td class="elementoEditable toggleHiddenEdicion"><button type="button" value="${impresora.impresoraID}" class="deleteBtn">Eliminar</button></td>
+        `;
     }
+
     tbody.appendChild(row);
 
     // Modelos que usan tóner color
@@ -316,8 +331,7 @@ function cargarTablaConsumibles() {
 
   // Cambiar el contenido de la tabla para mostrar las columnas de consumibles
 
-  if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
-    tabla.innerHTML = `
+  tabla.innerHTML = `
       <thead>
                   <tr>
                       <th>Tipo</th>
@@ -326,28 +340,8 @@ function cargarTablaConsumibles() {
                       <th>Fecha</th>
                       <th>Impresora</th>
                       <th>Serie</th>
-                      <th>Editar</th>
-                      <th>Salir</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <!-- Aquí puedes agregar filas de datos -->
-                  <tr>
-                  
-                  </tr>
-                  <!-- Más filas aquí -->
-              </tbody>`;
-  } else {
-
-    tabla.innerHTML = `
-      <thead>
-                  <tr>
-                      <th>Tipo</th>
-                      <th>Modelo</th>
-                      <th>TIJ</th>
-                      <th>Fecha</th>
-                      <th>Impresora</th>
-                      <th>Serie</th>
+                      <th class="elementoEditable toggleHiddenEdicion">Editar</th>
+                      <th class="elementoEditable toggleHiddenEdicion">Salir</th>
                   </tr>
               </thead>
               <tbody>
@@ -358,7 +352,8 @@ function cargarTablaConsumibles() {
                   <!-- Más filas aquí -->
               </tbody>`;
 
-  }
+
+
   // Cambiar el texto del botón para agregar consumibles
   botonADD.innerHTML = `<span>Agregar consumible</span>`;
   // Llamar a la función para obtener e insertar los consumibles en la tabla
@@ -390,29 +385,32 @@ function renderConsumibles(consumibles) {
   tbody.innerHTML = '';
   consumibles.forEach(consumible => {
     const row = document.createElement('tr');
-    if (editarBtn.firstElementChild.textContent.trim() === "Salir edicion") {
-      row.innerHTML = `
+
+    if (estaModoEdicion()) {
+    row.innerHTML = `
         <td>${consumible.tipo}</td>
         <td>${consumible.modelo}</td>
         <td>${consumible.tij}</td>
         <td class="fecha">${consumible.fecha.slice(0, 10)}</td>
         <td>${consumible.nombre}</td>
         <td>${consumible.serie}</td>
-        <td><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
-        <td><button type="button" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
+        <td class="elementoEditable "><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
+        <td class="elementoEditable "><button type="button" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
       `;
-    }
-    else {
-      row.innerHTML = `
+    
+    } else {
+
+       row.innerHTML = `
         <td>${consumible.tipo}</td>
         <td>${consumible.modelo}</td>
         <td>${consumible.tij}</td>
         <td class="fecha">${consumible.fecha.slice(0, 10)}</td>
         <td>${consumible.nombre}</td>
-        <td>${consumible.serie}</td>`
-
+        <td>${consumible.serie}</td>
+        <td class="elementoEditable toggleHiddenEdicion"><button  value="${consumible.consumibleID}" class="editBtn">Editar</button></td>
+        <td class="elementoEditable toggleHiddenEdicion"><button type="button" value="${consumible.consumibleID}" class="deleteBtn">Eliminar</button></td>
+      `;
     }
-
     tbody.appendChild(row);
   });
 }
@@ -555,11 +553,11 @@ async function eliminarImpresora(e) {
 
 async function eliminarConsumible(e) {
   console.log('entro a la funcion eliminar consumible')
-  
+
   // Obtener el nombre de la impresora y TIJ según el contexto
   let nombreImpresora = '';
   let tijConsumible = '';
-  
+
   if (botonADD.textContent.trim() === 'Agregar impresora' && serieConsultaToner) {
     // Si estamos eliminando desde el modal de tóner, usar el nombre del modal
     const tituloH1 = document.getElementById('TituloH1');
@@ -568,7 +566,7 @@ async function eliminarConsumible(e) {
       // Extraer el nombre después de "Tóners de la impresora: "
       nombreImpresora = textoCompleto.replace('Tóners de la impresora: ', '');
     }
-    
+
     // Obtener TIJ desde la fila del modal de tóner que se está eliminando
     const filasToner = document.querySelectorAll('.tablaToner tbody tr');
     for (const fila of filasToner) {
@@ -597,10 +595,10 @@ async function eliminarConsumible(e) {
       }
     }
   }
-  
+
   console.log('Nombre de impresora para auditoría:', nombreImpresora);
   console.log('TIJ para auditoría:', tijConsumible);
-  
+
   //Enviar los datos a la API
   try {
     const response = await fetch(buildApiUrl(`/consumible/${idEliminar}`), {
@@ -628,7 +626,7 @@ async function eliminarConsumible(e) {
 
     if (botonADD.textContent.trim() === 'Agregar consumible') {
       getConsumibles();
-    }else if (botonADD.textContent.trim() === 'Agregar impresora') {    
+    } else if (botonADD.textContent.trim() === 'Agregar impresora') {
       getImpresoras();
       getTonerEspecifico(serieConsultaToner);
     }
@@ -1022,38 +1020,20 @@ function buscarElemento() {
 
 
 //-----------------------------------------Funcion Editar---------------------------------------------------------
-function edicion() {
-  const estadoAnterior = editarBtn.firstElementChild.textContent.trim();
 
-  switch (estadoAnterior) {
-    case "Editar":
-      editarBtn.firstElementChild.textContent = "Salir edicion";
-      switch (botonADD.firstElementChild.textContent.trim()) {
-        case "Agregar impresora":
-          cargarTablaimpresoras();
-          break;
-        case "Agregar consumible":
-          cargarTablaConsumibles();
-          break;
-        default:
-          break;
-      }
-      break;
+function activarEdicion() {
+  const elementosEditables = document.querySelectorAll('.elementoEditable');
+  const estadoActual = obtenerEstadoEdicion();
 
-    case "Salir edicion":
-      editarBtn.firstElementChild.textContent = "Editar";
-      switch (botonADD.firstElementChild.textContent.trim()) {
-        case "Agregar impresora":
-          cargarTablaimpresoras();
-          break;
-        case "Agregar consumible":
-          cargarTablaConsumibles();
-          break;
-        default:
-          break;
-      }
-      break;
-  }
+  // Alternar el estado del botón usando la función auxiliar
+  alternarModoEdicion();
+
+  // Aplicar el toggle a todos los elementos editables
+  elementosEditables.forEach(elemento => {
+    elemento.classList.toggle('toggleHiddenEdicion');
+  });
+  
+  console.log('Toggle aplicado a', elementosEditables.length, 'elementos. Nuevo estado:', obtenerEstadoEdicion());
 }
 
 
@@ -1063,11 +1043,11 @@ function edicion() {
 async function obtenerNivelTonerNegro(ip) {
   const cacheKey = `toner_negro_${ip}`;
   const cached = cacheConTTL.get(cacheKey);
-  
+
   if (cached !== null) {
     return cached;
   }
-  
+
   console.log('Extrayendo nivel de tóner Negro...');
   try {
     const tonerResp = await fetch(buildApiUrl(`/tonerNegro/${ip}`));
@@ -1095,11 +1075,11 @@ async function obtenerNivelTonerNegro(ip) {
 async function obtenerNivelTonerColor(ip) {
   const cacheKey = `toner_color_${ip}`;
   const cached = cacheConTTL.get(cacheKey);
-  
+
   if (cached !== null) {
     return cached;
   }
-  
+
   console.log('Extrayendo nivel de tóner Color...');
   try {
     const tonerResp = await fetch(buildApiUrl(`/tonersColor/${ip}`));
@@ -1120,11 +1100,11 @@ async function obtenerNivelTonerColor(ip) {
 async function obtenerNivelTonerScraping(ip) {
   const cacheKey = `toner_scraping_${ip}`;
   const cached = cacheConTTL.get(cacheKey);
-  
+
   if (cached !== null) {
     return cached;
   }
-  
+
   console.log('Extrayendo nivel de tóner por scraping...');
   try {
     const tonerResp = await fetch(buildApiUrl(`/tonerScraping/${ip}`));
@@ -1136,7 +1116,7 @@ async function obtenerNivelTonerScraping(ip) {
     } else if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
       nivel = tonerData.tonerLevels;
     }
-    
+
     // Guardar en caché con TTL de 5 minutos
     cacheConTTL.set(cacheKey, nivel);
     return nivel;
@@ -1222,7 +1202,7 @@ function consultaToner(e) {
   tonerModal.style.display = 'block';
 
   //Definimos el ID de la impresora
-   serieConsultaToner = e.target.id;
+  serieConsultaToner = e.target.id;
   console.log('Impresora serie:', serieConsultaToner);
 
   //Definimos el nombre de la impresora
@@ -1265,8 +1245,8 @@ async function getTonerEspecifico(serie) {
     // Si no hay datos válidos, devolver null
     if (!tonerEspecifico || (Array.isArray(tonerEspecifico) && tonerEspecifico.length === 0)) {
       console.warn('No se encontraron consumibles para la impresora serie:', serie);
-        renderTonerUnico(null);
-        return null;
+      renderTonerUnico(null);
+      return null;
     }
 
     renderTonerUnico(tonerEspecifico);
@@ -1283,7 +1263,7 @@ function renderTonerUnico(tonerEspecifico) {
   console.log('Renderizando tóner específico:', tonerEspecifico);
   // Asegurarnos de limpiar antes de renderizar
   const tbody = document.querySelector('.tablaToner tbody');
-   tbody.innerHTML = '';
+  tbody.innerHTML = '';
 
   // No renderizar si no se recibió dato (undefined o null)
   if (tonerEspecifico === undefined || tonerEspecifico === null) {
@@ -1312,7 +1292,7 @@ function renderTonerUnico(tonerEspecifico) {
     } else {
 
       console.log("Noooo Entro al for each de toner especifico")
-      const row = document.createElement('tr');      row.innerHTML = `
+      const row = document.createElement('tr'); row.innerHTML = `
       <td>${tonerEspecifico.tipo}</td>
       <td>${tonerEspecifico.modelo}</td>
       <td>${tonerEspecifico.tij}</td>
@@ -1333,7 +1313,7 @@ function eliminacionTonerEspecifico(event) {
     // Aquí iría la lógica para eliminar el tóner específico
     idEliminar = id;
     eliminarConsumible();
-  
+
   }
 }
 
