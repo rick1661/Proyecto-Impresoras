@@ -29,12 +29,44 @@ let eliminar = false;
 let idEliminar;
 
 
+
+
 // Variables para caché de datos
 let cacheImpresoras = null;
 let cacheConsumibles = null;
 
-// Caché para niveles de tóner por IP
-const cacheToner = {};
+// Caché con TTL para niveles de tóner
+const cacheConTTL = {
+  datos: {},
+  
+  set(clave, valor, ttlMinutos = 11) {
+    this.datos[clave] = {
+      valor,
+      expiracion: Date.now() + (ttlMinutos * 60 * 1000)
+    };
+  },
+  
+  get(clave) {
+    const entrada = this.datos[clave];
+    if (!entrada) return null;
+    
+    if (Date.now() > entrada.expiracion) {
+      delete this.datos[clave]; // Limpia datos expirados
+      return null;
+    }
+    
+    return entrada.valor;
+  },
+  
+  limpiarExpirados() {
+    const ahora = Date.now();
+    for (const clave in this.datos) {
+      if (ahora > this.datos[clave].expiracion) {
+        delete this.datos[clave];
+      }
+    }
+  }
+};
 
 // Cola de peticiones para nivel de tóner
 const tonerQueue = [];
@@ -141,7 +173,7 @@ function cargarTablaimpresoras() {
 
 async function getImpresoras(guardarCache = false) {
   try {
-    const response = await fetch(`https://192.168.80.180:5500/impresora`); // Carga todos
+    const response = await fetch(buildApiUrl('/impresora')); // Carga todos
     const data = await response.json();
     const impresoras = data.impresoras || data;
     if (guardarCache) {
@@ -339,7 +371,7 @@ function cargarTablaConsumibles() {
 
 //**************************************funcion para obtener e insertar los consumibles en la tabla principal**************************************
 function getConsumibles(guardarCache = false) {
-  fetch(`https://192.168.80.180:5500/consumible`)
+  fetch(buildApiUrl('/consumible'))
     .then(response => response.json())
     .then(data => {
       const consumibles = data.consumibles || data;
@@ -491,7 +523,7 @@ async function eliminarImpresora(e) {
 
   //Enviar los datos a la API
   try {
-    const response = await fetch(`https://192.168.80.180:5500/impresora/${idEliminar}`, {
+    const response = await fetch(buildApiUrl(`/impresora/${idEliminar}`), {
 
       method: 'DELETE',
       //headers: {
@@ -523,15 +555,63 @@ async function eliminarImpresora(e) {
 
 async function eliminarConsumible(e) {
   console.log('entro a la funcion eliminar consumible')
+  
+  // Obtener el nombre de la impresora y TIJ según el contexto
+  let nombreImpresora = '';
+  let tijConsumible = '';
+  
+  if (botonADD.textContent.trim() === 'Agregar impresora' && serieConsultaToner) {
+    // Si estamos eliminando desde el modal de tóner, usar el nombre del modal
+    const tituloH1 = document.getElementById('TituloH1');
+    if (tituloH1) {
+      const textoCompleto = tituloH1.textContent;
+      // Extraer el nombre después de "Tóners de la impresora: "
+      nombreImpresora = textoCompleto.replace('Tóners de la impresora: ', '');
+    }
+    
+    // Obtener TIJ desde la fila del modal de tóner que se está eliminando
+    const filasToner = document.querySelectorAll('.tablaToner tbody tr');
+    for (const fila of filasToner) {
+      const btnEliminar = fila.querySelector('.eliminar-btn');
+      const idFila = fila.querySelector('.eliminar-td').classList[1];
+      if (btnEliminar && parseInt(idFila) === idEliminar) {
+        const celdas = fila.querySelectorAll('td');
+        if (celdas.length > 2) {
+          tijConsumible = celdas[2].textContent.trim(); // Columna "TIJ" en modal
+        }
+        break;
+      }
+    }
+  } else if (botonADD.textContent.trim() === 'Agregar consumible') {
+    // Si estamos eliminando desde la tabla de consumibles, buscar en la fila
+    const filas = document.querySelectorAll('.styled-table tbody tr');
+    for (const fila of filas) {
+      const btnEliminar = fila.querySelector('.deleteBtn');
+      if (btnEliminar && btnEliminar.value == idEliminar) {
+        const celdas = fila.querySelectorAll('td');
+        if (celdas.length > 4) {
+          nombreImpresora = celdas[4].textContent.trim(); // Columna "Impresora"
+          tijConsumible = celdas[2].textContent.trim(); // Columna "TIJ"
+        }
+        break;
+      }
+    }
+  }
+  
+  console.log('Nombre de impresora para auditoría:', nombreImpresora);
+  console.log('TIJ para auditoría:', tijConsumible);
+  
   //Enviar los datos a la API
   try {
-    const response = await fetch(`https://192.168.80.180:5500/consumible/${idEliminar}`, {
-
+    const response = await fetch(buildApiUrl(`/consumible/${idEliminar}`), {
       method: 'DELETE',
-      //headers: {
-      //    'Content-Type': 'application/json'
-      //  },
-      //body: datosJSONC
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nombreImpresora: nombreImpresora,
+        tij: tijConsumible
+      })
     });
 
     if (!response.ok) {
@@ -600,7 +680,7 @@ function modificarCamposImpresora(elementosTd) {
 //*************************Funcion para obtener las areas de la edificion************************************
 //Consultar Areas
 async function getAreasEdit(elemento) {
-  fetch('https://192.168.80.180:5500/area')
+  fetch(buildApiUrl('/area'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
 
@@ -626,7 +706,7 @@ async function getAreasEdit(elemento) {
 //************************Funcion para obtener los contratos de la edicion**********************
 
 async function getContratosEdit(elemento) {
-  fetch('https://192.168.80.180:5500/contrato')
+  fetch(buildApiUrl('/contrato'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       data.forEach(contrato => {
@@ -706,6 +786,7 @@ function modificarCamposConsumible(elementosTd) {
                           <option value="CF287XC">CF287XC</option>
                           <option value="CF287JC">CF287JC</option>
                           <option value="CF226X">CF226X</option>
+                          <option value="CF226JC">CF226JC</option>
                               </select>`;
 
         break;
@@ -737,7 +818,7 @@ function modificarCamposConsumible(elementosTd) {
 
 //Consltar Impresoras
 async function getImpresoraSelectEdit(elemento) {
-  fetch('https://192.168.80.180:5500/impresora')
+  fetch(buildApiUrl('/impresora'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
 
@@ -837,7 +918,7 @@ async function enviarCambios(e) {
 
           //Enviar los datos a la API
           try {
-            const response = await fetch(`https://192.168.80.180:5500/impresora/${datosActualizadosI.id}`, {
+            const response = await fetch(buildApiUrl(`/impresora/${datosActualizadosI.id}`), {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json'
@@ -890,7 +971,7 @@ async function enviarCambios(e) {
 
           //Enviar los datos a la API
           try {
-            const response = await fetch(`https://192.168.80.180:5500/consumible/${datosActualizadosC.id}`, {
+            const response = await fetch(buildApiUrl(`/consumible/${datosActualizadosC.id}`), {
 
               method: 'PUT',
               headers: {
@@ -942,39 +1023,36 @@ function buscarElemento() {
 
 //-----------------------------------------Funcion Editar---------------------------------------------------------
 function edicion() {
+  const estadoAnterior = editarBtn.firstElementChild.textContent.trim();
 
-  switch (editarBtn.firstElementChild.textContent.trim()) {
-
+  switch (estadoAnterior) {
     case "Editar":
-
       editarBtn.firstElementChild.textContent = "Salir edicion";
+      switch (botonADD.firstElementChild.textContent.trim()) {
+        case "Agregar impresora":
+          cargarTablaimpresoras();
+          break;
+        case "Agregar consumible":
+          cargarTablaConsumibles();
+          break;
+        default:
+          break;
+      }
       break;
 
     case "Salir edicion":
-
       editarBtn.firstElementChild.textContent = "Editar";
+      switch (botonADD.firstElementChild.textContent.trim()) {
+        case "Agregar impresora":
+          cargarTablaimpresoras();
+          break;
+        case "Agregar consumible":
+          cargarTablaConsumibles();
+          break;
+        default:
+          break;
+      }
       break;
-  }
-
-  switch (botonADD.firstElementChild.textContent.trim()) {
-
-    case "Agregar impresora":
-
-      
-
-      // Llamar a la función para obtener e insertar las impresoras en la tabla
-      cargarTablaimpresoras();
-
-      break;
-
-    case "Agregar consumible":
-
-      
-
-      //Llamar funcion para obtener e insertar los consumibles a la tabla
-      cargarTablaConsumibles()
-      break;
-
   }
 }
 
@@ -983,12 +1061,16 @@ function edicion() {
 //-----------------------------------------funciones para extraer nivel de toner---------------------------------------------------------
 
 async function obtenerNivelTonerNegro(ip) {
-  if (cacheToner[ip] && cacheToner[ip].negro !== undefined) {
-    return cacheToner[ip].negro;
+  const cacheKey = `toner_negro_${ip}`;
+  const cached = cacheConTTL.get(cacheKey);
+  
+  if (cached !== null) {
+    return cached;
   }
   
+  console.log('Extrayendo nivel de tóner Negro...');
   try {
-    const tonerResp = await fetch(`https://192.168.80.180:5500/tonerNegro/${ip}`);
+    const tonerResp = await fetch(buildApiUrl(`/tonerNegro/${ip}`));
     const tonerData = await tonerResp.json();
     let nivel;
     if (tonerData.tonerLevels && tonerData.tonerLevels.length > 0) {
@@ -1001,8 +1083,9 @@ async function obtenerNivelTonerNegro(ip) {
     } else {
       nivel = "No accesible";
     }
-    if (!cacheToner[ip]) cacheToner[ip] = {};
-    cacheToner[ip].negro = nivel;
+
+    // Guardar en caché
+    cacheConTTL.set(cacheKey, nivel);
     return nivel;
   } catch (err) {
     return '-';
@@ -1010,19 +1093,24 @@ async function obtenerNivelTonerNegro(ip) {
 }
 
 async function obtenerNivelTonerColor(ip) {
-  if (cacheToner[ip] && cacheToner[ip].color !== undefined) {
-    return cacheToner[ip].color;
+  const cacheKey = `toner_color_${ip}`;
+  const cached = cacheConTTL.get(cacheKey);
+  
+  if (cached !== null) {
+    return cached;
   }
   
+  console.log('Extrayendo nivel de tóner Color...');
   try {
-    const tonerResp = await fetch(`https://192.168.80.180:5500/tonersColor/${ip}`);
+    const tonerResp = await fetch(buildApiUrl(`/tonersColor/${ip}`));
     const tonerData = await tonerResp.json();
     let nivel = '-';
     if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
       nivel = tonerData.tonerLevels;
     }
-    if (!cacheToner[ip]) cacheToner[ip] = {};
-    cacheToner[ip].color = nivel;
+
+    // Guardar en caché
+    cacheConTTL.set(cacheKey, nivel);
     return nivel;
   } catch (err) {
     return '-';
@@ -1030,12 +1118,16 @@ async function obtenerNivelTonerColor(ip) {
 }
 
 async function obtenerNivelTonerScraping(ip) {
-  if (cacheToner[ip] && cacheToner[ip].scraping !== undefined) {
-    return cacheToner[ip].scraping;
+  const cacheKey = `toner_scraping_${ip}`;
+  const cached = cacheConTTL.get(cacheKey);
+  
+  if (cached !== null) {
+    return cached;
   }
   
+  console.log('Extrayendo nivel de tóner por scraping...');
   try {
-    const tonerResp = await fetch(`https://192.168.80.180:5500/tonerScraping/${ip}`);
+    const tonerResp = await fetch(buildApiUrl(`/tonerScraping/${ip}`));
     const tonerData = await tonerResp.json();
     let nivel = '-';
     if (Array.isArray(tonerData.niveles)) {
@@ -1044,8 +1136,9 @@ async function obtenerNivelTonerScraping(ip) {
     } else if (tonerData.tonerLevels && typeof tonerData.tonerLevels === 'object') {
       nivel = tonerData.tonerLevels;
     }
-    if (!cacheToner[ip]) cacheToner[ip] = {};
-    cacheToner[ip].scraping = nivel;
+    
+    // Guardar en caché con TTL de 5 minutos
+    cacheConTTL.set(cacheKey, nivel);
     return nivel;
   } catch (error) {
     return '-';
@@ -1119,11 +1212,8 @@ function renderBarraToner(valor) {
 }
 
 function limpiarCacheToner() {
-
-  for (const ip in cacheToner) {
-    delete cacheToner[ip];
-  }
-
+  // Limpiar todo el caché de tóner
+  cacheConTTL.datos = {};
 }
 
 function consultaToner(e) {
@@ -1160,7 +1250,7 @@ async function getTonerEspecifico(serie) {
   try {
     console.log('Obteniendo tóner específico para serie:', serie);
     // Aquí iría la lógica para obtener el tóner específico
-    const response = await fetch(`https://192.168.80.180:5500/consumible/${serie}`);
+    const response = await fetch(buildApiUrl(`/consumible/${serie}`));
 
     // Si la respuesta no es OK, devolver null
     if (!response.ok) {
@@ -1246,3 +1336,9 @@ function eliminacionTonerEspecifico(event) {
   
   }
 }
+
+// Limpieza automática del caché cada 10 minutos
+setInterval(() => {
+  cacheConTTL.limpiarExpirados();
+  console.log('Cache de tóner limpiado automáticamente');
+}, 10 * 60 * 1000);

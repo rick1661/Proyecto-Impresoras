@@ -96,6 +96,7 @@ btn.onclick = function () {
                         <option value="CF287XC">CF287XC</option>
                         <option value="CF287JC">CF287JC</option>
                         <option value="CF226X">CF226X</option>
+                        <option value="CF226JC">CF226JC</option>
                     </select>
                     <button id="btnGuardar" type="submit">Guardar</button>`
 
@@ -162,6 +163,7 @@ btn.onclick = function () {
                         <option value="CF287XC">CF287XC</option>
                         <option value="CF287JC">CF287JC</option>
                         <option value="CF226X">CF226X</option>
+                        <option value="CF226JC">CF226JC</option>
                     </select>
                     <button type="submit">Guardar</button>`
       // Cargar las impresoras al abrir el modal
@@ -221,7 +223,7 @@ span.onclick = function () {
 //Consltar Impresoras
 function getImpresoraSelect() {
 
-  fetch('https://192.168.80.180:5500/impresora')
+  fetch(buildApiUrl('/impresora'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -249,7 +251,7 @@ function getImpresoraSelect() {
 
 //Consultar Areas
 function getAreas() {
-  fetch('https://192.168.80.180:5500/area')
+  fetch(buildApiUrl('/area'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -270,7 +272,7 @@ function getAreas() {
 //Consultar contratos
 
 function getContratos() {
-  fetch('https://192.168.80.180:5500/contrato')
+  fetch(buildApiUrl('/contrato'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
       console.log(data);
@@ -363,7 +365,7 @@ async function formularioImpresoraEnvio(formulario) {
   console.log(jsonString);
 
   try {
-    const respuesta = await fetch('https://192.168.80.180:5500/impresora/1', {
+    const respuesta = await fetch(buildApiUrl('/impresora/1'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json' // Importante para JSON
@@ -425,7 +427,7 @@ async function formularioConsumibleEnvio(formulario) {
 
 
   try {
-    const respuesta = await fetch('https://192.168.80.180:5500/consumible/1', {
+    const respuesta = await fetch(buildApiUrl('/consumible/1'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

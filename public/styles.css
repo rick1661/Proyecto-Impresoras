@@ -182,7 +182,7 @@ body {
 .main-content {
   margin-left: 280px;
   /* Un poco más que el ancho de la sidebar (270px) */
-  padding: 32px;
+  padding: 10px 32px 32px 32px;
   width: calc(100% - 290px);
   min-height: 100vh;
   box-sizing: border-box;
@@ -206,8 +206,8 @@ body {
   overflow-x: auto;
   overflow-y: auto;
   margin-bottom: 10px;
-  max-height: calc(100vh - 135px);
-  min-height: calc(100vh - 130px);
+  max-height: calc(100vh - 197px);
+  /* min-height removido para permitir que la tabla sea más pequeña */
 
 
 }
@@ -393,7 +393,7 @@ body {
   display: flex;
   width: 100%;
   justify-content: center;
-  padding: 10px
+  padding: 10px 0 0 0;
 }
 
 

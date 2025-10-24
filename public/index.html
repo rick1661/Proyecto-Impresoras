@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impresoras SIMNSA</title>
+    <link rel="icon" type="image/png" href="logo.png" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
@@ -98,15 +99,15 @@
 
     <div class="main-content">
 
+        <div id="contenedorBuscadorPrincipal">
+            <div id="contenedorBuscadorSecundario">
+                <input type="text" id="busquedaInput" placeholder="Buscar elemento"> <span id="buscadorIcono"
+                    class="material-symbols-outlined"> search</span>
+            </div>
+        </div>
+
         <div id="tableContainer">
             <table class="styled-table">
-                <div id="contenedorBuscadorPrincipal">
-                    <div id="contenedorBuscadorSecundario">
-                        <input type="text" id="busquedaInput" placeholder="Buscar elemento"> <span id="buscadorIcono"
-                            class="material-symbols-outlined"> search</span>
-                    </div>
-
-                </div>
                 <thead>
                     <tr>
                         <th>Serie</th>
@@ -222,7 +223,7 @@
 
 
         <!-- Script -->
-
+        <script src="api-config.js"></script>
         <script src="asaid.js"></script>
         <script src="table.js"></script>
         <script src="botonADD.js"></script>
@@ -230,6 +231,7 @@
     <script src="../node_modules/select2/dist/js/select2.min.js"></script>-->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+       
 
 
 
