@@ -138,8 +138,33 @@ function cargarTablaimpresoras() {
 
   // Cambiar el contenido de la tabla para mostrar las columnas de impresoras 
 
-
+  if (estaModoEdicion()) {
   tabla.innerHTML = `
+              <thead>
+                  <tr>
+                      <th>Serie</th>
+                      <th>Nombre</th>
+                      <th>Pocentaje</th>
+                      <th>Marca</th>
+                      <th>Modelo</th>
+                      <th>IP</th>
+                      <th>Área</th>
+                      <th>Contrato</th>
+                      <th>Tóner</th>
+                      <th class="elementoEditable ">Editar</th>
+                      <th class="elementoEditable ">Eliminar</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Aquí puedes agregar filas de datos -->
+                  <tr>
+                  
+                  </tr>
+                  <!-- Más filas aquí -->
+              </tbody>`;
+  } else {
+
+      tabla.innerHTML = `
               <thead>
                   <tr>
                       <th>Serie</th>
@@ -162,6 +187,7 @@ function cargarTablaimpresoras() {
                   </tr>
                   <!-- Más filas aquí -->
               </tbody>`;
+  }
 
 
 
@@ -327,12 +353,33 @@ function cargarTablaConsumibles() {
 
   // Establecer la sección a consumibles
 
-  console.log('Botón de consumibles clickeado');
 
   // Cambiar el contenido de la tabla para mostrar las columnas de consumibles
 
+  if (estaModoEdicion()) {
   tabla.innerHTML = `
       <thead>
+                  <tr>
+                      <th>Tipo</th>
+                      <th>Modelo</th>
+                      <th>TIJ</th>
+                      <th>Fecha</th>
+                      <th>Impresora</th>
+                      <th>Serie</th>
+                      <th class="elementoEditable ">Editar</th>
+                      <th class="elementoEditable ">Salir</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Aquí puedes agregar filas de datos -->
+                  <tr>
+                  
+                  </tr>
+                  <!-- Más filas aquí -->
+              </tbody>`;
+  } else {
+
+      tabla.innerHTML = ` <thead>
                   <tr>
                       <th>Tipo</th>
                       <th>Modelo</th>
@@ -351,7 +398,7 @@ function cargarTablaConsumibles() {
                   </tr>
                   <!-- Más filas aquí -->
               </tbody>`;
-
+  }
 
 
   // Cambiar el texto del botón para agregar consumibles
