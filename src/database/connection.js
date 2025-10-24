@@ -1,6 +1,9 @@
 import sql from 'mssql'
 import 'dotenv/config';
 
+// Exportar sql para que pueda ser usado en los controladores
+export { sql };
+
 
 
 //"ITTJCDSTEC-17/SQLEXPRESS",
