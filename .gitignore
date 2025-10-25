@@ -117,9 +117,14 @@ public
 .pnp.*
 
 # Archivos específicos del proyecto
-# Certificados SSL (si contienen datos sensibles)
-certs/*.pem
-certs/*.key
+# Certificados SSL y claves privadas (NUNCA deben estar en Git)
+certs/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+../secure-certs/
 
 # Archivos de backup de base de datos
 *.bak

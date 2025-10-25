@@ -5,21 +5,42 @@ import {postOneImpresora} from '../controllers/impresora.controllers.js';
 import {putOneImpresora} from '../controllers/impresora.controllers.js';
 import {deleteOneImpresora} from '../controllers/impresora.controllers.js';
 
+// Importar middleware y esquemas de validación
+import { validateBody, validateParams } from '../middleware/validation.js';
+import { 
+    createImpresoraSchema, 
+    updateImpresoraSchema, 
+    impresoraParamsSchema 
+} from '../middleware/schemas/impresora.schema.js';
+
 const router = Router();
 
-//General
+//Consulta general (sin validación - no tiene parámetros críticos)
 router.get('/impresora/', getImpresoras );
 
-//Consulta unica
-router.get('/impresora/:id', getOneImpresora );
+//Consulta única (validar ID en parámetros)
+router.get('/impresora/:id', 
+    validateParams(impresoraParamsSchema),
+    getOneImpresora 
+);
 
-//Creando impresora
-router.post('/impresora/:id', postOneImpresora);
+//Creación (validar datos en body) - CORREGIDO: sin :id
+router.post('/impresora', 
+    validateBody(createImpresoraSchema),
+    postOneImpresora
+);
 
-//Actualizando impresora
-router.put('/impresora/:id', putOneImpresora );
+//Actualización (validar ID y datos)
+router.put('/impresora/:id', 
+    validateParams(impresoraParamsSchema),
+    validateBody(updateImpresoraSchema),
+    putOneImpresora 
+);
 
-// eliminacion de impresora
-router.delete('/impresora/:id', deleteOneImpresora );
+//Eliminación (validar ID)
+router.delete('/impresora/:id', 
+    validateParams(impresoraParamsSchema),
+    deleteOneImpresora 
+);
 
 export default router;

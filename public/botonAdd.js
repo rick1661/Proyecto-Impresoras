@@ -365,7 +365,7 @@ async function formularioImpresoraEnvio(formulario) {
   console.log(jsonString);
 
   try {
-    const respuesta = await fetch(buildApiUrl('/impresora/1'), {
+    const respuesta = await fetch(buildApiUrl('/impresora'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json' // Importante para JSON
@@ -427,7 +427,7 @@ async function formularioConsumibleEnvio(formulario) {
 
 
   try {
-    const respuesta = await fetch(buildApiUrl('/consumible/1'), {
+    const respuesta = await fetch(buildApiUrl('/consumible'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
