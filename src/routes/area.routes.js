@@ -1,25 +1,42 @@
 import {Router} from 'express';
-import {getAreas} from '../controllers/area.controllers.js';
-import {getOneArea} from '../controllers/area.controllers.js';
-import { postOneArea } from '../controllers/area.controllers.js';
-import {putOneArea} from '../controllers/area.controllers.js';
-import {deleteOneArea} from '../controllers/area.controllers.js';
+import {getAreas, getOneArea, postOneArea, putOneArea, deleteOneArea} from '../controllers/area.controllers.js';
+
+// Importar middleware y esquemas de validación
+import { validateBody, validateParams } from '../middleware/validation.js';
+import { 
+    createAreaSchema, 
+    updateAreaSchema, 
+    areaParamsSchema 
+} from '../middleware/schemas/area.schema.js';
 
 const router = Router();
 
-// Consulta general
+// Consulta general (sin validación - no tiene parámetros críticos)
 router.get('/area', getAreas);
 
-//Consulta unica
-router.get('/area/:id', getOneArea );
+// Consulta única (validar ID en parámetros)
+router.get('/area/:id', 
+    validateParams(areaParamsSchema),
+    getOneArea
+);
 
-//Creacion unica
-router.post('/area/:id', postOneArea);
+// Creación (validar datos en body)
+router.post('/area', 
+    validateBody(createAreaSchema),
+    postOneArea
+);
 
-//Actualizando impresora
-router.put('/area/:id', putOneArea );
+// Actualización (validar ID y datos)
+router.put('/area/:id', 
+    validateParams(areaParamsSchema),
+    validateBody(updateAreaSchema),
+    putOneArea
+);
 
-// eliminacion de impresora
-router.delete('/area/:id', deleteOneArea);
+// Eliminación (validar ID)
+router.delete('/area/:id', 
+    validateParams(areaParamsSchema),
+    deleteOneArea
+);
 
 export default router;

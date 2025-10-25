@@ -1,26 +1,43 @@
 import {Router} from 'express';
-import {getEmpresas} from '../controllers/empresa.controllers.js';
-import {getOneEmpresa} from '../controllers/empresa.controllers.js';
-import {postOneEmpresa} from '../controllers/empresa.controllers.js';
-import {putOneEmpresa} from '../controllers/empresa.controllers.js';
-import {deleteOneEmpresa} from '../controllers/empresa.controllers.js';
+import {getEmpresas, getOneEmpresa, postOneEmpresa, putOneEmpresa, deleteOneEmpresa} from '../controllers/empresa.controllers.js';
+
+// Importar middleware y esquemas de validación
+import { validateBody, validateParams } from '../middleware/validation.js';
+import { 
+    createEmpresaSchema, 
+    updateEmpresaSchema, 
+    empresaParamsSchema 
+} from '../middleware/schemas/empresa.schema.js';
 
 const router = Router();
 
-// Consulta general
+// Consulta general (sin validación - no tiene parámetros críticos)
 router.get('/empresa', getEmpresas);
 
-//Consulta unica
-router.get('/empresa/:id', getOneEmpresa);
+//Consulta única (validar ID en parámetros)
+router.get('/empresa/:id', 
+    validateParams(empresaParamsSchema),
+    getOneEmpresa
+);
 
-//Creacion unica
-router.post('/empresa/:id', postOneEmpresa);
+//Creación (validar datos en body)
+router.post('/empresa', 
+    validateBody(createEmpresaSchema),
+    postOneEmpresa
+);
 
-//Actualizando impresora
-router.put('/empresa/:id', putOneEmpresa);
+//Actualización (validar ID y datos)
+router.put('/empresa/:id', 
+    validateParams(empresaParamsSchema),
+    validateBody(updateEmpresaSchema),
+    putOneEmpresa
+);
 
-//Eliminacion de impresora
-router.delete('/empresa/:id', deleteOneEmpresa  );
+//Eliminación (validar ID)
+router.delete('/empresa/:id', 
+    validateParams(empresaParamsSchema),
+    deleteOneEmpresa
+);
 
 export default router;
 

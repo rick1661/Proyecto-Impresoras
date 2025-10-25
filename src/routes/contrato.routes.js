@@ -1,25 +1,42 @@
 import {Router} from 'express';
-import {getContratos} from '../controllers/contrato.controllers.js';
-import {getOneContrato} from '../controllers/contrato.controllers.js';
-import {postOneContrato} from '../controllers/contrato.controllers.js';
-import {putOneContrato} from '../controllers/contrato.controllers.js';
-import {deleteOneContrato} from '../controllers/contrato.controllers.js';
+import {getContratos, getOneContrato, postOneContrato, putOneContrato, deleteOneContrato} from '../controllers/contrato.controllers.js';
+
+// Importar middleware y esquemas de validación
+import { validateBody, validateParams } from '../middleware/validation.js';
+import { 
+    createContratoSchema, 
+    updateContratoSchema, 
+    contratoParamsSchema 
+} from '../middleware/schemas/contrato.schema.js';
 
 const router = Router();
 
-//Consulta general
+//Consulta general (sin validación - no tiene parámetros críticos)
 router.get('/contrato', getContratos);
 
-//Consulta unica
-router.get('/contrato/:id', getOneContrato);
+//Consulta única (validar ID en parámetros)
+router.get('/contrato/:id', 
+    validateParams(contratoParamsSchema),
+    getOneContrato
+);
 
-//Creacion unica
-router.post('/contrato/:id', postOneContrato);
+//Creación (validar datos en body)
+router.post('/contrato', 
+    validateBody(createContratoSchema),
+    postOneContrato
+);
 
-//Actualizacion unica
-router.put('/contrato/:id', putOneContrato );
+//Actualización (validar ID y datos)
+router.put('/contrato/:id', 
+    validateParams(contratoParamsSchema),
+    validateBody(updateContratoSchema),
+    putOneContrato
+);
 
-//Eliminacion unica
-router.delete('/contrato/:id', deleteOneContrato);
+//Eliminación (validar ID)
+router.delete('/contrato/:id', 
+    validateParams(contratoParamsSchema),
+    deleteOneContrato
+);
 
 export default router;
