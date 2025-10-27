@@ -28,6 +28,10 @@ let vacio = false;
 let eliminar = false;
 let idEliminar;
 
+// Variables para el ordenamiento
+let sortOrder = 'asc'; // 'asc' para ascendente, 'desc' para descendente
+let currentData = []; // Para almacenar los datos actuales
+
 
 
 
@@ -110,12 +114,36 @@ function aplicarVisibilidadElementosEditables() {
 
 //********************* Fin de funciones auxiliares *********************
 
+// Función auxiliar para agregar event listener al botón de ordenamiento
+function agregarEventListenerOrdenamiento() {
+  setTimeout(() => {
+    const sortBtn = document.getElementById('sortTonerBtn');
+    if (sortBtn) {
+      // Remover event listener previo si existe
+      sortBtn.removeEventListener('click', ordenarPorToner);
+      // Agregar nuevo event listener
+      sortBtn.addEventListener('click', ordenarPorToner);
+      console.log('✅ Event listener de ordenamiento agregado');
+    } else {
+      console.warn('❌ Botón de ordenamiento no encontrado - verificando HTML...');
+      // Debug: verificar si el HTML contiene el botón
+      const tableHTML = document.querySelector('.styled-table thead');
+      if (tableHTML) {
+        console.log('HTML de la tabla:', tableHTML.innerHTML);
+      }
+    }
+  }, 100);
+}
+
 //Funcion para cargar listeners
 cargarEventListeners();
 
 function cargarEventListeners() {
 
-  document.addEventListener('DOMContentLoaded', getImpresoras);
+  document.addEventListener('DOMContentLoaded', () => {
+    // Primero cargar la estructura de la tabla de impresoras
+    cargarTablaimpresoras();
+  });
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   tabla.addEventListener('click', modificacionElemento);
@@ -144,7 +172,7 @@ function cargarTablaimpresoras() {
                   <tr>
                       <th>Serie</th>
                       <th>Nombre</th>
-                      <th>Pocentaje</th>
+                      <th>Porcentaje <button id="sortTonerBtn" class="sort-btn" title="Ordenar por nivel de tóner">↕️</button></th>
                       <th>Marca</th>
                       <th>Modelo</th>
                       <th>IP</th>
@@ -169,7 +197,7 @@ function cargarTablaimpresoras() {
                   <tr>
                       <th>Serie</th>
                       <th>Nombre</th>
-                      <th>Pocentaje</th>
+                      <th>Porcentaje <button id="sortTonerBtn" class="sort-btn" title="Ordenar por nivel de tóner">↕️</button></th>
                       <th>Marca</th>
                       <th>Modelo</th>
                       <th>IP</th>
@@ -203,6 +231,14 @@ function cargarTablaimpresoras() {
   } else {
     getImpresoras(true);
   }
+  
+  // Agregar event listener al botón de ordenamiento después de crear la tabla
+  setTimeout(() => {
+    const sortBtn = document.getElementById('sortTonerBtn');
+    if (sortBtn) {
+      sortBtn.addEventListener('click', ordenarPorToner);
+    }
+  }, 100);
 };
 
 //***********************************funcion para obtener e insertar las impresoras en la tabla principal****************************************
@@ -217,6 +253,9 @@ async function getImpresoras(guardarCache = false) {
       cacheImpresoras = impresoras;
     }
     renderImpresoras(impresoras);
+    
+    // Agregar event listener al botón de ordenamiento
+    agregarEventListenerOrdenamiento();
   } catch (error) {
     console.error('Error al cargar impresoras:', error);
   }
@@ -240,6 +279,9 @@ function processTonerQueue() {
 }
 
 function renderImpresoras(impresoras) {
+  // Almacenar los datos actuales para el ordenamiento
+  currentData = [...impresoras];
+  
   const tbody = document.querySelector('.styled-table tbody');
   tbody.innerHTML = '';
   for (const impresora of impresoras) {
@@ -1049,6 +1091,7 @@ async function enviarCambios(e) {
             cacheImpresoras = null;
 
             getImpresoras();
+            agregarEventListenerOrdenamiento();
             vacio = false;
 
           } catch (error) {
@@ -1315,6 +1358,77 @@ function renderBarraToner(valor) {
 function limpiarCacheToner() {
   // Limpiar todo el caché de tóner
   cacheConTTL.datos = {};
+}
+
+// Función para extraer el valor numérico del porcentaje de tóner
+function extraerValorToner(fila) {
+  const celdaPorcentaje = fila.cells[2]; // Columna de porcentaje (índice 2)
+  
+  if (!celdaPorcentaje) return -1;
+  
+  // Buscar elementos con clase 'textoNivel' que contienen el porcentaje
+  const textosNivel = celdaPorcentaje.querySelectorAll('.textoNivel');
+  
+  if (textosNivel.length === 0) {
+    // Si no hay textoNivel, buscar texto que contenga %
+    const texto = celdaPorcentaje.textContent;
+    const match = texto.match(/(\d+)%/);
+    return match ? parseInt(match[1]) : -1;
+  }
+  
+  // Para impresoras monocromáticas (un solo valor)
+  if (textosNivel.length === 1) {
+    const valor = textosNivel[0].textContent.replace('%', '').trim();
+    return parseInt(valor) || -1;
+  }
+  
+  // Para impresoras de color o con múltiples cartuchos, usar el promedio
+  let suma = 0;
+  let count = 0;
+  
+  textosNivel.forEach(elemento => {
+    const valor = parseInt(elemento.textContent.replace('%', '').trim());
+    if (!isNaN(valor)) {
+      suma += valor;
+      count++;
+    }
+  });
+  
+  return count > 0 ? Math.round(suma / count) : -1;
+}
+
+// Función para ordenar la tabla por nivel de tóner
+function ordenarPorToner() {
+  const tbody = document.querySelector('.styled-table tbody');
+  const filas = Array.from(tbody.querySelectorAll('tr'));
+  
+  // Alternar el orden
+  sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+  
+  // Ordenar las filas basándose en el valor del tóner
+  filas.sort((a, b) => {
+    const valorA = extraerValorToner(a);
+    const valorB = extraerValorToner(b);
+    
+    if (sortOrder === 'asc') {
+      return valorA - valorB;
+    } else {
+      return valorB - valorA;
+    }
+  });
+  
+  // Limpiar y re-insertar las filas ordenadas
+  tbody.innerHTML = '';
+  filas.forEach(fila => tbody.appendChild(fila));
+  
+  // Actualizar el icono del botón
+  const sortBtn = document.getElementById('sortTonerBtn');
+  if (sortBtn) {
+    sortBtn.textContent = sortOrder === 'asc' ? '↑' : '↓';
+    sortBtn.title = sortOrder === 'asc' ? 'Ordenar descendente' : 'Ordenar ascendente';
+  }
+  
+  console.log(`Tabla ordenada por tóner en orden ${sortOrder === 'asc' ? 'ascendente' : 'descendente'}`);
 }
 
 function consultaToner(e) {

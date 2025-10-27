@@ -1165,3 +1165,31 @@ h2 {
 .toggleHiddenEdicion {
   display: none;
 }
+
+/* Estilos para el botón de ordenamiento de tóner */
+.sort-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 8px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: #666;
+}
+
+.sort-btn:hover {
+  background-color: rgba(0, 102, 156, 0.1);
+  color: var(--colorPrincipal);
+  transform: scale(1.1);
+}
+
+.sort-btn:active {
+  transform: scale(0.95);
+}
+
+.sort-btn:focus {
+  outline: 2px solid var(--colorPrincipal);
+  outline-offset: 2px;
+}
