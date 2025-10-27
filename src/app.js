@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors'
+import helmet from 'helmet';
+import compression from 'compression';
 import impresoraRoutes from './routes/impresora.routes.js'; 
 import empresaRoutes from './routes/empresa.routes.js';
 import contratoRoutes from './routes/contrato.routes.js';
@@ -79,16 +81,43 @@ const getAllowedOrigins = () => {
     development: [
       'http://localhost:3000',
       'http://localhost:5500',
+      'http://localhost:5501',
+      'http://localhost:5502',
+      'http://localhost:5503',
       'http://127.0.0.1:3000',
-      'http://127.0.0.1:5500'
+      'http://127.0.0.1:5500',
+      'https://localhost:5500',
+      'https://localhost:5501',
+      'https://localhost:5502',
+      'https://localhost:5503'
     ],
     testing: [
+      // VLAN principal 192.168.85.x (equipos e impresoras)
+      'https://192.168.85.1:5500',
+      'https://192.168.85.10:5500',
+      'https://192.168.85.100:5500',
+      // VLAN administrativa 192.168.80.x (estaciones de trabajo)
+      'https://192.168.80.1:5500',
+      'https://192.168.80.10:5500',
+      'https://192.168.80.50:5500',
+      'https://192.168.80.100:5500',
       'https://192.168.80.180:5500',
       'https://192.168.80.181:5500'
     ],
     production: [
-      'https://api-impresoras.empresa.com',
-      'https://impresoras.empresa.com'
+      // Dominio interno del hospital
+      'https://simnsa.local',
+      'https://impresoras.simnsa.local',
+      'https://api-impresoras.simnsa.local',
+      // VLAN de equipos médicos 192.168.85.x
+      'https://192.168.85.1',
+      'https://192.168.85.10',
+      'https://192.168.85.100',
+      // VLAN administrativa 192.168.80.x  
+      'https://192.168.80.1',
+      'https://192.168.80.10',
+      'https://192.168.80.50',
+      'https://192.168.80.100'
     ]
   };
   
@@ -129,6 +158,127 @@ const corsOptions = {
 };
 app.use(cors(corsOptions)); //Habilitar CORS
 
+// ============================================================================
+// 🔒 CONFIGURACIÓN DE SEGURIDAD PARA ENTORNO HOSPITALARIO
+// ============================================================================
+
+// 1. Helmet - Headers de seguridad HTTP
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: [
+        "'self'", 
+        "'unsafe-inline'", // Necesario para algunos estilos inline
+        "cdnjs.cloudflare.com",
+        "fonts.googleapis.com",
+        "cdn.jsdelivr.net"
+      ],
+      fontSrc: [
+        "'self'",
+        "fonts.gstatic.com",
+        "cdnjs.cloudflare.com"
+      ],
+      scriptSrc: [
+        "'self'",
+        "cdn.jsdelivr.net",
+        "cdnjs.cloudflare.com",
+        "code.jquery.com" // Para jQuery oficial
+      ],
+      imgSrc: [
+        "'self'",
+        "data:", // Para imágenes base64
+        "blob:" // Para imágenes generadas dinámicamente
+      ],
+      connectSrc: [
+        "'self'",
+        "https:", // Permitir HTTPS en general para consultas SNMP
+        "http:", // Permitir HTTP para equipos internos si es necesario
+        "ws:", // WebSockets
+        "wss:" // WebSockets seguros
+      ]
+    }
+  },
+  crossOriginEmbedderPolicy: false, // Permitir recursos de terceros necesarios
+  hsts: {
+    maxAge: 31536000, // 1 año
+    includeSubDomains: true,
+    preload: true
+  }
+}));
+
+// 2. Compresión GZIP para optimizar transferencia de datos
+app.use(compression({
+  filter: (req, res) => {
+    // No comprimir si el cliente explícitamente no lo quiere
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    // Usar filtro por defecto para otros casos
+    return compression.filter(req, res);
+  },
+  level: 6, // Nivel balanceado de compresión (1-9)
+  threshold: 1024 // Solo comprimir respuestas > 1KB
+}));
+
+// 3. Rate Limiting diferenciado por tipo de operación
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 50000, // 🏥 Límite muy alto para uso hospitalario intensivo (55 req/seg promedio)
+  message: {
+    error: 'Demasiadas peticiones desde esta IP',
+    retryAfter: '15 minutos'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Skip en desarrollo y para IPs locales del hospital
+  skip: (req) => {
+    return process.env.NODE_ENV === 'development' || 
+           req.ip === '::1' || 
+           req.ip === '127.0.0.1' ||
+           req.ip?.startsWith('192.168.85.') ||
+           req.ip?.startsWith('192.168.80.');
+  }
+});
+
+const tonerLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 🔧 10 minutos (duplicado)
+  max: 2000, // 🔧 2000 consultas cada 10 min (3.3/seg) - mucho más permisivo
+  message: {
+    error: 'Límite de consultas de tóner excedido',
+    retryAfter: '10 minutos'
+  },
+  // Bypass para desarrollo y redes del hospital
+  skip: (req) => {
+    return process.env.NODE_ENV === 'development' || 
+           req.ip === '::1' || 
+           req.ip === '127.0.0.1' ||
+           req.ip?.startsWith('192.168.85.') ||
+           req.ip?.startsWith('192.168.80.');
+  }
+});
+
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5000, // 🔧 10x más permisivo para operaciones administrativas
+  message: {
+    error: 'Límite excedido para operaciones administrativas',
+    retryAfter: '15 minutos'
+  },
+  // Bypass para desarrollo y redes del hospital  
+  skip: (req) => {
+    return process.env.NODE_ENV === 'development' || 
+           req.ip === '::1' || 
+           req.ip === '127.0.0.1' ||
+           req.ip?.startsWith('192.168.85.') ||
+           req.ip?.startsWith('192.168.80.');
+  }
+});
+
+// Aplicar limitadores globales
+app.use('/api/', generalLimiter);
+
+// ============================================================================
 
 app.use(express.json()); //Habilitar el parseo de JSON
 app.use(express.urlencoded({ extended: true })); // Para formularios (opcional)
@@ -144,13 +294,17 @@ app.get('/', (req, res) => {
 });
 
 
-//Uso de rutas
-app.use(impresoraRoutes);
-app.use(empresaRoutes);
-app.use(contratoRoutes);
-app.use(consumibleRoutes);
-app.use(areaRoutes);
-app.use(tonerRoutes);
+//Uso de rutas con rate limiting específico por tipo de operación
+
+// Rutas administrativas (más restrictivas)
+app.use('/api', adminLimiter, impresoraRoutes);
+app.use('/api', adminLimiter, empresaRoutes);
+app.use('/api', adminLimiter, contratoRoutes);
+app.use('/api', adminLimiter, consumibleRoutes);
+app.use('/api', adminLimiter, areaRoutes);
+
+// Rutas de tóner (limitación especial para proteger equipos)
+app.use('/api', tonerLimiter, tonerRoutes);
 
 // Configuración del servidor con manejo seguro de certificados
 let server;

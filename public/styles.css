@@ -414,6 +414,19 @@ body {
   height: 100%;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
+  
+  /* 🎨 Animaciones para el modal - Opción 1: Fade + Scale */
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* Estado visible del modal con animación */
+.modal.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
 .modal-content {
@@ -430,7 +443,16 @@ body {
   max-width: 500px;
   /* Pero nunca más de 500px de ancho */
   position: relative;
-  /* Permite posicionar elementos hijos de forma absoluta (como el botón de cerrar) */
+  
+  /* 🎨 Animación del contenido del modal */
+  transform: translateY(-20px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Contenido visible con animación */
+.modal.show .modal-content {
+  transform: translateY(0);
 }
 
 .close {
@@ -452,6 +474,7 @@ body {
 
 h2 {
   text-align: center;
+  width:95%;
 }
 
 .close:hover {
@@ -511,6 +534,50 @@ h2 {
 #form button[type="submit"]:hover {
   box-shadow: 0 4px 16px rgba(0, 102, 156, 0.15);
   text-shadow: 0 0 8px #ffffff;
+}
+
+/* 🎨 Animaciones de aparición para campos del formulario */
+.modal #form input,
+.modal #form select,
+.modal #form button {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animación escalonada de los campos cuando el modal se muestra */
+.modal.show #form input:nth-of-type(1) { animation: slideInField 0.4s ease-out 0.1s forwards; }
+.modal.show #form input:nth-of-type(2) { animation: slideInField 0.4s ease-out 0.15s forwards; }
+.modal.show #form input:nth-of-type(3) { animation: slideInField 0.4s ease-out 0.2s forwards; }
+.modal.show #form input:nth-of-type(4) { animation: slideInField 0.4s ease-out 0.25s forwards; }
+.modal.show #form input:nth-of-type(5) { animation: slideInField 0.4s ease-out 0.3s forwards; }
+.modal.show #form select:nth-of-type(1) { animation: slideInField 0.4s ease-out 0.35s forwards; }
+.modal.show #form select:nth-of-type(2) { animation: slideInField 0.4s ease-out 0.4s forwards; }
+.modal.show #form select:nth-of-type(3) { animation: slideInField 0.4s ease-out 0.45s forwards; }
+.modal.show #form button { animation: slideInField 0.4s ease-out 0.5s forwards; }
+
+@keyframes slideInField {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animación del título del modal */
+.modal #TituloH2 {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.modal.show #TituloH2 {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
 }
 
 .inputError {

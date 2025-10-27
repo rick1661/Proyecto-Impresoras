@@ -116,6 +116,12 @@ export const putOneImpresora = async (req, res) => {
         await transaction.begin();
         const reqT = new sql.Request(transaction);
 
+        // Validar que los campos requeridos no sean null o undefined
+        console.log('Request body:', req.body);
+        console.log('Request params:', req.params);
+        
+        // Los campos ya fueron validados por Joi middleware, no necesitamos validación adicional
+
         //Actualización para la tabla impresora
         const result = await reqT
             .input("id", sql.Int, req.params.id)
@@ -160,7 +166,29 @@ export const putOneImpresora = async (req, res) => {
             console.error('Rollback failed:', rbErr);
         }
         console.error('Error putOneImpresora:', err);
-        res.status(500).json({ error: 'Error actualizando impresora' });
+        
+        // Enviar error más específico basado en el tipo de error
+        if (err.number === 515) { // NULL constraint violation
+            return res.status(400).json({ 
+                error: 'Datos faltantes o inválidos',
+                details: 'Uno o más campos requeridos están vacíos o son inválidos',
+                originalError: err.message
+            });
+        }
+        
+        if (err.number === 547) { // Foreign key constraint violation
+            return res.status(400).json({ 
+                error: 'Referencias inválidas',
+                details: 'El área o contrato especificado no existe',
+                originalError: err.message
+            });
+        }
+        
+        res.status(500).json({ 
+            error: 'Error actualizando impresora',
+            details: err.message,
+            number: err.number
+        });
     }
 }
 

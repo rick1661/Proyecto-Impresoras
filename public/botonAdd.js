@@ -37,7 +37,8 @@ selectToner.addEventListener('blur', validacionSelect);
 
 //------Eventos onclick------//
 btn.onclick = function () {
-  modal.style.display = 'block';
+  // 🎨 Mostrar modal con animación suave
+  showModalWithAnimation();
 
   //console.log(btn.textContent);
   switch (btn.textContent.trim()) {
@@ -206,8 +207,8 @@ formulario.addEventListener('submit', (e) => {
 
 
 span.onclick = function () {
-  modal.style.display = 'none';
-
+  // 🎨 Cerrar modal con animación suave
+  hideModalWithAnimation();
 }
 
 // Quita el formulario dandole click a cualquier parte fuera de la ventana
@@ -390,6 +391,10 @@ async function formularioImpresoraEnvio(formulario) {
     alert('Datos recibidos correctamente.');
 
     resetFormulario(formulario);
+    
+    // 🎨 Cerrar modal con animación después del éxito
+    hideModalWithAnimation();
+    
     //Volver a cargar la tabla de impresoras
     limpiarCacheToner()
     cacheImpresoras = null;
@@ -446,6 +451,9 @@ async function formularioConsumibleEnvio(formulario) {
     cacheConsumibles = null;
     getConsumibles();
     resetFormulario(formulario);
+    
+    // 🎨 Cerrar modal con animación después del éxito
+    hideModalWithAnimation();
   } catch (error) {
     console.error('Error al enviar datos:', error);
     alert('Hubo un error al enviar los datos.');
@@ -477,5 +485,65 @@ function resetFormulario(e) {
 
 
 //----------------------------------------------Fin funciones---------------------------------------------//
+
+// 🎨 ==================== FUNCIONES DE ANIMACIÓN MODAL ====================
+
+/**
+ * Muestra el modal con animación suave de fade + scale
+ */
+function showModalWithAnimation() {
+  // Mostrar el modal (display: block)
+  modal.style.display = 'block';
+  
+  // Aplicar animación después de un frame para asegurar que el CSS se aplique
+  requestAnimationFrame(() => {
+    modal.classList.add('show');
+  });
+  
+  // Focus en el primer campo después de que termine la animación
+  setTimeout(() => {
+    const firstInput = modal.querySelector('input[type="text"]');
+    if (firstInput) {
+      firstInput.focus();
+    }
+  }, 400); // 400ms = tiempo total de animación + delay
+}
+
+/**
+ * Oculta el modal con animación suave
+ */
+function hideModalWithAnimation() {
+  // Remover la clase show para iniciar animación de salida
+  modal.classList.remove('show');
+  
+  // Ocultar el modal después de que termine la animación
+  setTimeout(() => {
+    modal.style.display = 'none';
+    // Resetear cualquier estado del formulario si es necesario
+    resetFormState();
+  }, 300); // 300ms = duración de la transición CSS
+}
+
+/**
+ * Resetea el estado visual del formulario
+ */
+function resetFormState() {
+  // Remover cualquier clase de error de validación
+  const errorInputs = modal.querySelectorAll('.inputError');
+  errorInputs.forEach(input => {
+    input.classList.remove('inputError');
+  });
+  
+  // Resetear opciones de select2 si están inicializadas
+  try {
+    $('#selectArea').val('n').trigger('change');
+    $('#selectContrato').val('n').trigger('change');
+    $('#selectImpresora').val('n').trigger('change');
+  } catch (e) {
+    // Ignorar errores si select2 no está inicializado
+  }
+}
+
+// 🎨 ==================== EVENTOS DE ANIMACIÓN ====================
 
 

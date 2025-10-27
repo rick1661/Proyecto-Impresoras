@@ -11,11 +11,11 @@ import {
     tonerIpStrictParamsSchema 
 } from '../middleware/schemas/toner.schema.js';
 
-// Configura el límite: máximo 30 peticiones por minuto por IP
+// Configura el límite: más permisivo para uso hospitalario intensivo
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minuto
-  max: 200, // máximo 200 peticiones
-  message: 'Demasiadas solicitudes desde esta IP, intenta de nuevo más tarde.'
+  max: 1000, // máximo 1000 peticiones por minuto (muy permisivo)
+  message: 'Demasiadas solicitudes de tóner desde esta IP, intenta de nuevo más tarde.'
 });
 
 const router = Router();

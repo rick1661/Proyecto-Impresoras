@@ -469,7 +469,10 @@ function modificacionElemento(e) {
   //prevenir el comportamiento por defecto
   //e.preventDefault();
   const target = e.target;
-  console.log(target);
+  console.log('Click detectado en:', target);
+  console.log('Clases del elemento:', target.classList);
+  console.log('Contiene toner-cell?', target.classList.contains('toner-cell'));
+  
   //Identificar si se dio click en el boton de editar o eliminar
 
   if (target.classList.contains('editBtn')) {
@@ -520,6 +523,7 @@ function modificacionElemento(e) {
 
   //Mostrar toner al dar click en la celda de toner
   if (target.classList.contains('toner-cell')) {
+    console.log('🎯 Click en celda de toner detectado!');
     consultaToner(e);
   }
 
@@ -698,25 +702,30 @@ function modificarCamposImpresora(elementosTd) {
 
       //Convertir el campo area en un select
     } else if (elemento.firstElementChild === null && index === 6) {
-
+      // Guardar el texto actual del área para seleccionarlo después
+      const areaActual = elemento.textContent.trim();
+      
       elemento.innerHTML = `
                           <select class="selectEdit" name="area" id="selectArea" required>
-                            <option value="">${elemento.textContent}</option>
+                            <option value="">Seleccionar área...</option>
                             <!-- Agrega más opciones según necesites -->
                           </select>`
       //cargar las areas
-      getAreasEdit(elemento.firstElementChild);
+      getAreasEdit(elemento.firstElementChild, areaActual);
 
       //Convertir el campo contrato en un select
     } else if (elemento.firstElementChild === null && index === 7) {
+      // Guardar el texto actual del contrato para seleccionarlo después
+      const contratoActual = elemento.textContent.trim();
+      
       elemento.innerHTML = `
                           <select class="selectEdit" name="contrato" id="selectContrato" required>
-                            <option value="">${elemento.textContent}</option>
+                            <option value="">Seleccionar contrato...</option>
                             <!-- Agrega más opciones según necesites -->
                           </select>`
 
       //cargar los contratos
-      getContratosEdit(elemento.firstElementChild);
+      getContratosEdit(elemento.firstElementChild, contratoActual);
     }
   });
 }
@@ -724,7 +733,7 @@ function modificarCamposImpresora(elementosTd) {
 
 //*************************Funcion para obtener las areas de la edificion************************************
 //Consultar Areas
-async function getAreasEdit(elemento) {
+async function getAreasEdit(elemento, areaActual = null) {
   fetch(buildApiUrl('/area'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
@@ -734,13 +743,17 @@ async function getAreasEdit(elemento) {
         option.value = area.areaID;
         option.textContent = area.nombre;
         elemento.appendChild(option);
-
-        //Asignamos el valor seleccionado en el select Areas
-        if (elemento.options[elemento.selectedIndex].textContent === area.nombre.trim()) {
-          elemento.value = area.areaID;
-        };
-
       });
+
+      // Seleccionar el área actual después de cargar todas las opciones
+      if (areaActual) {
+        for (let option of elemento.options) {
+          if (option.textContent.trim() === areaActual) {
+            elemento.value = option.value;
+            break;
+          }
+        }
+      }
 
     })
     .catch(error => {
@@ -750,7 +763,7 @@ async function getAreasEdit(elemento) {
 
 //************************Funcion para obtener los contratos de la edicion**********************
 
-async function getContratosEdit(elemento) {
+async function getContratosEdit(elemento, contratoActual = null) {
   fetch(buildApiUrl('/contrato'))
     .then(response => response.json()) // Convierte la respuesta a JSON
     .then(data => { // en data se guardan la información de la consulta
@@ -759,14 +772,17 @@ async function getContratosEdit(elemento) {
         option.value = contrato.contratoID;
         option.textContent = contrato.nombre;
         elemento.appendChild(option);
-
-        //Asignamos el valor seleccionado en el select Contratos
-        if (elemento.options[elemento.selectedIndex].textContent === contrato.nombre.trim()) {
-          elemento.value = contrato.contratoID;
-        }
-
-
       });
+
+      // Seleccionar el contrato actual después de cargar todas las opciones
+      if (contratoActual) {
+        for (let option of elemento.options) {
+          if (option.textContent.trim() === contratoActual) {
+            elemento.value = option.value;
+            break;
+          }
+        }
+      }
 
     })
     .catch(error => {
@@ -944,6 +960,49 @@ async function enviarCambios(e) {
 
           console.log("entro a la preparacion de envio de impresora")
           //Crear el objeto con los nuevos datos
+          
+          // Debug: Log de los valores antes de procesarlos
+          console.log('Elementos TD:', elementosTd);
+          elementosTd.forEach((td, index) => {
+            console.log(`TD[${index}]:`, td.textContent, 'firstElementChild:', td.firstElementChild);
+            if (td.firstElementChild) {
+              console.log(`  - Tipo: ${td.firstElementChild.tagName}, Valor: "${td.firstElementChild.value}"`);
+            }
+          });
+          
+          console.log('Area element:', elementosTd[6].firstElementChild);
+          console.log('Area value:', elementosTd[6].firstElementChild?.value);
+          console.log('Contrato element:', elementosTd[7].firstElementChild);
+          console.log('Contrato value:', elementosTd[7].firstElementChild?.value);
+          
+          const areaValue = elementosTd[6].firstElementChild?.value?.trim() || '';
+          const contratoValue = elementosTd[7].firstElementChild?.value?.trim() || '';
+          
+          console.log('=== DEBUGGING VALUES ===');
+          console.log('areaValue (raw):', `"${areaValue}"`);
+          console.log('contratoValue (raw):', `"${contratoValue}"`);
+          
+          // Validar que los valores no estén vacíos antes de hacer parseInt
+          const areaID = areaValue === '' ? null : parseInt(areaValue);
+          const contratoID = contratoValue === '' ? null : parseInt(contratoValue);
+          
+          console.log('Area parsed:', areaID, 'isNaN:', isNaN(areaID));
+          console.log('Contrato parsed:', contratoID, 'isNaN:', isNaN(contratoID));
+          console.log('========================');
+          
+          // Verificar si los IDs son válidos
+          if (!areaValue || isNaN(areaID) || areaID === null) {
+            console.error('❌ Area validation failed:', { areaValue, areaID, isNaN: isNaN(areaID) });
+            alert('Por favor, seleccione un área válida');
+            return;
+          }
+          
+          if (!contratoValue || isNaN(contratoID) || contratoID === null) {
+            console.error('❌ Contrato validation failed:', { contratoValue, contratoID, isNaN: isNaN(contratoID) });
+            alert('Por favor, seleccione un contrato válido');
+            return;
+          }
+          
           const datosActualizadosI = {
             id: parseInt(e.target.value),
             serie: elementosTd[0].firstElementChild.value.trim(),
@@ -951,15 +1010,19 @@ async function enviarCambios(e) {
             marca: elementosTd[3].firstElementChild.value.trim(),
             modelo: elementosTd[4].firstElementChild.value.trim(),
             direccionIp: elementosTd[5].firstElementChild.value.trim(),
-            areaID: parseInt(elementosTd[6].firstElementChild.value.trim()),
-            contratoID: parseInt(elementosTd[7].firstElementChild.value.trim()),
+            areaID: areaID,
+            contratoID: contratoID,
             toner: elementosTd[8].firstElementChild.value.trim()
           };
 
-          console.log('Datos actualizados:', datosActualizadosI);
+          console.log('🔍 OBJETO ANTES DE ENVIAR:');
+          console.log('datosActualizadosI:', datosActualizadosI);
+          console.log('areaID en objeto:', datosActualizadosI.areaID, typeof datosActualizadosI.areaID);
+          console.log('contratoID en objeto:', datosActualizadosI.contratoID, typeof datosActualizadosI.contratoID);
           //convertimos el objeto a JSON
           const datosJSON = JSON.stringify(datosActualizadosI);
-          console.log(datosJSON);
+          console.log('📤 JSON A ENVIAR:', datosJSON);
+          console.log('📤 JSON PARSEADO:', JSON.parse(datosJSON));
 
           //Enviar los datos a la API
           try {
@@ -972,7 +1035,10 @@ async function enviarCambios(e) {
             });
 
             if (!response.ok) {
-              throw new Error('Error al actualizar la impresora');
+              // Intentar obtener el error detallado del servidor
+              const errorData = await response.json().catch(() => null);
+              const errorMessage = errorData?.error || errorData?.details || 'Error al actualizar la impresora';
+              throw new Error(errorMessage);
             }
 
             const resultado = await response.json();
@@ -987,7 +1053,15 @@ async function enviarCambios(e) {
 
           } catch (error) {
             console.error('Error al enviar los datos:', error);
-            alert('Error al actualizar la impresora');
+            
+            // Intentar obtener detalles del error del servidor
+            if (error.message && error.message.includes('Error al actualizar la impresora')) {
+              // Este es el error genérico, intentar obtener más detalles de la respuesta
+              console.log('Error genérico detectado, verificando respuesta...');
+            }
+            
+            // Mostrar mensaje más específico
+            alert(`Error al actualizar la impresora: ${error.message}`);
           }
           // }
           break;

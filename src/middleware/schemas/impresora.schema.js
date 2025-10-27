@@ -66,7 +66,7 @@ export const createImpresoraSchema = Joi.object({
             'any.required': 'La dirección IP es obligatoria'
         }),
 
-    area: Joi.number()
+    areaID: Joi.number()
         .integer()
         .positive()
         .required()
@@ -77,7 +77,7 @@ export const createImpresoraSchema = Joi.object({
             'any.required': 'El ID de área es obligatorio'
         }),
 
-    contrato: Joi.number()
+    contratoID: Joi.number()
         .integer()
         .positive()
         .required()
@@ -161,7 +161,7 @@ export const updateImpresoraSchema = Joi.object({
             'string.pattern.base': 'La dirección IP debe tener un formato válido (ej: 192.168.1.100 o 192.168.1.100:8080)'
         }),
 
-    area: Joi.number()
+    areaID: Joi.number()
         .integer()
         .positive()
         .optional()
@@ -171,7 +171,7 @@ export const updateImpresoraSchema = Joi.object({
             'number.positive': 'El ID de área debe ser mayor a 0'
         }),
 
-    contrato: Joi.number()
+    contratoID: Joi.number()
         .integer()
         .positive()
         .optional()
