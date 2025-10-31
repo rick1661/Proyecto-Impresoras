@@ -2,9 +2,22 @@ import { getConnection} from "../database/connection.js";
 import { insertarEvento } from '../utils/audit.js';
 import sql from 'mssql';
 
-
-// Crea una nueva instancia del objeto Date para obtener la fecha actual
-const fechaActual = new Date();
+/**
+ * 🗓️ Obtiene la fecha actual en formato YYYY-MM-DD para México (UTC-6)
+ * Esto evita problemas de desfase de zona horaria al guardar en SQL Server
+ */
+function obtenerFechaActualMexico() {
+    const ahora = new Date();
+    
+    // Ajustar a zona horaria de México (UTC-6)
+    // Durante horario de verano puede ser UTC-5, pero manejamos UTC-6 como estándar
+    const offsetMexico = -6 * 60; // -6 horas en minutos
+    const utc = ahora.getTime() + (ahora.getTimezoneOffset() * 60000);
+    const fechaMexico = new Date(utc + (offsetMexico * 60000));
+    
+    // Convertir a formato YYYY-MM-DD para SQL Server DATE
+    return fechaMexico.toISOString().split('T')[0];
+}
 
 //Consulta General
 export const getConsumibles =  async (req, res) => {
@@ -50,6 +63,9 @@ export const postOneConsumible = async (req, res) => {
     try {
         await transaction.begin();
         const reqT = new sql.Request(transaction);
+
+        // 🗓️ Obtener fecha actual corregida para México
+        const fechaActual = obtenerFechaActualMexico();
 
         const result = await reqT
             .input("tipo", sql.VarChar, req.body.tipo)

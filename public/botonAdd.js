@@ -59,7 +59,7 @@ btn.onclick = function () {
                         <option value="n">Selecciona un área</option>
                         <!-- Agrega más opciones según necesites -->
                     </select>
-                    <label for="area">contrato:</label>
+                    <label for="area">Contrato:</label>
                     <select name="contrato" class="js-example-basic-single" id="selectContrato" required>
                         <option value="n">Selecciona un contrato</option>
                         <!-- Agrega más opciones según necesites -->
