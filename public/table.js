@@ -20,6 +20,10 @@ const tablaToner = document.querySelector('.tablaToner tbody');
 //Variable que guarda la tabla de consulta de toner a modificar
 let tablaConsultaToner;
 
+// 💾 Variables para guardar valores originales en modo edición
+let valoresOriginales = new Map(); // Almacena los valores originales por fila
+let filasEnEdicion = new Set(); // Rastrea qué filas están siendo editadas
+
 //variable que almacena la serie a consultar
 let serieConsultaToner;
 
@@ -46,7 +50,7 @@ const cacheConTTL = {
   set(clave, valor, ttlMinutos = 11) {
     this.datos[clave] = {
       valor,
-      expiracion: Date.now() + (ttlMinutos * 60 * 1000)
+      expiracion: Date.now() + (ttlMinutos * 60 * 1000) 
     };
   },
 
@@ -228,6 +232,8 @@ function cargarTablaimpresoras() {
   // Llamar a la función para obtener e insertar las impresoras en la tabla
   if (cacheImpresoras) {
     renderImpresoras(cacheImpresoras);
+    // 🔍 Aplicar filtro de búsqueda si hay texto en el buscador
+    aplicarFiltroActual();
   } else {
     getImpresoras(true);
   }
@@ -256,6 +262,9 @@ async function getImpresoras(guardarCache = false) {
     
     // Agregar event listener al botón de ordenamiento
     agregarEventListenerOrdenamiento();
+    
+    // 🔍 Aplicar filtro de búsqueda si hay texto en el buscador
+    aplicarFiltroActual();
   } catch (error) {
     console.error('Error al cargar impresoras:', error);
   }
@@ -448,6 +457,8 @@ function cargarTablaConsumibles() {
   // Llamar a la función para obtener e insertar los consumibles en la tabla
   if (cacheConsumibles) {
     renderConsumibles(cacheConsumibles);
+    // 🔍 Aplicar filtro de búsqueda si hay texto en el buscador
+    aplicarFiltroActual();
   } else {
     getConsumibles(true);
   }
@@ -463,6 +474,9 @@ function getConsumibles(guardarCache = false) {
         cacheConsumibles = consumibles;
       }
       renderConsumibles(consumibles);
+      
+      // 🔍 Aplicar filtro de búsqueda si hay texto en el buscador
+      aplicarFiltroActual();
     })
     .catch(error => {
       console.error('Error al cargar consumibles:', error);
@@ -729,10 +743,84 @@ async function eliminarConsumible(e) {
   }
 }
 
+// 💾 **************************Funciones para preservar valores originales************************
 
+// Función para obtener un ID único de la fila
+function obtenerIdFila(elemento) {
+  const fila = elemento.closest('tr');
+  if (fila) {
+    // Usar la posición de la fila como ID único
+    const filas = Array.from(fila.parentElement.children);
+    return `fila_${filas.indexOf(fila)}`;
+  }
+  return null;
+}
+
+// Función para guardar los valores originales de una fila antes de editarla
+function guardarValoresOriginales(fila) {
+  const filaId = obtenerIdFila(fila.firstElementChild);
+  if (filaId && !valoresOriginales.has(filaId)) {
+    const valores = {};
+    const celdas = fila.querySelectorAll('td');
+    
+    // Determinar qué tipo de tabla estamos editando basándonos en el botón ADD
+    const esImpresora = botonADD.textContent.trim() === 'Agregar impresora';
+    
+    celdas.forEach((celda, index) => {
+      if (esImpresora) {
+        // Para impresoras: índices 0-8 excepto el 2 (que es la imagen)
+        if (index <= 8 && index !== 2) {
+          valores[index] = celda.textContent.trim();
+        }
+      } else {
+        // Para consumibles: índices 0, 1, 2, 4 (tipo, modelo, tij, impresoraID)
+        if (index === 0 || index === 1 || index === 2 || index === 4) {
+          valores[index] = celda.textContent.trim();
+        }
+      }
+    });
+    
+    valoresOriginales.set(filaId, valores);
+    filasEnEdicion.add(filaId);
+    console.log('Valores originales guardados para fila:', filaId, valores, 'Tipo:', esImpresora ? 'Impresora' : 'Consumible');
+  }
+}
+
+// Función para restaurar los valores originales de una fila
+function restaurarValoresOriginales(fila) {
+  const filaId = obtenerIdFila(fila.firstElementChild);
+  if (filaId && valoresOriginales.has(filaId)) {
+    const valoresGuardados = valoresOriginales.get(filaId);
+    const celdas = fila.querySelectorAll('td');
+    
+    celdas.forEach((celda, index) => {
+      if (valoresGuardados.hasOwnProperty(index)) {
+        celda.textContent = valoresGuardados[index];
+      }
+    });
+    
+    console.log('Valores originales restaurados para fila:', filaId, valoresGuardados);
+  }
+}
+
+// Función para limpiar el registro de una fila específica
+function limpiarRegistroValoresOriginales(fila) {
+  const filaId = obtenerIdFila(fila.firstElementChild);
+  if (filaId) {
+    valoresOriginales.delete(filaId);
+    filasEnEdicion.delete(filaId);
+    console.log('Registro limpiado para fila:', filaId);
+  }
+}
 
 //**************************Funcion para mofificar los campos de en la edicion de una impresora************************
 function modificarCamposImpresora(elementosTd) {
+
+  // 💾 Guardar valores originales antes de modificar
+  const fila = elementosTd[0]?.parentElement;
+  if (fila) {
+    guardarValoresOriginales(fila);
+  }
 
   //Recorrer los elementos td y convertirlos en campos editables
   elementosTd.forEach((elemento, index) => {
@@ -834,6 +922,12 @@ async function getContratosEdit(elemento, contratoActual = null) {
 
 // ********************Funcion para modificar los campos en la edicion de un consumible********************
 function modificarCamposConsumible(elementosTd) {
+
+  // 💾 Guardar valores originales antes de modificar
+  const fila = elementosTd[0]?.parentElement;
+  if (fila) {
+    guardarValoresOriginales(fila);
+  }
 
   //Recorrer los elementos td y convertirlos en campos editables
   console.log("Funcion moficarCampos Consumible")
@@ -1086,6 +1180,13 @@ async function enviarCambios(e) {
             const resultado = await response.json();
             console.log('Respuesta de la API:', resultado);
             alert('Impresora actualizada correctamente');
+            
+            // Limpiar los valores preservados ya que se guardó exitosamente
+            const filaId = obtenerIdFila(elementosTd[0]);
+            if (filaId) {
+              valoresOriginales.delete(filaId);
+              filasEnEdicion.delete(filaId);
+            }
 
             //Volver a cargar la tabla de impresoras
             cacheImpresoras = null;
@@ -1149,6 +1250,13 @@ async function enviarCambios(e) {
             const resultado = await response.json();
             console.log('Respuesta de la API:', resultado);
             alert('Consumible actualizado correctamente');
+            
+            // Limpiar los valores preservados ya que se guardó exitosamente
+            const filaId = obtenerIdFila(elementosTd[0]);
+            if (filaId) {
+              valoresOriginales.delete(filaId);
+              filasEnEdicion.delete(filaId);
+            }
 
             //Volver a cargar la tabla de impresoras
             cacheConsumibles = null;
@@ -1174,12 +1282,49 @@ async function enviarCambios(e) {
 
 //--------------Funcion de busqueda --------------------
 function buscarElemento() {
-  const filtro = this.value.toLowerCase();
+  aplicarFiltroActual();
+}
+
+// 🔍 Función para aplicar el filtro actual sin depender del evento 'this'
+function aplicarFiltroActual() {
+  const filtro = buscador.value.toLowerCase().trim();
   const filas = document.querySelectorAll('.styled-table tbody tr');
+  
+  if (filtro === '') {
+    // Sin filtro - mostrar todas las filas
+    filas.forEach(fila => {
+      fila.style.display = '';
+    });
+    actualizarIndicadorFiltro(false);
+    return;
+  }
+  
+  // Aplicar filtro
+  let filasVisibles = 0;
   filas.forEach(fila => {
     const textoFila = fila.textContent.toLowerCase();
-    fila.style.display = textoFila.includes(filtro) ? '' : 'none';
+    const esVisible = textoFila.includes(filtro);
+    fila.style.display = esVisible ? '' : 'none';
+    if (esVisible) filasVisibles++;
   });
+  
+  // 📊 Actualizar indicador visual y mostrar información
+  actualizarIndicadorFiltro(true, filasVisibles, filas.length);
+  console.log(`🔍 Filtro aplicado: "${filtro}" - ${filasVisibles} de ${filas.length} filas mostradas`);
+}
+
+// 🎨 Función para actualizar el indicador visual del filtro
+function actualizarIndicadorFiltro(activo, visibles = 0, total = 0) {
+  // Agregar/quitar clase CSS para estilo visual del input
+  if (activo) {
+    buscador.style.backgroundColor = '#e3f2fd'; // Azul claro
+    buscador.style.border = '2px solid #2196f3'; // Borde azul
+    buscador.title = `Mostrando ${visibles} de ${total} resultados`;
+  } else {
+    buscador.style.backgroundColor = '';
+    buscador.style.border = '';
+    buscador.title = 'Buscar en la tabla...';
+  }
 }
 
 
@@ -1188,6 +1333,11 @@ function buscarElemento() {
 function activarEdicion() {
   const elementosEditables = document.querySelectorAll('.elementoEditable');
   const estadoActual = obtenerEstadoEdicion();
+
+  // 🔧 Si estamos saliendo del modo edición, restablecer todos los campos editables
+  if (estaModoEdicion()) {
+    restablecerCamposEditables();
+  }
 
   // Alternar el estado del botón usando la función auxiliar
   alternarModoEdicion();
@@ -1198,6 +1348,33 @@ function activarEdicion() {
   });
   
   console.log('Toggle aplicado a', elementosEditables.length, 'elementos. Nuevo estado:', obtenerEstadoEdicion());
+}
+
+// 🔧 Función para restablecer todos los campos que están siendo editados
+function restablecerCamposEditables() {
+  console.log('Restableciendo campos editables...');
+  
+  // 💾 Primero restaurar los valores originales de todas las filas en edición
+  const filasEditadas = document.querySelectorAll('tr');
+  filasEditadas.forEach(fila => {
+    // Si la fila tiene campos de edición activos, restaurar valores originales
+    if (fila.querySelector('.inputEdit, .selectEdit')) {
+      restaurarValoresOriginales(fila);
+      // Limpiar el registro de esta fila ya que se cancela la edición
+      limpiarRegistroValoresOriginales(fila);
+    }
+  });
+  
+  // Restablecer botones de "Guardar" a "Editar"
+  const botonesGuardar = document.querySelectorAll('.guardarBtn');
+  botonesGuardar.forEach(btn => {
+    btn.textContent = 'Editar';
+    btn.style.backgroundColor = ''; // Quitar color verde
+    btn.setAttribute('class', 'editBtn');
+    btn.removeAttribute('id'); // Remover id guardarBtn si existe
+  });
+  
+  console.log('Campos restablecidos y valores originales restaurados');
 }
 
 
@@ -1427,6 +1604,9 @@ function ordenarPorToner() {
     sortBtn.textContent = sortOrder === 'asc' ? '↑' : '↓';
     sortBtn.title = sortOrder === 'asc' ? 'Ordenar descendente' : 'Ordenar ascendente';
   }
+  
+  // 🔍 Aplicar filtro de búsqueda después del ordenamiento
+  aplicarFiltroActual();
   
   console.log(`Tabla ordenada por tóner en orden ${sortOrder === 'asc' ? 'ascendente' : 'descendente'}`);
 }

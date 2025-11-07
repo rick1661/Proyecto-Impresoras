@@ -120,6 +120,24 @@ export const putOneConsumible = async (req, res) => {
         await transaction.begin();
         const reqT = new sql.Request(transaction);
 
+        // 📋 **NUEVO: Obtener datos actuales antes de la actualización para auditoría**
+        const datosAnteriores = await reqT
+            .input("idConsulta", sql.Int, req.params.id)
+            .query(`
+                SELECT c.tipo, c.modelo, c.tij, c.fecha, c.impresoraID,
+                       i.serie as impresioraSerie, i.nombre as impresoraName
+                FROM consumible c
+                LEFT JOIN impresora i ON c.impresoraID = i.impresoraID
+                WHERE c.consumibleID = @idConsulta
+            `);
+
+        if (datosAnteriores.recordset.length === 0) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Consumible no encontrado" });
+        }
+
+        const valoresAnteriores = datosAnteriores.recordset[0];
+
         const result = await reqT
             .input("consumibleID", sql.Int, req.params.id)
             .input("tipo", sql.VarChar, req.body.tipo)
@@ -134,23 +152,70 @@ export const putOneConsumible = async (req, res) => {
             return res.status(404).json({message: "Consumible no encontrado"});
         }
 
-        // Insertar evento
+        // 📋 **NUEVO: Preparar datos de auditoría con valores anteriores y nuevos**
+        const valoresNuevos = {
+            tipo: req.body.tipo,
+            modelo: req.body.modelo,
+            tij: req.body.tij,
+            fecha: req.body.fecha,
+            impresoraID: req.body.impresoraID
+        };
+
+        // 🔍 **Detectar qué campos específicamente cambiaron**
+        const cambios = {};
+        Object.keys(valoresNuevos).forEach(campo => {
+            const valorAnterior = valoresAnteriores[campo];
+            const valorNuevo = valoresNuevos[campo];
+            
+            // Comparar valores (considerando fechas y tipos diferentes)
+            if (campo === 'fecha') {
+                // Para fechas, comparar como strings ISO
+                const fechaAnterior = valorAnterior ? new Date(valorAnterior).toISOString().split('T')[0] : null;
+                const fechaNueva = valorNuevo ? new Date(valorNuevo).toISOString().split('T')[0] : null;
+                if (fechaAnterior !== fechaNueva) {
+                    cambios[campo] = {
+                        anterior: fechaAnterior,
+                        nuevo: fechaNueva
+                    };
+                }
+            } else if (valorAnterior !== valorNuevo) {
+                cambios[campo] = {
+                    anterior: valorAnterior,
+                    nuevo: valorNuevo
+                };
+            }
+        });
+
+        // Insertar evento con información completa de cambios
         await insertarEvento({
             tipo: 'UPDATE_CONSUMIBLE',
             recurso: 'consumible',
             recursoId: req.params.id,
             usuarioId: req.user?.id ?? null,
             usuarioNombre: req.user?.name ?? null,
-            detalles: { body: req.body },
+            detalles: { 
+                valoresAnteriores: valoresAnteriores,
+                valoresNuevos: valoresNuevos,
+                cambiosDetectados: cambios,
+                totalCambios: Object.keys(cambios).length,
+                metadatos: {
+                    timestamp: new Date().toISOString(),
+                    source: 'web_interface'
+                }
+            },
             ip: req.ip,
             userAgent: req.headers['user-agent'],
             requestId: req.headers['x-request-id'] ?? null,
             resultado: 'SUCCESS',
-            mensaje: null
+            mensaje: `Consumible actualizado. ${Object.keys(cambios).length} campos modificados: ${Object.keys(cambios).join(', ')}`
         }, transaction);
 
         await transaction.commit();
-        res.status(200).json({ message: 'Consumible actualizado' });
+        res.status(200).json({ 
+            message: 'Consumible actualizado',
+            cambios: Object.keys(cambios).length,
+            camposModificados: Object.keys(cambios)
+        });
     } catch (err) {
         try {
             await transaction.rollback();

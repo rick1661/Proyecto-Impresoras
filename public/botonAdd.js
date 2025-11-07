@@ -354,15 +354,53 @@ async function formularioImpresoraEnvio(formulario) {
   const ObjetoDatosDelFormulario = Object.fromEntries(datosFormulario);
   console.log(ObjetoDatosDelFormulario);
 
-  //Convertir el valor de areaID y contratoID a enteros
-  ObjetoDatosDelFormulario.area = parseInt(ObjetoDatosDelFormulario.area);
-  ObjetoDatosDelFormulario.contrato = parseInt(ObjetoDatosDelFormulario.contrato);
+  // 🔧 Convertir nombres de campos del frontend al formato esperado por el backend
+  // El frontend usa 'area' y 'contrato', pero el backend espera 'areaID' y 'contratoID'
+  
+  // 🔧 Normalizar modelo para que coincida con la base de datos
+  let modeloNormalizado = ObjetoDatosDelFormulario.modelo.trim();
+  if (modeloNormalizado === '432') {
+    modeloNormalizado = 'MFP 432';
+  } else if (modeloNormalizado === 'M432') {
+    modeloNormalizado = 'MFP M432';
+  }
+  // Agregar más normalizaciones según sea necesario
+  
+  const datosParaBackend = {
+    serie: ObjetoDatosDelFormulario.serie,
+    nombre: ObjetoDatosDelFormulario.nombre,
+    marca: ObjetoDatosDelFormulario.marca,
+    modelo: modeloNormalizado,                              // ✅ modelo normalizado
+    direccionIp: ObjetoDatosDelFormulario.direccionIp,
+    areaID: parseInt(ObjetoDatosDelFormulario.area),        // ✅ area → areaID
+    contratoID: parseInt(ObjetoDatosDelFormulario.contrato), // ✅ contrato → contratoID
+    toner: ObjetoDatosDelFormulario.toner || ''              // ✅ campo opcional
+  };
 
-  console.log(ObjetoDatosDelFormulario.area);
-  console.log(ObjetoDatosDelFormulario.contrato);
+  // 🔍 Validar que los campos requeridos estén presentes
+  const camposRequeridos = ['serie', 'nombre', 'marca', 'modelo', 'direccionIp'];
+  const camposVacios = camposRequeridos.filter(campo => !datosParaBackend[campo] || datosParaBackend[campo].trim() === '');
+  
+  if (camposVacios.length > 0) {
+    alert(`Por favor complete los siguientes campos: ${camposVacios.join(', ')}`);
+    return;
+  }
+  
+  if (!datosParaBackend.areaID || datosParaBackend.areaID <= 0) {
+    alert('Por favor seleccione un área válida');
+    return;
+  }
+  
+  if (!datosParaBackend.contratoID || datosParaBackend.contratoID <= 0) {
+    alert('Por favor seleccione un contrato válido');
+    return;
+  }
+
+  console.log('Datos corregidos para el backend:', datosParaBackend);
 
   // Convertir el objeto JavaScript a una cadena JSON
-  const jsonString = JSON.stringify(ObjetoDatosDelFormulario);
+  const jsonString = JSON.stringify(datosParaBackend);
+  console.log('JSON que se enviará:', jsonString);
   console.log(jsonString);
 
   try {
@@ -384,7 +422,21 @@ async function formularioImpresoraEnvio(formulario) {
     });
 
     if (!respuesta.ok) {
-      throw new Error(`Error https: ${respuesta.status}`);
+      // 🔍 Intentar obtener información más detallada del error
+      let mensajeError = `Error HTTP: ${respuesta.status}`;
+      try {
+        const errorData = await respuesta.json();
+        if (errorData.message) {
+          mensajeError += ` - ${errorData.message}`;
+        }
+        if (errorData.details) {
+          mensajeError += ` - Detalles: ${JSON.stringify(errorData.details)}`;
+        }
+      } catch (e) {
+        // Si no se puede parsear el JSON del error, usar mensaje genérico
+        mensajeError += ` - ${respuesta.statusText}`;
+      }
+      throw new Error(mensajeError);
     };
     const resultado = await respuesta.json(); // 5. Procesar la respuesta (ejemplo JSON)
     console.log('Datos enviados exitosamente:', resultado);
@@ -402,7 +454,20 @@ async function formularioImpresoraEnvio(formulario) {
   }
   catch (error) {
     console.error('Error al enviar datos:', error);
-    alert('Hubo un error al enviar los datos.');
+    
+    // 🚨 Mostrar error más detallado al usuario
+    let mensajeUsuario = 'Error al guardar la impresora: ';
+    if (error.message.includes('400')) {
+      mensajeUsuario += 'Datos inválidos. Verifique que todos los campos estén completos y correctos.';
+    } else if (error.message.includes('409')) {
+      mensajeUsuario += 'Ya existe una impresora con esa serie.';
+    } else if (error.message.includes('500')) {
+      mensajeUsuario += 'Error interno del servidor. Contacte al administrador.';
+    } else {
+      mensajeUsuario += error.message;
+    }
+    
+    alert(mensajeUsuario);
   };
 
 }

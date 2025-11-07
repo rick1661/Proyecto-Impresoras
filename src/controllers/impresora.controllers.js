@@ -51,8 +51,8 @@ export const postOneImpresora = async (req, res) => {
             .input("marca", sql.VarChar, req.body.marca)
             .input("modelo", sql.VarChar, req.body.modelo)
             .input("direccionIp", sql.VarChar, req.body.direccionIp)
-            .input("areaID", sql.Int, req.body.area)
-            .input("contratoID", sql.Int, req.body.contrato)
+            .input("areaID", sql.Int, req.body.areaID)           // ✅ Corregido: usar areaID
+            .input("contratoID", sql.Int, req.body.contratoID)   // ✅ Corregido: usar contratoID
             .input("toner", sql.VarChar, req.body.toner)
             .query(`
                 INSERT INTO impresora (serie, nombre, marca, modelo, direccionIp, areaID, contratoID, toner)
@@ -88,8 +88,8 @@ export const postOneImpresora = async (req, res) => {
             marca: req.body.marca,
             modelo: req.body.modelo,
             direccionIp: req.body.direccionIp,
-            areaID: req.body.area,
-            contratoID: req.body.contrato,
+            areaID: req.body.areaID,        // ✅ Corregido: usar areaID
+            contratoID: req.body.contratoID, // ✅ Corregido: usar contratoID
             toner: req.body.toner
         });
     } catch (err) {
@@ -99,7 +99,34 @@ export const postOneImpresora = async (req, res) => {
         } catch (rbErr) {
             console.error('Rollback failed:', rbErr);
         }
+        
         console.error('Error crearImpresoraController:', err);
+        
+        // 🔍 Manejo específico de errores
+        if (err.number === 547) { // Foreign key constraint violation
+            if (err.message.includes('areaID')) {
+                return res.status(400).json({ 
+                    error: 'El área seleccionada no existe',
+                    message: 'Por favor seleccione un área válida de la lista'
+                });
+            } else if (err.message.includes('contratoID')) {
+                return res.status(400).json({ 
+                    error: 'El contrato seleccionado no existe',
+                    message: 'Por favor seleccione un contrato válido de la lista'
+                });
+            } else {
+                return res.status(400).json({ 
+                    error: 'Referencia inválida',
+                    message: 'El área o contrato seleccionado no existe'
+                });
+            }
+        } else if (err.number === 2627) { // Unique constraint violation (duplicate serie)
+            return res.status(409).json({ 
+                error: 'Serie duplicada',
+                message: 'Ya existe una impresora con esa serie'
+            });
+        }
+        
         res.status(500).json({ error: 'Error creando impresora' });
     }
 
@@ -119,6 +146,26 @@ export const putOneImpresora = async (req, res) => {
         // Validar que los campos requeridos no sean null o undefined
         console.log('Request body:', req.body);
         console.log('Request params:', req.params);
+        
+        // 📋 **NUEVO: Obtener datos actuales antes de la actualización para auditoría**
+        const datosAnteriores = await reqT
+            .input("idConsulta", sql.Int, req.params.id)
+            .query(`
+                SELECT i.serie, i.nombre, i.marca, i.modelo, i.direccionIp, i.toner,
+                       i.areaID, a.nombre as areaNombre,
+                       i.contratoID, c.nombre as contratoNombre
+                FROM impresora i
+                LEFT JOIN area a ON i.areaID = a.areaID
+                LEFT JOIN contrato c ON i.contratoID = c.contratoID
+                WHERE i.impresoraID = @idConsulta
+            `);
+
+        if (datosAnteriores.recordset.length === 0) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Impresora no encontrada" });
+        }
+
+        const valoresAnteriores = datosAnteriores.recordset[0];
         
         // Los campos ya fueron validados por Joi middleware, no necesitamos validación adicional
 
@@ -141,23 +188,63 @@ export const putOneImpresora = async (req, res) => {
             return res.status(404).json({ message: "Impresora no encontrada" });
         }
 
-        //insertar Evento
+        // 📋 **NUEVO: Preparar datos de auditoría con valores anteriores y nuevos**
+        const valoresNuevos = {
+            serie: req.body.serie,
+            nombre: req.body.nombre,
+            marca: req.body.marca,
+            modelo: req.body.modelo,
+            direccionIp: req.body.direccionIp,
+            areaID: req.body.areaID,
+            contratoID: req.body.contratoID,
+            toner: req.body.toner
+        };
+
+        // 🔍 **Detectar qué campos específicamente cambiaron**
+        const cambios = {};
+        Object.keys(valoresNuevos).forEach(campo => {
+            const valorAnterior = valoresAnteriores[campo];
+            const valorNuevo = valoresNuevos[campo];
+            
+            // Comparar valores (considerando que algunos pueden ser null/undefined)
+            if (valorAnterior !== valorNuevo) {
+                cambios[campo] = {
+                    anterior: valorAnterior,
+                    nuevo: valorNuevo
+                };
+            }
+        });
+
+        //insertar Evento con información completa de cambios
         await insertarEvento({
             tipo: 'UPDATE_IMPRESORA',
             recurso: 'impresora',
             recursoId: req.params.id,
             usuarioId: req.user?.id ?? null,
             usuarioNombre: req.user?.name ?? null,
-            detalles: { body: req.body },
+            detalles: { 
+                valoresAnteriores: valoresAnteriores,
+                valoresNuevos: valoresNuevos,
+                cambiosDetectados: cambios,
+                totalCambios: Object.keys(cambios).length,
+                metadatos: {
+                    timestamp: new Date().toISOString(),
+                    source: 'web_interface'
+                }
+            },
             ip: req.ip,
             userAgent: req.headers['user-agent'],
             requestId: req.headers['x-request-id'] ?? null,
             resultado: 'SUCCESS',
-            mensaje: null
+            mensaje: `Impresora actualizada. ${Object.keys(cambios).length} campos modificados: ${Object.keys(cambios).join(', ')}`
         }, transaction);
 
         await transaction.commit();
-        res.status(200).json({ message: "Impresora actualizada" });
+        res.status(200).json({ 
+            message: "Impresora actualizada", 
+            cambios: Object.keys(cambios).length,
+            camposModificados: Object.keys(cambios)
+        });
     } catch (err) {
         // intentar rollback de forma segura
         try {

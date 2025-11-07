@@ -45,6 +45,8 @@ probar la conexion de la llave en el equipo
 
  pm2 start archivoruta --name archivonombre
 
+ pm2 start src --name app.js // este 
+
  ver los servicios 
 
  pm2 list
