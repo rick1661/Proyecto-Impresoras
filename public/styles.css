@@ -1193,3 +1193,309 @@ h2 {
   outline: 2px solid var(--colorPrincipal);
   outline-offset: 2px;
 }
+
+/* 📋 **************************Estilos para Eventos de Auditoría************************ */
+
+/* Botones activos en la sidebar - Color principal para todos */
+#btnEventos.active,
+#btnImpresoras.active,
+#btnConsumibles.active {
+  background: var(--colorPrincipal) !important;
+  color: white !important;
+}
+
+/* Asegurar que los enlaces dentro de los botones activos también sean blancos */
+#btnEventos.active .nav-link,
+#btnImpresoras.active .nav-link,
+#btnConsumibles.active .nav-link {
+  background: var(--colorPrincipal) !important;
+  color: white !important;
+}
+
+#btnEventos.active .nav-icon,
+#btnImpresoras.active .nav-icon,
+#btnConsumibles.active .nav-icon,
+#btnEventos.active .nav-label,
+#btnImpresoras.active .nav-label,
+#btnConsumibles.active .nav-label {
+  color: white !important;
+}
+
+/* Estilos para la tabla de eventos */
+.badge-eventos {
+  background: var(--colorPrincipal);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+/* Asegurar que los encabezados de eventos tengan texto blanco */
+#tableContainer .styled-table th {
+  color: #ffffff !important;
+}
+
+/* Reforzar el color blanco en thead específicamente */
+#tableContainer .styled-table thead th {
+  color: #ffffff !important;
+}
+
+/* Estilo específico para cuando se muestran eventos */
+.styled-table thead tr th {
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+.btn-detalle-evento {
+  background: var(--colorPrincipal) !important;
+  color: white !important;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-detalle-evento:hover {
+  background: #004d73 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 102, 156, 0.4);
+}
+
+.btn-detalle-evento:active {
+  transform: translateY(0);
+}
+
+/* Modal de detalles de eventos */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.evento-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.evento-detail-modal {
+  padding: 24px;
+}
+
+.evento-header {
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.evento-header h3 {
+  color: var(--colorPrincipal);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evento-header p {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.evento-info {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: #495057;
+  flex: 0 0 120px;
+}
+
+.info-row .value {
+  color: #212529;
+  text-align: right;
+  flex: 1;
+}
+
+.changes-section {
+  margin: 20px 0;
+}
+
+.changes-section h4 {
+  color: var(--colorPrincipal);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.changes-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.change-item {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.change-item:hover {
+  border-color: var(--colorPrincipal);
+  box-shadow: 0 2px 8px rgba(0, 102, 156, 0.1);
+}
+
+.field-name {
+  font-weight: 600;
+  color: var(--colorPrincipal);
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.change-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.old-value, .new-value {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.old-value {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  color: #c53030;
+}
+
+.new-value {
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
+  color: #2f855a;
+}
+
+.raw-details {
+  margin: 20px 0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.raw-details h4 {
+  color: var(--colorPrincipal);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.json-display {
+  background: #2d3748;
+  color: #e2e8f0;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85em;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.evento-actions {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e9ecef;
+  text-align: right;
+}
+
+.btn-close {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-close:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+/* Estilos responsivos para eventos */
+@media (max-width: 768px) {
+  .evento-modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .change-values {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .info-row .value {
+    text-align: left;
+  }
+}

@@ -8,6 +8,7 @@ import contratoRoutes from './routes/contrato.routes.js';
 import consumibleRoutes from './routes/consumible.routes.js';
 import areaRoutes from './routes/area.routes.js';
 import tonerRoutes from './routes/toner.routes.js';
+import eventosRoutes from './routes/eventos.routes.js';
 
 import fs from 'fs';
 import https from 'https';
@@ -305,6 +306,9 @@ app.use('/api', adminLimiter, areaRoutes);
 
 // Rutas de tóner (limitación especial para proteger equipos)
 app.use('/api', tonerLimiter, tonerRoutes);
+
+// Rutas de eventos (limitación más permisiva para consultas)
+app.use('/api', generalLimiter, eventosRoutes);
 
 // Configuración del servidor con manejo seguro de certificados
 let server;

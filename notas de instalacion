@@ -57,3 +57,8 @@ probar la conexion de la llave en el equipo
  pm2 save
 
  npm install net-snmp
+
+ -- Nueva funcionalidad: Pestaña de Eventos de Auditoría
+ -- Muestra todos los eventos registrados en la tabla dbo.EventosAuditoria
+ -- Incluye detalles de cambios, usuarios, fechas y resultados
+ -- Modal con información completa de cada evento

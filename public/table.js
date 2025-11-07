@@ -3,6 +3,7 @@
 //Seleccionamos elementos del DOOM
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
+const btnEventos = document.getElementById('btnEventos');
 const tabla = document.querySelector('.styled-table');
 const botonADD = document.getElementById('agregarBtn');
 let botonGuardar;
@@ -145,11 +146,16 @@ cargarEventListeners();
 function cargarEventListeners() {
 
   document.addEventListener('DOMContentLoaded', () => {
+    // Asegurar que los botones estén visibles al cargar
+    botonADD.style.display = 'block';
+    editarBtn.style.display = 'block';
+    
     // Primero cargar la estructura de la tabla de impresoras
     cargarTablaimpresoras();
   });
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
+  btnEventos.addEventListener('click', cargarTablaEventos);
   tabla.addEventListener('click', modificacionElemento);
   buscador.addEventListener('input', buscarElemento);
   tablaToner.addEventListener('click', eliminacionTonerEspecifico);
@@ -166,7 +172,15 @@ function cargarEventListeners() {
 function cargarTablaimpresoras() {
 
   // Establecer la sección a impresoras
-
+  
+  // Aplicar estilos activos
+  btnImpresora.classList.add('active');
+  btnConsumible.classList.remove('active');
+  btnEventos.classList.remove('active');
+  
+  // Mostrar botones inferiores (pueden estar ocultos por eventos)
+  botonADD.style.display = 'block';
+  editarBtn.style.display = 'block';
 
   // Cambiar el contenido de la tabla para mostrar las columnas de impresoras 
 
@@ -403,7 +417,15 @@ function renderImpresoras(impresoras) {
 function cargarTablaConsumibles() {
 
   // Establecer la sección a consumibles
-
+  
+  // Aplicar estilos activos
+  btnImpresora.classList.remove('active');
+  btnConsumible.classList.add('active');
+  btnEventos.classList.remove('active');
+  
+  // Mostrar botones inferiores (pueden estar ocultos por eventos)
+  botonADD.style.display = 'block';
+  editarBtn.style.display = 'block';
 
   // Cambiar el contenido de la tabla para mostrar las columnas de consumibles
 
@@ -955,7 +977,7 @@ function modificarCamposConsumible(elementosTd) {
                                 <option value = "${elemento.textContent}"> ${elemento.textContent}</option>
                                 <!-- Agregar mas opciones segun necesites -->
                           <option value="W9008MC">W9008MC</option>
-                          <option value="W1330XCc">W1330XC</option>
+                          <option value="W1330XC">W1330XC</option>
                           <option value="W1330X">W1330X</option>
                           <option value="CF258XC">CF258XC</option>
                           <option value="CF258X">CF258X</option>
@@ -1737,3 +1759,495 @@ setInterval(() => {
   cacheConTTL.limpiarExpirados();
   console.log('Cache de tóner limpiado automáticamente');
 }, 10 * 60 * 1000);
+
+// 📋 **************************Funciones para Eventos de Auditoría************************
+
+// Variable para caché de eventos
+let cacheEventos = null;
+
+/**
+ * Función auxiliar para obtener el nombre de la impresora a la que pertenece un consumible
+ * (Solo para uso en detalles del modal)
+ */
+function obtenerNombreImpresoraPorConsumible(consumibleId) {
+  if (!cacheConsumibles || !consumibleId) {
+    return `Tóner #${consumibleId}`;
+  }
+  
+  // Buscar el consumible en el caché
+  const consumible = cacheConsumibles.find(cons => 
+    cons.consumibleID == consumibleId || cons.id == consumibleId || cons.ID == consumibleId
+  );
+  
+  if (consumible) {
+    const impresoraId = consumible.impresoraID || consumible.impresoraId || consumible.ImpresoraId;
+    if (impresoraId) {
+      const nombreImpresora = obtenerNombreImpresoraPorId(impresoraId);
+      return `${nombreImpresora} (Tóner)`;
+    }
+  }
+  
+  return `Tóner #${consumibleId}`;
+}
+
+/**
+ * Función principal para cargar la tabla de eventos
+ */
+function cargarTablaEventos() {
+  console.log('Cargando tabla de eventos...');
+  
+  // Cambiar el título
+  tituloH2.textContent = 'Eventos de Auditoría';
+  
+  // Ocultar botones inferiores (no aplicables para eventos - solo lectura)
+  botonADD.style.display = 'none';
+  editarBtn.style.display = 'none';
+  
+  // Aplicar estilos activos
+  btnImpresora.classList.remove('active');
+  btnConsumible.classList.remove('active');
+  btnEventos.classList.add('active');
+  
+  // Obtener eventos de auditoría
+  getEventosDeAuditoria();
+}
+
+/**
+ * Obtener eventos de auditoría directamente de la base de datos
+ */
+async function getEventosDeAuditoria() {
+  try {
+    // Si hay caché válido, usarlo
+    if (cacheEventos) {
+      mostrarTablaEventos(cacheEventos);
+      return;
+    }
+    
+    console.log('Obteniendo eventos de auditoría desde base de datos...');
+    
+    // Asegurar que las impresoras estén cargadas para mostrar nombres
+    if (!cacheImpresoras) {
+      console.log('Cargando impresoras para mostrar nombres en eventos...');
+      try {
+        const impresorasResponse = await fetch(buildApiUrl('/impresora'));
+        const impresorasData = await impresorasResponse.json();
+        cacheImpresoras = impresorasData.impresoras || impresorasData;
+        console.log('✅ Impresoras cargadas para eventos');
+      } catch (error) {
+        console.warn('⚠️ No se pudieron cargar impresoras para eventos:', error);
+      }
+    }
+    
+    // Asegurar que los consumibles estén cargados para mostrar nombres en detalles
+    if (!cacheConsumibles) {
+      console.log('Cargando consumibles para mostrar nombres en detalles...');
+      try {
+        const consumiblesResponse = await fetch(buildApiUrl('/consumible'));
+        const consumiblesData = await consumiblesResponse.json();
+        cacheConsumibles = consumiblesData.consumibles || consumiblesData;
+        console.log('✅ Consumibles cargados para detalles');
+      } catch (error) {
+        console.warn('⚠️ No se pudieron cargar consumibles para detalles:', error);
+      }
+    }
+    
+    // Primero intentar con la versión normal
+    let response;
+    try {
+      response = await fetch(buildApiUrl('/eventos-auditoria?limit=100'));
+    } catch (error) {
+      console.log('Versión normal falló, intentando versión simple...');
+      // Si falla, usar la versión simple
+      response = await fetch(buildApiUrl('/eventos-auditoria-simple?limit=100'));
+    }
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Eventos de auditoría obtenidos:', data);
+    
+    // Guardar en caché
+    cacheEventos = data || [];
+    
+    // Mostrar la tabla
+    mostrarTablaEventos(cacheEventos);
+    
+  } catch (error) {
+    console.error('Error obteniendo eventos de auditoría:', error);
+    
+    // Mostrar mensaje de error en la tabla
+    tabla.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; color: #e74c3c; padding: 20px;">
+          <i class="fas fa-exclamation-triangle"></i>
+          Error cargando eventos de auditoría: ${error.message}
+          <br><small>Verifica que la tabla EventosAuditoria existe en la base de datos</small>
+        </td>
+      </tr>
+    `;
+  }
+}
+
+/**
+ * Función auxiliar para obtener el nombre de la impresora por ID
+ */
+function obtenerNombreImpresoraPorId(impresoraId) {
+  if (!cacheImpresoras || !impresoraId) {
+    return `Impresora #${impresoraId}`;
+  }
+  
+  const impresora = cacheImpresoras.find(imp => imp.impresoraID == impresoraId);
+  if (impresora && impresora.nombre && impresora.nombre[0]) {
+    return impresora.nombre[0];
+  }
+  
+  return `Impresora #${impresoraId}`;
+}
+
+/**
+ * Mostrar los eventos de auditoría en la tabla
+ */
+function mostrarTablaEventos(eventos) {
+  console.log('Mostrando tabla de eventos con', eventos.length, 'eventos');
+  
+  // Crear encabezado específico para eventos
+  const encabezado = `
+    <tr>
+      <th style="color: #ffffff !important;">ID</th>
+      <th style="color: #ffffff !important;">Fecha/Hora</th>
+      <th style="color: #ffffff !important;">Tipo</th>
+      <th style="color: #ffffff !important;">Recurso</th>
+      <th style="color: #ffffff !important;">Usuario</th>
+      <th style="color: #ffffff !important;">Resultado</th>
+      <th style="color: #ffffff !important;">Cambios</th>
+      <th style="color: #ffffff !important;">Acciones</th>
+    </tr>
+  `;
+  
+  // Crear filas de datos
+  let filas = '';
+  
+  if (eventos.length === 0) {
+    filas = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 20px; color: #7f8c8d;">
+          <i class="fas fa-info-circle"></i>
+          No hay eventos de auditoría disponibles
+        </td>
+      </tr>
+    `;
+  } else {
+    eventos.forEach(evento => {
+      // Manejar diferentes nombres de columnas de forma flexible
+      const auditoriaId = evento.AuditoriaID || evento.id || evento.ID || 'N/A';
+      const tipo = evento.Tipo || evento.tipo || evento.Type || 'UNKNOWN';
+      const recurso = evento.Recurso || evento.recurso || evento.Resource || 'unknown';
+      const recursoId = evento.RecursoId || evento.recursoId || evento.ResourceId || 'N/A';
+      const usuario = evento.UsuarioNombre || evento.usuario || evento.User || evento.UsuarioId || 'Sistema';
+      const resultado = evento.Resultado || evento.resultado || evento.Result || evento.Status || 'UNKNOWN';
+      const mensaje = evento.Mensaje || evento.mensaje || evento.Message || '';
+      
+      // Manejar fecha de forma flexible
+      let fecha = 'N/A';
+      if (evento.CreadoEn) fecha = new Date(evento.CreadoEn).toLocaleString('es-MX');
+      else if (evento.FechaHora) fecha = new Date(evento.FechaHora).toLocaleString('es-MX');
+      else if (evento.Fecha) fecha = new Date(evento.Fecha).toLocaleString('es-MX');
+      else if (evento.Created) fecha = new Date(evento.Created).toLocaleString('es-MX');
+      else if (evento.CreatedAt) fecha = new Date(evento.CreatedAt).toLocaleString('es-MX');
+      else if (evento.Timestamp) fecha = new Date(evento.Timestamp).toLocaleString('es-MX');
+      
+      // Parsear detalles JSON si existe
+      let totalCambios = '-';
+      try {
+        const detallesTexto = evento.Detalles || evento.detalles || evento.Details || null;
+        if (detallesTexto) {
+          const detalles = JSON.parse(detallesTexto);
+          totalCambios = detalles.totalCambios || detalles.cambiosDetectados ? Object.keys(detalles.cambiosDetectados).length : '-';
+        }
+      } catch (e) {
+        // Si no se puede parsear, mostrar '-'
+      }
+      
+      const resultadoFormateado = resultado === 'SUCCESS' ? 
+        '<span style="color: #27ae60;"><i class="fas fa-check-circle"></i> Éxito</span>' :
+        '<span style="color: #e74c3c;"><i class="fas fa-times-circle"></i> Error</span>';
+      
+      // Determinar el color del tipo de evento
+      let tipoColor = '#3498db'; // azul por defecto
+      if (tipo.includes('CREATE')) tipoColor = '#27ae60'; // verde
+      if (tipo.includes('UPDATE')) tipoColor = '#f39c12'; // naranja
+      if (tipo.includes('DELETE')) tipoColor = '#e74c3c'; // rojo
+      
+      // Obtener el nombre apropiado del recurso
+      let nombreRecurso = '';
+      if (recurso === 'impresora' && recursoId && recursoId !== 'N/A') {
+        nombreRecurso = obtenerNombreImpresoraPorId(recursoId);
+      } else {
+        nombreRecurso = `${recurso} #${recursoId}`;
+      }
+      
+      filas += `
+        <tr data-evento-id="${auditoriaId}">
+          <td>${auditoriaId}</td>
+          <td>${fecha}</td>
+          <td>
+            <span style="color: ${tipoColor}; font-weight: bold;">
+              ${tipo.replace('_', ' ')}
+            </span>
+          </td>
+          <td>
+            <i class="fas fa-${recurso === 'impresora' ? 'print' : 'tint'}"></i>
+            ${nombreRecurso}
+          </td>
+          <td>${usuario}</td>
+          <td>${resultadoFormateado}</td>
+          <td>
+            ${totalCambios !== '-' ? `<span class="badge-eventos">${totalCambios}</span>` : '-'}
+          </td>
+          <td>
+            <button class="btn-detalle-evento" data-evento-id="${auditoriaId}">
+              <i class="fas fa-eye"></i> Ver
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  
+  // Actualizar la tabla
+  tabla.innerHTML = encabezado + filas;
+  
+  // Forzar color blanco en encabezados después del renderizado
+  setTimeout(() => {
+    const headers = tabla.querySelectorAll('th');
+    headers.forEach(th => {
+      th.style.color = '#ffffff';
+      th.style.setProperty('color', '#ffffff', 'important');
+    });
+    
+    // Forzar color principal en botones "Ver"
+    const botonesVer = tabla.querySelectorAll('.btn-detalle-evento');
+    botonesVer.forEach(btn => {
+      btn.style.setProperty('background', '#00669c', 'important');
+      btn.style.setProperty('color', 'white', 'important');
+    });
+  }, 100);
+  
+  // Agregar event listeners para los botones de detalle
+  agregarEventListenersEventos();
+}
+
+/**
+ * Agregar event listeners específicos para eventos
+ */
+function agregarEventListenersEventos() {
+  const botonesDetalle = document.querySelectorAll('.btn-detalle-evento');
+  
+  botonesDetalle.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const eventoId = e.target.closest('button').dataset.eventoId;
+      mostrarDetalleEvento(eventoId);
+    });
+  });
+}
+
+/**
+ * Mostrar detalles completos de un evento
+ */
+function mostrarDetalleEvento(eventoId) {
+  const evento = cacheEventos.find(e => e.AuditoriaID == eventoId);
+  
+  if (!evento) {
+    alert('Evento no encontrado');
+    return;
+  }
+  
+  // Parsear detalles JSON
+  let detalles = null;
+  try {
+    if (evento.Detalles) {
+      detalles = JSON.parse(evento.Detalles);
+    }
+  } catch (e) {
+    console.error('Error parseando detalles:', e);
+  }
+  
+  // Preparar el contenido del modal con los detalles
+  let detalleHTML = `
+    <div class="evento-detail-modal">
+      <div class="evento-header">
+        <h3><i class="fas fa-clipboard-list"></i> Detalle del Evento #${evento.AuditoriaID}</h3>
+        <p><strong>Fecha:</strong> ${new Date(evento.CreadoEn || evento.FechaHora).toLocaleString('es-MX')}</p>
+      </div>
+      
+      <div class="evento-info">
+        <div class="info-row">
+          <span class="label">Tipo:</span>
+          <span class="value">${evento.Tipo}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Recurso:</span>
+          <span class="value">${
+            evento.Recurso === 'impresora' ? 
+              obtenerNombreImpresoraPorId(evento.RecursoId) : 
+              evento.Recurso === 'consumible' ? 
+                obtenerNombreImpresoraPorConsumible(evento.RecursoId) :
+                `${evento.Recurso} #${evento.RecursoId}`
+          }</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Usuario:</span>
+          <span class="value">${evento.UsuarioNombre || 'Sistema'}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">IP:</span>
+          <span class="value">${evento.IP || 'N/A'}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Resultado:</span>
+          <span class="value">${evento.Resultado}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Mensaje:</span>
+          <span class="value">${evento.Mensaje || 'N/A'}</span>
+        </div>
+      </div>
+  `;
+  
+  // Agregar detalles específicos si existen
+  if (detalles && detalles.cambiosDetectados) {
+    detalleHTML += `
+      <div class="changes-section">
+        <h4><i class="fas fa-exchange-alt"></i> Cambios Realizados</h4>
+        <div class="changes-grid">
+    `;
+    
+    Object.entries(detalles.cambiosDetectados).forEach(([campo, cambio]) => {
+      detalleHTML += `
+        <div class="change-item">
+          <div class="field-name">${campo}</div>
+          <div class="change-values">
+            <span class="old-value">
+              <i class="fas fa-arrow-left"></i>
+              ${cambio.anterior || 'N/A'}
+            </span>
+            <span class="new-value">
+              <i class="fas fa-arrow-right"></i>
+              ${cambio.nuevo || 'N/A'}
+            </span>
+          </div>
+        </div>
+      `;
+    });
+    
+    detalleHTML += `
+        </div>
+      </div>
+    `;
+  } else if (detalles) {
+    // Mostrar detalles raw si no hay cambiosDetectados
+    detalleHTML += `
+      <div class="raw-details">
+        <h4><i class="fas fa-code"></i> Detalles Raw</h4>
+        <pre class="json-display">${JSON.stringify(detalles, null, 2)}</pre>
+      </div>
+    `;
+  }
+  
+  detalleHTML += `
+      <div class="evento-actions">
+        <button id="btnCerrarModalEvento" class="btn-close">
+          <i class="fas fa-times"></i> Cerrar
+        </button>
+      </div>
+    </div>
+  `;
+  
+  // Mostrar el modal
+  mostrarModalEvento(detalleHTML);
+}
+
+/**
+ * Mostrar modal con contenido de evento
+ */
+function mostrarModalEvento(contenido) {
+  let modal = document.getElementById('eventoDetailModal');
+  
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'eventoDetailModal';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+  
+  modal.innerHTML = `
+    <div class="modal-content evento-modal">
+      ${contenido}
+    </div>
+  `;
+  
+  modal.style.display = 'flex';
+  
+  // Agregar event listener al botón cerrar
+  setTimeout(() => {
+    const btnCerrar = document.getElementById('btnCerrarModalEvento');
+    if (btnCerrar) {
+      btnCerrar.addEventListener('click', cerrarModalEvento);
+    }
+  }, 50);
+  
+  // Cerrar modal con tecla Escape
+  const handleEscape = (e) => {
+    if (e.key === 'Escape') {
+      cerrarModalEvento();
+    }
+  };
+  
+  // Remover listeners previos y agregar nuevos
+  document.removeEventListener('keydown', window.modalEscapeHandler);
+  window.modalEscapeHandler = handleEscape;
+  document.addEventListener('keydown', handleEscape);
+  
+  // Cerrar modal al hacer clic fuera
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      cerrarModalEvento();
+    }
+  });
+}
+
+/**
+ * Cerrar modal de evento
+ */
+function cerrarModalEvento() {
+  const modal = document.getElementById('eventoDetailModal');
+  if (modal) {
+    modal.style.display = 'none';
+    
+    // Limpiar event listeners para evitar memory leaks
+    const btnCerrar = document.getElementById('btnCerrarModalEvento');
+    if (btnCerrar) {
+      btnCerrar.removeEventListener('click', cerrarModalEvento);
+    }
+    
+    // Remover listener de escape
+    if (window.modalEscapeHandler) {
+      document.removeEventListener('keydown', window.modalEscapeHandler);
+      window.modalEscapeHandler = null;
+    }
+    
+    // Opcional: remover el modal del DOM completamente
+    // modal.remove();
+  }
+}
+
+// Hacer la función disponible globalmente
+window.cerrarModalEvento = cerrarModalEvento;
+
+// Función para invalidar caché cuando sea necesario
+function invalidarCacheEventos() {
+  cacheEventos = null;
+  console.log('Caché de eventos invalidado');
+}

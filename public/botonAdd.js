@@ -69,7 +69,7 @@ btn.onclick = function () {
                         <option value="n">Selecciona un tóner</option>
                         <!-- Agrega más opciones según necesites -->
                          <option value="W9008MC">W9008MC</option>
-                        <option value="W1330XCc">W1330XC</option>
+                        <option value="W1330XC">W1330XC</option>
                         <option value="W1330X">W1330X</option>
                         <option value="CF258XC">CF258XC</option>
                         <option value="CF258X">CF258X</option>
@@ -136,7 +136,7 @@ btn.onclick = function () {
                         <option value="n">Selecciona un modelo</option>
                         <!-- Agrega más opciones según necesites -->
                         <option value="W9008MC">W9008MC</option>
-                        <option value="W1330XCc">W1330XC</option>
+                        <option value="W1330XC">W1330XC</option>
                         <option value="W1330X">W1330X</option>
                         <option value="CF258XC">CF258XC</option>
                         <option value="CF258X">CF258X</option>
