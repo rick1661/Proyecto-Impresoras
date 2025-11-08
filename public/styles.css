@@ -1731,3 +1731,70 @@ h2 {
     margin: 10px;
   }
 }
+
+/* 🔍 Estilos para barras de búsqueda independientes en inventario */
+.search-container {
+  margin-bottom: 15px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 15px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: white;
+  color: #495057;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--colorPrincipal);
+  box-shadow: 0 0 0 3px rgba(0, 102, 156, 0.1);
+  background: #f8fbff;
+}
+
+.search-input::placeholder {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  color: #6c757d;
+  font-size: 0.9rem;
+  pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.search-input:focus + .search-icon {
+  color: var(--colorPrincipal);
+}
+
+/* Indicador visual cuando hay filtro activo */
+.search-input[style*="background-color"] {
+  font-weight: 500;
+}
+
+.search-input[style*="background-color"] + .search-icon {
+  color: var(--colorPrincipal);
+}
+
+/* Estilos responsivos para búsquedas */
+@media (max-width: 768px) {
+  .search-input {
+    font-size: 0.85rem;
+    padding: 8px 35px 8px 12px;
+  }
+  
+  .search-icon {
+    right: 10px;
+    font-size: 0.8rem;
+  }
+}

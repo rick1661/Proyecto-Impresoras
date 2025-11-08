@@ -190,6 +190,12 @@ function cargarTablaimpresoras() {
   // Mostrar botones inferiores (pueden estar ocultos por eventos)
   botonADD.style.display = 'block';
   editarBtn.style.display = 'block';
+  
+  // Restaurar barra de búsqueda superior
+  const contenedorBuscadorPrincipal = document.getElementById('contenedorBuscadorPrincipal');
+  if (contenedorBuscadorPrincipal) {
+    contenedorBuscadorPrincipal.style.display = 'flex';
+  }
 
   // Cambiar el contenido de la tabla para mostrar las columnas de impresoras 
 
@@ -442,6 +448,12 @@ function cargarTablaConsumibles() {
   // Mostrar botones inferiores (pueden estar ocultos por eventos)
   botonADD.style.display = 'block';
   editarBtn.style.display = 'block';
+  
+  // Restaurar barra de búsqueda superior
+  const contenedorBuscadorPrincipal = document.getElementById('contenedorBuscadorPrincipal');
+  if (contenedorBuscadorPrincipal) {
+    contenedorBuscadorPrincipal.style.display = 'flex';
+  }
 
   // Cambiar el contenido de la tabla para mostrar las columnas de consumibles
 
@@ -1825,6 +1837,12 @@ function cargarTablaEventos() {
   btnEventos.classList.add('active');
   btnInventario.classList.remove('active');
   
+  // Restaurar barra de búsqueda superior
+  const contenedorBuscadorPrincipal = document.getElementById('contenedorBuscadorPrincipal');
+  if (contenedorBuscadorPrincipal) {
+    contenedorBuscadorPrincipal.style.display = 'flex';
+  }
+  
   // Ocultar inventario y restaurar tabla
   const tableContainer = document.getElementById('tableContainer');
   const inventarioContainer = document.getElementById('inventarioContainer');
@@ -2290,6 +2308,12 @@ function cargarInventario() {
   botonADD.style.display = 'none';
   editarBtn.style.display = 'none';
   
+  // Ocultar la barra de búsqueda superior (no necesaria en inventario)
+  const contenedorBuscadorPrincipal = document.getElementById('contenedorBuscadorPrincipal');
+  if (contenedorBuscadorPrincipal) {
+    contenedorBuscadorPrincipal.style.display = 'none';
+  }
+  
   // Ocultar la tabla principal y mostrar contenedor de inventario
   const tableContainer = document.getElementById('tableContainer');
   const inventarioContainer = document.getElementById('inventarioContainer');
@@ -2436,6 +2460,10 @@ function mostrarInventario() {
     <div class="inventario-tables">
       <div class="table-section">
         <h3><i class="fas fa-list"></i> Tóners por Modelo</h3>
+        <div class="search-container">
+          <input type="text" id="busquedaModelos" class="search-input" placeholder="Buscar modelo...">
+          <i class="fas fa-search search-icon"></i>
+        </div>
         <div class="tabla-inventario-wrapper">
           ${generarTablaTonersPorModelo(estadisticas)}
         </div>
@@ -2443,6 +2471,10 @@ function mostrarInventario() {
       
       <div class="table-section">
         <h3><i class="fas fa-building"></i> Tóners por Impresora</h3>
+        <div class="search-container">
+          <input type="text" id="busquedaImpresoras" class="search-input" placeholder="Buscar impresora...">
+          <i class="fas fa-search search-icon"></i>
+        </div>
         <div class="tabla-inventario-wrapper">
           ${generarTablaTonersPorImpresora(estadisticas)}
         </div>
@@ -2451,6 +2483,65 @@ function mostrarInventario() {
   `;
   
   inventarioContainer.innerHTML = inventarioHTML;
+  
+  // Agregar event listeners para las búsquedas independientes
+  agregarEventListenersBusquedaInventario();
+}
+
+/**
+ * Agregar event listeners para las búsquedas independientes
+ */
+function agregarEventListenersBusquedaInventario() {
+  const busquedaModelos = document.getElementById('busquedaModelos');
+  const busquedaImpresoras = document.getElementById('busquedaImpresoras');
+  
+  if (busquedaModelos) {
+    busquedaModelos.addEventListener('input', () => {
+      filtrarTablaInventario('busquedaModelos', '.inventario-tables .table-section:first-child .styled-table tbody tr');
+    });
+  }
+  
+  if (busquedaImpresoras) {
+    busquedaImpresoras.addEventListener('input', () => {
+      filtrarTablaInventario('busquedaImpresoras', '.inventario-tables .table-section:last-child .styled-table tbody tr');
+    });
+  }
+}
+
+/**
+ * Filtrar tabla de inventario
+ */
+function filtrarTablaInventario(inputId, filaSelector) {
+  const input = document.getElementById(inputId);
+  const filtro = input.value.toLowerCase().trim();
+  const filas = document.querySelectorAll(filaSelector);
+  
+  let filasVisibles = 0;
+  
+  filas.forEach(fila => {
+    const textoFila = fila.textContent.toLowerCase();
+    const esVisible = textoFila.includes(filtro);
+    fila.style.display = esVisible ? '' : 'none';
+    if (esVisible) filasVisibles++;
+  });
+  
+  // Actualizar indicador visual
+  actualizarIndicadorBusquedaInventario(input, filtro !== '', filasVisibles, filas.length);
+}
+
+/**
+ * Actualizar indicador visual de búsqueda
+ */
+function actualizarIndicadorBusquedaInventario(input, activo, visibles, total) {
+  if (activo) {
+    input.style.backgroundColor = '#e3f2fd';
+    input.style.border = '2px solid #2196f3';
+    input.title = `Mostrando ${visibles} de ${total} resultados`;
+  } else {
+    input.style.backgroundColor = '';
+    input.style.border = '';
+    input.title = '';
+  }
 }
 
 /**
