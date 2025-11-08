@@ -2424,11 +2424,11 @@ function mostrarInventario() {
       
       <div class="stat-card">
         <div class="stat-icon">
-          <i class="fas fa-chart-bar"></i>
+          <i class="fas fa-shield-alt"></i>
         </div>
         <div class="stat-info">
-          <h3>${estadisticas.promedioTonersPorImpresora.toFixed(1)}</h3>
-          <p>Promedio por Impresora</p>
+          <h3>${Math.round((Object.keys(estadisticas.tonersPorImpresora).length / estadisticas.totalImpresoras) * 100)}%</h3>
+          <p>Cobertura de Stock</p>
         </div>
       </div>
     </div>
@@ -2524,7 +2524,7 @@ function generarTablaTonersPorModelo(estadisticas) {
     const modelosOrdenados = entriesModelos.sort(([,a], [,b]) => b - a);
     
     modelosOrdenados.forEach(([modelo, cantidad]) => {
-      const porcentaje = ((cantidad / estadisticas.totalToners) * 100).toFixed(1);
+      const porcentaje = Math.round((cantidad / estadisticas.totalToners) * 100);
       html += `
         <tr>
           <td><strong>${modelo}</strong></td>
