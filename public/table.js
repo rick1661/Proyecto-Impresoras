@@ -4,6 +4,7 @@
 const btnImpresora = document.getElementById('btnImpresoras');
 const btnConsumible = document.getElementById('btnConsumibles');
 const btnEventos = document.getElementById('btnEventos');
+const btnInventario = document.getElementById('btnInventario');
 const tabla = document.querySelector('.styled-table');
 const botonADD = document.getElementById('agregarBtn');
 let botonGuardar;
@@ -156,6 +157,7 @@ function cargarEventListeners() {
   btnImpresora.addEventListener('click', cargarTablaimpresoras);
   btnConsumible.addEventListener('click', cargarTablaConsumibles);
   btnEventos.addEventListener('click', cargarTablaEventos);
+  btnInventario.addEventListener('click', cargarInventario);
   tabla.addEventListener('click', modificacionElemento);
   buscador.addEventListener('input', buscarElemento);
   tablaToner.addEventListener('click', eliminacionTonerEspecifico);
@@ -177,6 +179,13 @@ function cargarTablaimpresoras() {
   btnImpresora.classList.add('active');
   btnConsumible.classList.remove('active');
   btnEventos.classList.remove('active');
+  btnInventario.classList.remove('active');
+  
+  // Ocultar inventario y restaurar tabla
+  const tableContainer = document.getElementById('tableContainer');
+  const inventarioContainer = document.getElementById('inventarioContainer');
+  if (inventarioContainer) inventarioContainer.style.display = 'none';
+  tableContainer.style.display = 'block';
   
   // Mostrar botones inferiores (pueden estar ocultos por eventos)
   botonADD.style.display = 'block';
@@ -422,6 +431,13 @@ function cargarTablaConsumibles() {
   btnImpresora.classList.remove('active');
   btnConsumible.classList.add('active');
   btnEventos.classList.remove('active');
+  btnInventario.classList.remove('active');
+  
+  // Ocultar inventario y restaurar tabla
+  const tableContainer = document.getElementById('tableContainer');
+  const inventarioContainer = document.getElementById('inventarioContainer');
+  if (inventarioContainer) inventarioContainer.style.display = 'none';
+  tableContainer.style.display = 'block';
   
   // Mostrar botones inferiores (pueden estar ocultos por eventos)
   botonADD.style.display = 'block';
@@ -1807,6 +1823,13 @@ function cargarTablaEventos() {
   btnImpresora.classList.remove('active');
   btnConsumible.classList.remove('active');
   btnEventos.classList.add('active');
+  btnInventario.classList.remove('active');
+  
+  // Ocultar inventario y restaurar tabla
+  const tableContainer = document.getElementById('tableContainer');
+  const inventarioContainer = document.getElementById('inventarioContainer');
+  if (inventarioContainer) inventarioContainer.style.display = 'none';
+  tableContainer.style.display = 'block';
   
   // Obtener eventos de auditoría
   getEventosDeAuditoria();
@@ -2250,4 +2273,351 @@ window.cerrarModalEvento = cerrarModalEvento;
 function invalidarCacheEventos() {
   cacheEventos = null;
   console.log('Caché de eventos invalidado');
+}
+
+// 📊 **************************Funciones para Inventario************************
+
+/**
+ * Función principal para cargar el inventario de tóners
+ */
+function cargarInventario() {
+  console.log('Cargando inventario...');
+  
+  // Cambiar el título
+  tituloH2.textContent = 'Inventario de Tóners';
+  
+  // Ocultar botones inferiores (no aplicables para inventario - solo lectura)
+  botonADD.style.display = 'none';
+  editarBtn.style.display = 'none';
+  
+  // Ocultar la tabla principal y mostrar contenedor de inventario
+  const tableContainer = document.getElementById('tableContainer');
+  const inventarioContainer = document.getElementById('inventarioContainer');
+  
+  tableContainer.style.display = 'none';
+  inventarioContainer.style.display = 'block';
+  
+  // Aplicar estilos activos
+  btnImpresora.classList.remove('active');
+  btnConsumible.classList.remove('active');
+  btnEventos.classList.remove('active');
+  btnInventario.classList.add('active');
+  
+  // Cargar datos del inventario
+  getInventarioData();
+}
+
+/**
+ * Obtener datos del inventario y generar métricas
+ */
+async function getInventarioData() {
+  try {
+    // Mostrar indicador de carga
+    const inventarioContainer = document.getElementById('inventarioContainer');
+    inventarioContainer.innerHTML = `
+      <div class="loading-message" style="text-align: center; padding: 40px; color: var(--colorPrincipal);">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+        Cargando datos del inventario...
+      </div>
+    `;
+    
+    // Cargar impresoras y consumibles
+    await Promise.all([
+      cargarImpresorasParaInventario(),
+      cargarConsumiblesParaInventario()
+    ]);
+    
+    // Generar y mostrar el inventario
+    mostrarInventario();
+    
+  } catch (error) {
+    console.error('❌ Error al obtener datos del inventario:', error);
+    const inventarioContainer = document.getElementById('inventarioContainer');
+    inventarioContainer.innerHTML = `
+      <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        Error al cargar el inventario: ${error.message}
+        <br><small>Revisa la consola para más detalles</small>
+      </div>
+    `;
+  }
+}
+
+/**
+ * Cargar impresoras para el inventario
+ */
+async function cargarImpresorasParaInventario() {
+  try {
+    if (!cacheImpresoras) {
+      const response = await fetch(buildApiUrl('/impresora'));
+      const data = await response.json();
+      cacheImpresoras = data.impresoras || data;
+      console.log('✅ Impresoras cargadas para inventario:', cacheImpresoras.length);
+    }
+  } catch (error) {
+    console.error('❌ Error cargando impresoras:', error);
+    throw error;
+  }
+}
+
+/**
+ * Cargar consumibles para el inventario
+ */
+async function cargarConsumiblesParaInventario() {
+  try {
+    if (!cacheConsumibles) {
+      const response = await fetch(buildApiUrl('/consumible'));
+      const data = await response.json();
+      cacheConsumibles = data.consumibles || data;
+      console.log('✅ Consumibles cargados para inventario:', cacheConsumibles.length);
+    }
+  } catch (error) {
+    console.error('❌ Error cargando consumibles:', error);
+    throw error;
+  }
+}
+
+/**
+ * Mostrar el inventario con métricas y gráficos
+ */
+function mostrarInventario() {
+  console.log('Generando vista de inventario...');
+  
+  // Generar estadísticas
+  const estadisticas = generarEstadisticasInventario();
+  
+  // Obtener el contenedor de inventario
+  const inventarioContainer = document.getElementById('inventarioContainer');
+  
+  // Crear HTML del inventario
+  const inventarioHTML = `
+    <div class="inventario-stats">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-tint"></i>
+        </div>
+        <div class="stat-info">
+          <h3>${estadisticas.totalToners}</h3>
+          <p>Total Tóners</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-print"></i>
+        </div>
+        <div class="stat-info">
+          <h3>${estadisticas.totalImpresoras}</h3>
+          <p>Impresoras</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-palette"></i>
+        </div>
+        <div class="stat-info">
+          <h3>${estadisticas.modelos.length}</h3>
+          <p>Modelos Diferentes</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="stat-info">
+          <h3>${estadisticas.promedioTonersPorImpresora.toFixed(1)}</h3>
+          <p>Promedio por Impresora</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="inventario-tables">
+      <div class="table-section">
+        <h3><i class="fas fa-list"></i> Tóners por Modelo</h3>
+        <div class="tabla-inventario-wrapper">
+          ${generarTablaTonersPorModelo(estadisticas)}
+        </div>
+      </div>
+      
+      <div class="table-section">
+        <h3><i class="fas fa-building"></i> Tóners por Impresora</h3>
+        <div class="tabla-inventario-wrapper">
+          ${generarTablaTonersPorImpresora(estadisticas)}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  inventarioContainer.innerHTML = inventarioHTML;
+}
+
+/**
+ * Generar estadísticas del inventario
+ */
+function generarEstadisticasInventario() {
+  console.log('🔍 Generando estadísticas de inventario...');
+  
+  const stats = {
+    totalToners: cacheConsumibles ? cacheConsumibles.length : 0,
+    totalImpresoras: cacheImpresoras ? cacheImpresoras.length : 0,
+    modelos: [],
+    tonersPorModelo: {},
+    tonersPorImpresora: {},
+    promedioTonersPorImpresora: 0
+  };
+  
+  // Contar los tóners por cada impresora y modelo
+  if (cacheConsumibles && cacheImpresoras) {
+    cacheConsumibles.forEach((consumible) => {
+      // Contar por modelo de tóner
+      const modelo = consumible.modelo || 'Sin modelo';
+      stats.tonersPorModelo[modelo] = (stats.tonersPorModelo[modelo] || 0) + 1;
+      
+      if (!stats.modelos.includes(modelo)) {
+        stats.modelos.push(modelo);
+      }
+      
+      // Contar por impresora
+      const impresora = consumible.nombre || 'Sin nombre';
+      stats.tonersPorImpresora[impresora] = (stats.tonersPorImpresora[impresora] || 0) + 1;
+    });
+    
+    // Calcular promedio
+    const impresorasConToners = Object.keys(stats.tonersPorImpresora).length;
+    stats.promedioTonersPorImpresora = impresorasConToners > 0 ? stats.totalToners / impresorasConToners : 0;
+  }
+  
+  return stats;
+}
+
+/**
+ * Generar tabla de tóners por modelo
+ */
+function generarTablaTonersPorModelo(estadisticas) {
+  let html = `
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-tag"></i> Modelo</th>
+          <th><i class="fas fa-tint"></i> Cantidad</th>
+          <th><i class="fas fa-percentage"></i> Porcentaje</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  // Verificar si hay datos
+  const entriesModelos = Object.entries(estadisticas.tonersPorModelo);
+  if (entriesModelos.length === 0) {
+    html += `
+      <tr>
+        <td colspan="3" style="text-align: center; color: #6c757d; padding: 30px;">
+          <i class="fas fa-inbox"></i><br>
+          No se encontraron tóners por modelo
+        </td>
+      </tr>
+    `;
+  } else {
+    // Ordenar modelos por cantidad (descendente)
+    const modelosOrdenados = entriesModelos.sort(([,a], [,b]) => b - a);
+    
+    modelosOrdenados.forEach(([modelo, cantidad]) => {
+      const porcentaje = ((cantidad / estadisticas.totalToners) * 100).toFixed(1);
+      html += `
+        <tr>
+          <td><strong>${modelo}</strong></td>
+          <td><span class="badge-count">${cantidad}</span></td>
+          <td>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${porcentaje}%"></div>
+              <span class="progress-text">${porcentaje}%</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  
+  html += `
+      </tbody>
+    </table>
+  `;
+  
+  return html;
+}
+
+/**
+ * Generar tabla de tóners por impresora
+ */
+function generarTablaTonersPorImpresora(estadisticas) {
+  let html = `
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-print"></i> Impresora</th>
+          <th><i class="fas fa-tint"></i> Tóners</th>
+          <th><i class="fas fa-chart-line"></i> Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  // Verificar si hay datos
+  const entriesImpresoras = Object.entries(estadisticas.tonersPorImpresora);
+  if (entriesImpresoras.length === 0) {
+    html += `
+      <tr>
+        <td colspan="3" style="text-align: center; color: #6c757d; padding: 30px;">
+          <i class="fas fa-inbox"></i><br>
+          No se encontraron tóners por impresora
+        </td>
+      </tr>
+    `;
+  } else {
+    // Ordenar impresoras por cantidad de tóners (descendente)
+    const impresorasOrdenadas = entriesImpresoras.sort(([,a], [,b]) => b - a);
+    
+    impresorasOrdenadas.forEach(([nombre, cantidad]) => {
+      // Determinar estado basado en cantidad
+      let estadoClase = 'estado-normal';
+      let estadoTexto = 'Normal';
+      let estadoIcono = 'check-circle';
+      
+      if (cantidad >= 3) {
+        estadoClase = 'estado-alto';
+        estadoTexto = 'Stock Alto';
+        estadoIcono = 'arrow-up';
+      } else if (cantidad === 2) {
+        estadoClase = 'estado-bajo';
+        estadoTexto = 'Stock Bajo';
+        estadoIcono = 'exclamation-triangle';
+      } else if (cantidad === 1) {
+        estadoClase = 'estado-critico';
+        estadoTexto = 'Crítico';
+        estadoIcono = 'times-circle';
+      }
+      
+      html += `
+        <tr>
+          <td><strong>${nombre}</strong></td>
+          <td><span class="badge-count">${cantidad}</span></td>
+          <td>
+            <span class="estado-badge ${estadoClase}">
+              <i class="fas fa-${estadoIcono}"></i>
+              ${estadoTexto}
+            </span>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  
+  html += `
+      </tbody>
+    </table>
+  `;
+  
+  return html;
 }

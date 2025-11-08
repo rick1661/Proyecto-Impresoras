@@ -1499,3 +1499,235 @@ h2 {
     text-align: left;
   }
 }
+
+/* 📊 **************************Estilos para Inventario************************ */
+
+/* Botón activo de inventario */
+#btnInventario.active {
+  background: var(--colorPrincipal) !important;
+  color: white !important;
+}
+
+#btnInventario.active .nav-link {
+  background: var(--colorPrincipal) !important;
+  color: white !important;
+}
+
+#btnInventario.active .nav-icon,
+#btnInventario.active .nav-label {
+  color: white !important;
+}
+
+.inventario-main-container {
+  display: none;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.inventario-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, var(--colorPrincipal), #0088cc);
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0, 102, 156, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  opacity: 0.8;
+}
+
+.stat-info h3 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.stat-info p {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.inventario-tables {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin: 20px;
+}
+
+.table-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.table-section h3 {
+  color: var(--colorSecundario);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.tabla-inventario-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+  background: white;
+}
+
+.tabla-inventario-wrapper .styled-table {
+  margin: 0;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.tabla-inventario-wrapper .styled-table th {
+  position: sticky;
+  top: 0;
+  background: var(--colorSecundario) !important;
+  z-index: 10;
+}
+
+.badge-count {
+  background: var(--colorPrincipal);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.progress-bar {
+  position: relative;
+  background: #e9ecef;
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--colorPrincipal), #00b4d8);
+  border-radius: 10px;
+  transition: width 0.8s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  z-index: 2;
+}
+
+.estado-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.estado-normal {
+  background: #d4edda;
+  color: #155724;
+}
+
+.estado-bajo {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado-alto {
+  background: #cce7ff;
+  color: #004085;
+}
+
+.estado-critico {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 40px;
+  color: var(--colorPrincipal);
+  font-size: 1.1rem;
+}
+
+.loading-message i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.error-message {
+  text-align: center;
+  padding: 40px;
+  color: #721c24;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.error-message i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Estilos responsivos para inventario */
+@media (max-width: 1200px) {
+  .inventario-tables {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .inventario-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    padding: 20px;
+  }
+  
+  .stat-info h3 {
+    font-size: 1.8rem;
+  }
+  
+  .inventario-stats,
+  .inventario-tables {
+    margin: 10px;
+  }
+}
