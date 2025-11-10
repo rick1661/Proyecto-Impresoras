@@ -2671,22 +2671,25 @@ function generarTablaTonersPorImpresora(estadisticas) {
     const impresorasOrdenadas = entriesImpresoras.sort(([,a], [,b]) => b - a);
     
     impresorasOrdenadas.forEach(([nombre, cantidad]) => {
-      // Determinar estado basado en cantidad
+      // Determinar estado basado en la regla solicitada:
+      // - si tiene más de 1 tóner -> 'Stock Alto'
+      // - si tiene exactamente 1 tóner -> 'Stock Normal'
+      // - si no tiene ninguno -> 'Sin stock' (caso añadido para claridad)
       let estadoClase = 'estado-normal';
-      let estadoTexto = 'Normal';
+      let estadoTexto = 'Stock Normal';
       let estadoIcono = 'check-circle';
-      
-      if (cantidad >= 3) {
+
+      if (cantidad > 1) {
         estadoClase = 'estado-alto';
         estadoTexto = 'Stock Alto';
         estadoIcono = 'arrow-up';
-      } else if (cantidad === 2) {
-        estadoClase = 'estado-bajo';
-        estadoTexto = 'Stock Bajo';
-        estadoIcono = 'exclamation-triangle';
       } else if (cantidad === 1) {
-        estadoClase = 'estado-critico';
-        estadoTexto = 'Crítico';
+        estadoClase = 'estado-normal';
+        estadoTexto = 'Stock Normal';
+        estadoIcono = 'check-circle';
+      } else if (cantidad === 0) {
+        estadoClase = 'estado-vacio';
+        estadoTexto = 'Sin stock';
         estadoIcono = 'times-circle';
       }
       
