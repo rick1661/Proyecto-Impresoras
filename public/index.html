@@ -123,6 +123,17 @@
 
     </aside>
 
+    <!-- Header móvil -->
+    <header class="mobile-header" style="display: none;">
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="mobile-title" id="mobileTitle">Impresoras</h1>
+    </header>
+
+    <!-- Overlay para cerrar sidebar en móvil -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <div class="main-content">
 
         <div id="contenedorBuscadorPrincipal">
@@ -264,10 +275,26 @@
     <script src="../node_modules/select2/dist/js/select2.min.js"></script>-->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-       
 
-
-
+    <!-- Navegación móvil -->
+    <nav class="mobile-nav" style="display: none;">
+        <a href="#" class="mobile-nav-item" id="mobileImpresoras">
+            <i class="fas fa-print"></i>
+            <span>Impresoras</span>
+        </a>
+        <a href="#" class="mobile-nav-item" id="mobileConsumibles">
+            <i class="fas fa-tint"></i>
+            <span>Consumibles</span>
+        </a>
+        <a href="#" class="mobile-nav-item" id="mobileInventario">
+            <i class="fas fa-boxes"></i>
+            <span>Inventario</span>
+        </a>
+        <a href="#" class="mobile-nav-item" id="mobileEventos">
+            <i class="fas fa-history"></i>
+            <span>Eventos</span>
+        </a>
+    </nav>
 
 </body>
 

@@ -181,6 +181,9 @@ function cargarTablaimpresoras() {
   btnEventos.classList.remove('active');
   btnInventario.classList.remove('active');
   
+  // Actualizar navegación móvil
+  updateMobileNavigation('impresoras');
+  
   // Ocultar inventario y restaurar tabla
   const tableContainer = document.getElementById('tableContainer');
   const inventarioContainer = document.getElementById('inventarioContainer');
@@ -438,6 +441,9 @@ function cargarTablaConsumibles() {
   btnConsumible.classList.add('active');
   btnEventos.classList.remove('active');
   btnInventario.classList.remove('active');
+  
+  // Actualizar navegación móvil
+  updateMobileNavigation('consumibles');
   
   // Ocultar inventario y restaurar tabla
   const tableContainer = document.getElementById('tableContainer');
@@ -1837,6 +1843,9 @@ function cargarTablaEventos() {
   btnEventos.classList.add('active');
   btnInventario.classList.remove('active');
   
+  // Actualizar navegación móvil
+  updateMobileNavigation('eventos');
+  
   // Restaurar barra de búsqueda superior
   const contenedorBuscadorPrincipal = document.getElementById('contenedorBuscadorPrincipal');
   if (contenedorBuscadorPrincipal) {
@@ -2326,6 +2335,9 @@ function cargarInventario() {
   btnConsumible.classList.remove('active');
   btnEventos.classList.remove('active');
   btnInventario.classList.add('active');
+  
+  // Actualizar navegación móvil
+  updateMobileNavigation('inventario');
   
   // Cargar datos del inventario
   getInventarioData();
@@ -2969,4 +2981,199 @@ function formatearNivelCritico(nivelToner) {
   }
   
   return '<span style="color: #6c757d;">No disponible</span>';
+}
+
+
+// ====================== FUNCIONALIDAD M�VIL ======================
+
+/**
+ * Actualizar título móvil
+ */
+function updateMobileTitle(title) {
+  const mobileTitle = document.getElementById('mobileTitle');
+  if (mobileTitle && window.innerWidth <= 768) {
+    mobileTitle.textContent = title;
+  }
+}
+
+/**
+ * Actualizar navegación móvil activa
+ */
+function updateMobileNavigation(section) {
+  const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+  mobileNavItems.forEach(item => item.classList.remove('active'));
+  
+  const mobileImpresoras = document.getElementById('mobileImpresoras');
+  const mobileConsumibles = document.getElementById('mobileConsumibles');
+  const mobileInventario = document.getElementById('mobileInventario');
+  const mobileEventos = document.getElementById('mobileEventos');
+  
+  switch(section) {
+    case 'impresoras':
+      if (mobileImpresoras) mobileImpresoras.classList.add('active');
+      updateMobileTitle('Impresoras');
+      break;
+    case 'consumibles':
+      if (mobileConsumibles) mobileConsumibles.classList.add('active');
+      updateMobileTitle('Consumibles');
+      break;
+    case 'inventario':
+      if (mobileInventario) mobileInventario.classList.add('active');
+      updateMobileTitle('Inventario');
+      break;
+    case 'eventos':
+      if (mobileEventos) mobileEventos.classList.add('active');
+      updateMobileTitle('Eventos');
+      break;
+  }
+}
+
+/**
+ * Inicializar funcionalidad m�vil
+ */
+function initMobileFunctionality() {
+  const mobileHeader = document.querySelector('.mobile-header');
+  const mobileNav = document.querySelector('.mobile-nav');
+  const sidebar = document.querySelector('.sidebar');
+  const mobileOverlay = document.getElementById('mobileOverlay');
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  
+  // Detectar si es m�vil
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+  
+  // Mostrar/ocultar elementos m�viles
+  function toggleMobileElements() {
+    if (isMobile()) {
+      mobileHeader.style.display = 'flex';
+      mobileNav.style.display = 'flex';
+      sidebar.classList.remove('mobile-open');
+    } else {
+      mobileHeader.style.display = 'none';
+      mobileNav.style.display = 'none';
+      sidebar.classList.remove('mobile-open');
+      mobileOverlay.classList.remove('active');
+    }
+  }
+  
+  // Abrir/cerrar sidebar m�vil
+  function toggleMobileSidebar() {
+    if (isMobile()) {
+      sidebar.classList.toggle('mobile-open');
+      mobileOverlay.classList.toggle('active');
+    }
+  }
+  
+  // Cerrar sidebar m�vil
+  function closeMobileSidebar() {
+    if (isMobile()) {
+      sidebar.classList.remove('mobile-open');
+      mobileOverlay.classList.remove('active');
+    }
+  }
+  
+  // Event listeners
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+  }
+  
+  if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', closeMobileSidebar);
+  }
+  
+  // Cerrar sidebar al hacer clic en un enlace del men�
+  const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', closeMobileSidebar);
+  });
+  
+  // Navegaci�n m�vil
+  const mobileImpresoras = document.getElementById('mobileImpresoras');
+  const mobileConsumibles = document.getElementById('mobileConsumibles');
+  const mobileInventario = document.getElementById('mobileInventario');
+  const mobileEventos = document.getElementById('mobileEventos');
+  
+  if (mobileImpresoras) {
+    mobileImpresoras.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateMobileNavigation('impresoras');
+      cargarTablaimpresoras();
+    });
+  }
+  
+  if (mobileConsumibles) {
+    mobileConsumibles.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateMobileNavigation('consumibles');
+      cargarTablaConsumibles();
+    });
+  }
+  
+  if (mobileInventario) {
+    mobileInventario.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateMobileNavigation('inventario');
+      cargarInventario();
+    });
+  }
+  
+  if (mobileEventos) {
+    mobileEventos.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateMobileNavigation('eventos');
+      cargarTablaEventos();
+    });
+  }
+  
+  // Hacer tablas m�s m�vil-friendly
+  function optimizeTablesForMobile() {
+    if (isMobile()) {
+      const tables = document.querySelectorAll('.styled-table');
+      tables.forEach(table => {
+        // Agregar clase para estilos m�viles
+        table.classList.add('mobile-optimized');
+        
+        // Crear versi�n simplificada para m�vil si es necesario
+        if (table.querySelectorAll('th').length > 5) {
+          table.classList.add('mobile-essential');
+        }
+      });
+    }
+  }
+  
+  // Ajustar modales para m�vil
+  function optimizeModalsForMobile() {
+    if (isMobile()) {
+      const modals = document.querySelectorAll('.modal-content');
+      modals.forEach(modal => {
+        modal.style.width = '95%';
+        modal.style.maxHeight = '90vh';
+        modal.style.margin = '5vh auto';
+      });
+    }
+  }
+  
+  // Inicializar en carga de p�gina
+  toggleMobileElements();
+  
+  // Actualizar en resize
+  window.addEventListener('resize', () => {
+    toggleMobileElements();
+    optimizeTablesForMobile();
+    optimizeModalsForMobile();
+  });
+  
+  // Inicializar navegaci�n m�vil con impresoras por defecto
+  updateMobileNavigation('impresoras');
+}
+
+// Inicializar cuando el DOM est� listo
+document.addEventListener('DOMContentLoaded', initMobileFunctionality);
+
+// Tambi�n inicializar si ya est� cargado
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initMobileFunctionality);
+} else {
+  initMobileFunctionality();
 }
