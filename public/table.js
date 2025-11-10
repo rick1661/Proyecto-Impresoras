@@ -2422,7 +2422,7 @@ function mostrarInventario() {
         </div>
         <div class="stat-info">
           <h3>${estadisticas.totalToners}</h3>
-          <p>Total Tóners</p>
+          <p>Total tóners</p>
         </div>
       </div>
       
@@ -2442,7 +2442,7 @@ function mostrarInventario() {
         </div>
         <div class="stat-info">
           <h3>${estadisticas.modelos.length}</h3>
-          <p>Modelos Diferentes</p>
+          <p>Modelos diferentes</p>
         </div>
       </div>
       
@@ -2452,14 +2452,25 @@ function mostrarInventario() {
         </div>
         <div class="stat-info">
           <h3>${Math.round((Object.keys(estadisticas.tonersPorImpresora).length / estadisticas.totalImpresoras) * 100)}%</h3>
-          <p>Cobertura de Stock</p>
+          <p>Cobertura de stock</p>
         </div>
       </div>
     </div>
     
     <div class="inventario-tables">
       <div class="table-section">
-        <h3><i class="fas fa-list"></i> Tóners por Modelo</h3>
+        <h3><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> Impresoras críticas sin stock</h3>
+        <div class="search-container">
+          <input type="text" id="busquedaCriticos" class="search-input" placeholder="Buscar impresora crítica...">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="tabla-inventario-wrapper">
+          <div id="tablaTonersCriticos">Cargando impresoras críticas...</div>
+        </div>
+      </div>
+      
+      <div class="table-section">
+        <h3><i class="fas fa-list"></i> Tóners por modelo</h3>
         <div class="search-container">
           <input type="text" id="busquedaModelos" class="search-input" placeholder="Buscar modelo...">
           <i class="fas fa-search search-icon"></i>
@@ -2470,7 +2481,7 @@ function mostrarInventario() {
       </div>
       
       <div class="table-section">
-        <h3><i class="fas fa-building"></i> Tóners por Impresora</h3>
+        <h3><i class="fas fa-building"></i> Tóners por impresora</h3>
         <div class="search-container">
           <input type="text" id="busquedaImpresoras" class="search-input" placeholder="Buscar impresora...">
           <i class="fas fa-search search-icon"></i>
@@ -2486,24 +2497,34 @@ function mostrarInventario() {
   
   // Agregar event listeners para las búsquedas independientes
   agregarEventListenersBusquedaInventario();
+  
+  // Cargar impresoras críticas sin stock de forma asíncrona
+  cargarTonersCriticos();
 }
 
 /**
  * Agregar event listeners para las búsquedas independientes
  */
 function agregarEventListenersBusquedaInventario() {
+  const busquedaCriticos = document.getElementById('busquedaCriticos');
   const busquedaModelos = document.getElementById('busquedaModelos');
   const busquedaImpresoras = document.getElementById('busquedaImpresoras');
   
+  if (busquedaCriticos) {
+    busquedaCriticos.addEventListener('input', () => {
+      filtrarTablaInventario('busquedaCriticos', '.inventario-tables .table-section:first-child .styled-table tbody tr');
+    });
+  }
+  
   if (busquedaModelos) {
     busquedaModelos.addEventListener('input', () => {
-      filtrarTablaInventario('busquedaModelos', '.inventario-tables .table-section:first-child .styled-table tbody tr');
+      filtrarTablaInventario('busquedaModelos', '.inventario-tables .table-section:nth-child(2) .styled-table tbody tr');
     });
   }
   
   if (busquedaImpresoras) {
     busquedaImpresoras.addEventListener('input', () => {
-      filtrarTablaInventario('busquedaImpresoras', '.inventario-tables .table-section:last-child .styled-table tbody tr');
+      filtrarTablaInventario('busquedaImpresoras', '.inventario-tables .table-section:nth-child(3) .styled-table tbody tr');
     });
   }
 }
@@ -2714,4 +2735,238 @@ function generarTablaTonersPorImpresora(estadisticas) {
   `;
   
   return html;
+}
+/**
+ * Cargar y mostrar impresoras críticas sin stock
+ */
+async function cargarTonersCriticos() {
+  console.log('🚨 Cargando impresoras críticas sin stock...');
+  
+  const tablaContainer = document.getElementById('tablaTonersCriticos');
+  
+  try {
+    // Mostrar mensaje de carga
+    tablaContainer.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: #6c757d;">
+        <i class="fas fa-spinner fa-spin"></i> Analizando niveles de tóner...
+      </div>
+    `;
+    
+    // Obtener impresoras críticas
+    const impresorasCriticas = await obtenerImpresorasCriticas();
+    
+    // Generar y mostrar la tabla
+    tablaContainer.innerHTML = generarTablaTonersCriticos(impresorasCriticas);
+    
+  } catch (error) {
+    console.error('❌ Error cargando impresoras críticas:', error);
+    tablaContainer.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: #e74c3c;">
+        <i class="fas fa-exclamation-triangle"></i> Error cargando impresoras críticas
+      </div>
+    `;
+  }
+}
+
+/**
+ * Obtener impresoras con situación crítica de tóner
+ */
+async function obtenerImpresorasCriticas() {
+  console.log('🔍 Analizando impresoras para encontrar situaciones críticas...');
+  
+  const impresorasCriticas = [];
+  
+  if (!cacheImpresoras || !cacheConsumibles) {
+    console.warn('⚠️ No hay datos de impresoras o consumibles disponibles');
+    return impresorasCriticas;
+  }
+  
+  // Crear mapa de stock por impresora (contar tóners disponibles)
+  const stockPorImpresora = {};
+  cacheConsumibles.forEach(consumible => {
+    const nombre = consumible.nombre || 'Sin nombre';
+    stockPorImpresora[nombre] = (stockPorImpresora[nombre] || 0) + 1;
+  });
+  
+  // Analizar cada impresora
+  for (const impresora of cacheImpresoras) {
+    const nombre = impresora.nombre?.[0] || 'Sin nombre';
+    const stockDisponible = stockPorImpresora[nombre] || 0;
+    
+    // Solo verificar si no tiene stock disponible
+    if (stockDisponible === 0) {
+      try {
+        // Obtener nivel de tóner actual
+        const nivelToner = await obtenerNivelTonerImpresora(impresora);
+        
+        // Verificar si algún cartucho está por debajo del 10%
+        if (tieneNivelCritico(nivelToner)) {
+          impresorasCriticas.push({
+            ...impresora,
+            nivelToner: nivelToner,
+            stockDisponible: stockDisponible,
+            nombreCompleto: nombre
+          });
+        }
+      } catch (error) {
+        console.warn(`⚠️ No se pudo obtener nivel de tóner para ${nombre}:`, error.message);
+      }
+    }
+  }
+  
+  console.log(`🚨 Encontradas ${impresorasCriticas.length} impresoras en situación crítica`);
+  return impresorasCriticas;
+}
+
+/**
+ * Obtener nivel de tóner de una impresora específica
+ */
+async function obtenerNivelTonerImpresora(impresora) {
+  const ip = impresora.direccionIp || '';
+  const modelo = (impresora.modelo || '').toUpperCase();
+  
+  // Determinar el tipo de función a usar según el modelo
+  const modelosColor = ['E47528', 'P57750 XC', 'MFP M283fdw', 'MFP P57750', 'MFP P57750 XC', 'MFP E47528'];
+  const modelo408 = ["408dn", "MFP M232", "MFP 432", "M432", "MFP M432"];
+  
+  const esColor = modelosColor.some(m => modelo.includes(m.toUpperCase()));
+  const es408 = modelo408.some(m => modelo.includes(m.toUpperCase()));
+  
+  let obtenerToner;
+  if (esColor) {
+    obtenerToner = obtenerNivelTonerColor;
+  } else if (es408) {
+    obtenerToner = obtenerNivelTonerScraping;
+  } else {
+    obtenerToner = obtenerNivelTonerNegro;
+  }
+  
+  return await obtenerToner(ip);
+}
+
+/**
+ * Verificar si un nivel de tóner está en estado crítico (<10%)
+ */
+function tieneNivelCritico(nivelToner) {
+  const UMBRAL_CRITICO = 10;
+  
+  // Si es un número simple (monocromático)
+  if (typeof nivelToner === 'number' || (!isNaN(nivelToner) && nivelToner !== null && nivelToner !== undefined && nivelToner !== '')) {
+    const nivel = Number(nivelToner);
+    return !isNaN(nivel) && nivel < UMBRAL_CRITICO;
+  }
+  
+  // Si es un objeto (color o scraping)
+  if (typeof nivelToner === 'object' && nivelToner !== null) {
+    const valores = Object.values(nivelToner);
+    return valores.some(valor => {
+      const nivel = Number(valor);
+      return !isNaN(nivel) && nivel < UMBRAL_CRITICO;
+    });
+  }
+  
+  // Si es string o no válido, no es crítico
+  return false;
+}
+
+/**
+ * Generar tabla HTML para impresoras críticas sin stock
+ */
+function generarTablaTonersCriticos(impresorasCriticas) {
+  let html = `
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-print"></i> Impresora</th>
+          <th><i class="fas fa-network-wired"></i> IP</th>
+          <th><i class="fas fa-tint"></i> Nivel Actual</th>
+          <th><i class="fas fa-exclamation-circle"></i> Estado</th>
+          <th><i class="fas fa-warehouse"></i> Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  if (impresorasCriticas.length === 0) {
+    html += `
+      <tr>
+        <td colspan="5" style="text-align: center; color: #27ae60; padding: 30px;">
+          <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+          ¡Excelente! No hay impresoras en situación crítica
+        </td>
+      </tr>
+    `;
+  } else {
+    impresorasCriticas.forEach(impresora => {
+      const ip = impresora.direccionIp || 'N/A';
+      const nivelTexto = formatearNivelCritico(impresora.nivelToner);
+      
+      html += `
+        <tr style="background-color: #ffeaa7; border-left: 4px solid #e74c3c;">
+          <td>
+            <strong>${impresora.nombreCompleto}</strong>
+            <br><small>${impresora.serie}</small>
+          </td>
+          <td>${ip}</td>
+          <td>${nivelTexto}</td>
+          <td>
+            <span style="color: #e74c3c; font-weight: bold;">
+              <i class="fas fa-exclamation-triangle"></i>
+              CRÍTICO
+            </span>
+          </td>
+          <td>
+            <span style="color: #e74c3c; font-weight: bold;">
+              <i class="fas fa-times-circle"></i>
+              Sin stock
+            </span>
+          </td>
+        </tr>
+      `;
+    });
+  }
+  
+  html += `
+      </tbody>
+    </table>
+  `;
+  
+  return html;
+}
+
+/**
+ * Formatear nivel de tóner para mostrar en la tabla críticos
+ */
+function formatearNivelCritico(nivelToner) {
+  // Si es un número simple
+  if (typeof nivelToner === 'number' || (!isNaN(nivelToner) && nivelToner !== null && nivelToner !== undefined && nivelToner !== '')) {
+    const nivel = Number(nivelToner);
+    if (!isNaN(nivel)) {
+      return `<span style="color: ${nivel < 10 ? '#e74c3c' : '#27ae60'}; font-weight: bold;">${nivel}%</span>`;
+    }
+  }
+  
+  // Si es un objeto (color o scraping)
+  if (typeof nivelToner === 'object' && nivelToner !== null) {
+    const colores = {
+      black: 'K',
+      cyan: 'C', 
+      magenta: 'M',
+      yellow: 'Y',
+      image: 'Tambor'
+    };
+    
+    let resultado = [];
+    for (const [color, valor] of Object.entries(nivelToner)) {
+      const nivel = Number(valor);
+      if (!isNaN(nivel)) {
+        const etiqueta = colores[color] || color;
+        const colorTexto = nivel < 10 ? '#e74c3c' : '#f39c12';
+        resultado.push(`<span style="color: ${colorTexto}; font-weight: bold;">${etiqueta}: ${nivel}%</span>`);
+      }
+    }
+    return resultado.join('<br>');
+  }
+  
+  return '<span style="color: #6c757d;">No disponible</span>';
 }
