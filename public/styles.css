@@ -864,7 +864,7 @@ h2 {
 }
 
 #buscadorIcono {
-  width: 35x;
+  width: 35px;
   font-weight: 500;
   font-size: 2em;
   text-align: center;
@@ -1041,12 +1041,11 @@ h2 {
   }
 
   #buscadorIcono {
-
     /* Posiciona el icono dentro del input */
     top: 50%;
     /* Centra verticalmente el icono */
-    left: 267px;
-    /* Posición horizontal */
+    right: 0px;
+    /* Posición horizontal desde la derecha */
     transform: translateY(-50%);
     /* Ajuste fino para centrar verticalmente */
     pointer-events: none;
@@ -1933,8 +1932,9 @@ h2 {
   .main-content {
     margin-left: 0;
     width: 100%;
-    padding: 60px 15px 15px 15px;
-    min-height: calc(100vh - 60px);
+    padding: 70px 10px 80px 10px;
+    min-height: calc(100vh - 150px);
+    box-sizing: border-box;
   }
   
   .main-content.expanded {
@@ -1995,15 +1995,31 @@ h2 {
     font-size: 0.7rem;
   }
   
-  /* Ocultar columnas menos importantes en móvil */
-  .styled-table th:nth-child(n+6),
-  .styled-table td:nth-child(n+6) {
+  /* Ocultar columnas menos importantes en móvil, mantener Tóner nivel */
+  .styled-table th:nth-child(5),
+  .styled-table th:nth-child(6),
+  .styled-table th:nth-child(7),  
+  .styled-table th:nth-child(8),
+  .styled-table th:nth-child(10),
+  .styled-table th:nth-child(11),
+  .styled-table td:nth-child(5),
+  .styled-table td:nth-child(6),
+  .styled-table td:nth-child(7),
+  .styled-table td:nth-child(8),
+  .styled-table td:nth-child(10),
+  .styled-table td:nth-child(11) {
     display: none;
   }
   
-  /* Mostrar solo columnas esenciales */
-  .styled-table.mobile-essential th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)),
-  .styled-table.mobile-essential td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)) {
+  /* Mostrar columnas esenciales en móvil: Serie, Nombre, Tóner nivel, Marca, Tóner */
+  .styled-table.mobile-essential th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(9)),
+  .styled-table.mobile-essential td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(9)) {
+    display: none;
+  }
+  
+  /* Durante búsqueda, mostrar más columnas: Serie, Nombre, Tóner nivel, Marca, IP, Tóner */
+  .styled-table.mobile-essential.searching th:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(6)):not(:nth-child(9)),
+  .styled-table.mobile-essential.searching td:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(6)):not(:nth-child(9)) {
     display: none;
   }
   
@@ -2011,6 +2027,19 @@ h2 {
   .editBtn, .deleteBtn, .guardarBtn {
     padding: 4px 8px;
     font-size: 0.7rem;
+  }
+  
+  /* Mejorar interacción táctil en celdas de tóner para móvil */
+  .styled-table td.toner-cell {
+    padding: 8px 4px;
+    min-height: 40px; /* Área táctil mínima recomendada */
+    cursor: pointer;
+    -webkit-tap-highlight-color: rgba(0, 102, 156, 0.2);
+    touch-action: manipulation; /* Evitar zoom accidental */
+  }
+  
+  .styled-table td.toner-cell * {
+    pointer-events: none; /* Los elementos hijos no interceptan clicks */
   }
   
   /* Controles superiores */
@@ -2025,15 +2054,58 @@ h2 {
     font-size: 0.9rem;
   }
   
-  /* Búsqueda móvil */
+  /* Contenedores de búsqueda móvil */
+  #contenedorBuscadorPrincipal {
+    margin: 10px 15px;
+    height: 45px;
+  }
+  
+  #contenedorBuscadorSecundario {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  #busquedaInput {
+    width: 100%;
+    font-size: 0.9rem;
+    height: 35px;
+    padding: 8px 40px 8px 15px;
+    border: none;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  #buscadorIcono {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: #666;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  /* Búsqueda en inventario móvil */
   .search-input {
     font-size: 0.85rem;
     padding: 8px 35px 8px 12px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .search-icon {
     right: 10px;
     font-size: 0.8rem;
+  }
+  
+  .search-container {
+    width: 100%;
+    margin-bottom: 10px;
   }
   
   /* Inventario móvil */
@@ -2163,6 +2235,32 @@ h2 {
   
   .mobile-nav-item i {
     font-size: 1rem;
+  }
+  
+  /* Búsqueda en móviles muy pequeños */
+  #contenedorBuscadorPrincipal {
+    margin: 10px 8px;
+  }
+  
+  #contenedorBuscadorSecundario {
+    max-width: none;
+  }
+  
+  #busquedaInput {
+    font-size: 0.85rem;
+    height: 32px;
+    padding: 6px 35px 6px 12px;
+  }
+  
+  #buscadorIcono {
+    position: absolute;
+    font-size: 1rem;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+    z-index: 1;
   }
   
   /* Barras de tóner móvil */

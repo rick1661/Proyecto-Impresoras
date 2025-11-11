@@ -539,16 +539,44 @@ function getConsumibles(guardarCache = false) {
     });
 }
 
+// Función para agregar icono de gotita al modelo específico
+function addDropIcon(modelo) {
+  if (modelo === 'W9008MC') {
+    return `${modelo} <span style="color: #000000; font-size: 1.1em; margin-left: 5px; filter: grayscale(100%) brightness(0%);">�</span>`;
+  }
+  return modelo;
+}
+
 function renderConsumibles(consumibles) {
   const tbody = document.querySelector('.styled-table tbody');
   tbody.innerHTML = '';
   consumibles.forEach(consumible => {
     const row = document.createElement('tr');
+    
+    // Agregar gotita según el modelo específico
+    let modeloConIcono = consumible.modelo;
+    
+    // Gotitas negras para modelos específicos
+    if (consumible.modelo === 'W9008MC' || consumible.modelo === 'MC9008' || consumible.modelo === 'W1332AC' || consumible.modelo === 'CF287JC' || consumible.modelo === '976YC K' || consumible.modelo === 'W2110X' || consumible.modelo === 'W1330XC' || consumible.modelo === 'CF287XC' || consumible.modelo === 'CF258XC' || consumible.modelo === 'CF226JC') {
+      modeloConIcono = `${consumible.modelo} <span style="color: #000000; font-size: 1.2em; margin-left: 5px;">●</span>`;
+    }
+    // Gotita cyan para 976YC C y W2111X
+    else if (consumible.modelo === '976YC C' || consumible.modelo === 'W2111X') {
+      modeloConIcono = `${consumible.modelo} <span style="color: #00BFFF; font-size: 1.2em; margin-left: 5px;">●</span>`;
+    }
+    // Gotita magenta para 976YC M y W2113X
+    else if (consumible.modelo === '976YC M' || consumible.modelo === 'W2113X') {
+      modeloConIcono = `${consumible.modelo} <span style="color: #FF1493; font-size: 1.2em; margin-left: 5px;">●</span>`;
+    }
+    // Gotita amarilla para 976YC Y y W2112X
+    else if (consumible.modelo === '976YC Y' || consumible.modelo === 'W2112X') {
+      modeloConIcono = `${consumible.modelo} <span style="color: #FFD700; font-size: 1.2em; margin-left: 5px;">●</span>`;
+    }
 
     if (estaModoEdicion()) {
     row.innerHTML = `
         <td>${consumible.tipo}</td>
-        <td>${consumible.modelo}</td>
+        <td>${modeloConIcono}</td>
         <td>${consumible.tij}</td>
         <td class="fecha">${consumible.fecha.slice(0, 10)}</td>
         <td>${consumible.nombre}</td>
@@ -561,7 +589,7 @@ function renderConsumibles(consumibles) {
 
        row.innerHTML = `
         <td>${consumible.tipo}</td>
-        <td>${consumible.modelo}</td>
+        <td>${modeloConIcono}</td>
         <td>${consumible.tij}</td>
         <td class="fecha">${consumible.fecha.slice(0, 10)}</td>
         <td>${consumible.nombre}</td>
@@ -633,10 +661,18 @@ function modificacionElemento(e) {
 
   }
 
-  //Mostrar toner al dar click en la celda de toner
-  if (target.classList.contains('toner-cell')) {
+  //Mostrar toner al dar click en la celda de toner o elementos dentro de ella
+  if (target.classList.contains('toner-cell') || target.closest('.toner-cell')) {
     console.log('🎯 Click en celda de toner detectado!');
-    consultaToner(e);
+    // Si el click fue en un elemento hijo, usar la celda padre
+    const tonerCell = target.classList.contains('toner-cell') ? target : target.closest('.toner-cell');
+    // Crear un evento sintético con el target correcto
+    const syntheticEvent = {
+      target: tonerCell,
+      preventDefault: e.preventDefault.bind(e),
+      stopPropagation: e.stopPropagation.bind(e)
+    };
+    consultaToner(syntheticEvent);
   }
 
 
@@ -1345,15 +1381,24 @@ function buscarElemento() {
 function aplicarFiltroActual() {
   const filtro = buscador.value.toLowerCase().trim();
   const filas = document.querySelectorAll('.styled-table tbody tr');
+  const tablas = document.querySelectorAll('.styled-table');
   
   if (filtro === '') {
-    // Sin filtro - mostrar todas las filas
+    // Sin filtro - mostrar todas las filas y quitar clase de búsqueda
     filas.forEach(fila => {
       fila.style.display = '';
+    });
+    tablas.forEach(tabla => {
+      tabla.classList.remove('searching');
     });
     actualizarIndicadorFiltro(false);
     return;
   }
+  
+  // Agregar clase de búsqueda para mostrar más columnas
+  tablas.forEach(tabla => {
+    tabla.classList.add('searching');
+  });
   
   // Aplicar filtro
   let filasVisibles = 0;
@@ -3163,6 +3208,33 @@ function initMobileFunctionality() {
     optimizeTablesForMobile();
     optimizeModalsForMobile();
   });
+  
+  // Mejorar manejo táctil en móviles
+  function enhanceTouchInteraction() {
+    if (isMobile()) {
+      // Delegación de eventos para mejor detección táctil en tóner
+      document.addEventListener('touchend', (e) => {
+        const target = e.target;
+        const tonerCell = target.classList.contains('toner-cell') ? target : target.closest('.toner-cell');
+        
+        if (tonerCell && !e.defaultPrevented) {
+          e.preventDefault();
+          console.log('🎯 Touch en celda de tóner detectado!');
+          
+          // Crear evento sintético para consultaToner
+          const syntheticEvent = {
+            target: tonerCell,
+            preventDefault: () => {},
+            stopPropagation: () => {}
+          };
+          consultaToner(syntheticEvent);
+        }
+      }, { passive: false });
+    }
+  }
+  
+  // Inicializar mejoras táctiles
+  enhanceTouchInteraction();
   
   // Inicializar navegaci�n m�vil con impresoras por defecto
   updateMobileNavigation('impresoras');
