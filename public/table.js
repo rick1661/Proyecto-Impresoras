@@ -553,25 +553,29 @@ function renderConsumibles(consumibles) {
   consumibles.forEach(consumible => {
     const row = document.createElement('tr');
     
+    // Función auxiliar para aplicar gotitas de color por modelo (reutilizable)
+    function aplicarGotitaPorModelo(modelo) {
+      // Gotitas negras para modelos específicos
+      if (modelo === 'W9008MC' || modelo === 'MC9008' || modelo === 'W1332AC' || modelo === 'CF287JC' || modelo === '976YC K' || modelo === 'W2110X' || modelo === 'W1330XC' || modelo === 'CF287XC' || modelo === 'CF258XC' || modelo === 'CF226JC') {
+        return `${modelo} <span style="color: #000000; font-size: 1.2em; margin-left: 5px;">●</span>`;
+      }
+      // Gotita cyan para 976YC C y W2111X
+      else if (modelo === '976YC C' || modelo === 'W2111X') {
+        return `${modelo} <span style="color: #00BFFF; font-size: 1.2em; margin-left: 5px;">●</span>`;
+      }
+      // Gotita magenta para 976YC M y W2113X
+      else if (modelo === '976YC M' || modelo === 'W2113X') {
+        return `${modelo} <span style="color: #FF1493; font-size: 1.2em; margin-left: 5px;">●</span>`;
+      }
+      // Gotita amarilla para 976YC Y y W2112X
+      else if (modelo === '976YC Y' || modelo === 'W2112X') {
+        return `${modelo} <span style="color: #FFD700; font-size: 1.2em; margin-left: 5px;">●</span>`;
+      }
+      return modelo;
+    }
+
     // Agregar gotita según el modelo específico
-    let modeloConIcono = consumible.modelo;
-    
-    // Gotitas negras para modelos específicos
-    if (consumible.modelo === 'W9008MC' || consumible.modelo === 'MC9008' || consumible.modelo === 'W1332AC' || consumible.modelo === 'CF287JC' || consumible.modelo === '976YC K' || consumible.modelo === 'W2110X' || consumible.modelo === 'W1330XC' || consumible.modelo === 'CF287XC' || consumible.modelo === 'CF258XC' || consumible.modelo === 'CF226JC') {
-      modeloConIcono = `${consumible.modelo} <span style="color: #000000; font-size: 1.2em; margin-left: 5px;">●</span>`;
-    }
-    // Gotita cyan para 976YC C y W2111X
-    else if (consumible.modelo === '976YC C' || consumible.modelo === 'W2111X') {
-      modeloConIcono = `${consumible.modelo} <span style="color: #00BFFF; font-size: 1.2em; margin-left: 5px;">●</span>`;
-    }
-    // Gotita magenta para 976YC M y W2113X
-    else if (consumible.modelo === '976YC M' || consumible.modelo === 'W2113X') {
-      modeloConIcono = `${consumible.modelo} <span style="color: #FF1493; font-size: 1.2em; margin-left: 5px;">●</span>`;
-    }
-    // Gotita amarilla para 976YC Y y W2112X
-    else if (consumible.modelo === '976YC Y' || consumible.modelo === 'W2112X') {
-      modeloConIcono = `${consumible.modelo} <span style="color: #FFD700; font-size: 1.2em; margin-left: 5px;">●</span>`;
-    }
+    let modeloConIcono = aplicarGotitaPorModelo(consumible.modelo);
 
     if (estaModoEdicion()) {
     row.innerHTML = `
@@ -1796,9 +1800,33 @@ function renderTonerUnico(tonerEspecifico) {
       tonerEspecifico.forEach(toner => {
         const row = document.createElement('tr');
         console.log(toner.fecha);
+        
+        // Aplicar gotitas de color al modelo en el modal
+        function aplicarGotitaPorModelo(modelo) {
+          // Gotitas negras para modelos específicos
+          if (modelo === 'W9008MC' || modelo === 'MC9008' || modelo === 'W1332AC' || modelo === 'CF287JC' || modelo === '976YC K' || modelo === 'W2110X' || modelo === 'W1330XC' || modelo === 'CF287XC' || modelo === 'CF258XC' || modelo === 'CF226JC') {
+            return `${modelo} <span style="color: #000000; font-size: 1.2em; margin-left: 5px;">●</span>`;
+          }
+          // Gotita cyan para 976YC C y W2111X
+          else if (modelo === '976YC C' || modelo === 'W2111X') {
+            return `${modelo} <span style="color: #00BFFF; font-size: 1.2em; margin-left: 5px;">●</span>`;
+          }
+          // Gotita magenta para 976YC M y W2113X
+          else if (modelo === '976YC M' || modelo === 'W2113X') {
+            return `${modelo} <span style="color: #FF1493; font-size: 1.2em; margin-left: 5px;">●</span>`;
+          }
+          // Gotita amarilla para 976YC Y y W2112X
+          else if (modelo === '976YC Y' || modelo === 'W2112X') {
+            return `${modelo} <span style="color: #FFD700; font-size: 1.2em; margin-left: 5px;">●</span>`;
+          }
+          return modelo;
+        }
+        
+        const modeloConGotita = aplicarGotitaPorModelo(toner.modelo);
+        
         row.innerHTML = `
         <td>${toner.tipo}</td>
-        <td>${toner.modelo}</td>
+        <td>${modeloConGotita}</td>
         <td>${toner.tij}</td>
         <td>${toner.fecha.slice(0, 10)}</td>
         <td class="eliminar-td ${toner.consumibleID}"><button class="eliminar-btn">X</button></td>
@@ -1808,9 +1836,34 @@ function renderTonerUnico(tonerEspecifico) {
     } else {
 
       console.log("Noooo Entro al for each de toner especifico")
-      const row = document.createElement('tr'); row.innerHTML = `
+      
+      // Aplicar gotitas de color al modelo en el modal (caso único)
+      function aplicarGotitaPorModelo(modelo) {
+        // Gotitas negras para modelos específicos
+        if (modelo === 'W9008MC' || modelo === 'MC9008' || modelo === 'W1332AC' || modelo === 'CF287JC' || modelo === '976YC K' || modelo === 'W2110X' || modelo === 'W1330XC' || modelo === 'CF287XC' || modelo === 'CF258XC' || modelo === 'CF226JC') {
+          return `${modelo} <span style="color: #000000; font-size: 1.2em; margin-left: 5px;">●</span>`;
+        }
+        // Gotita cyan para 976YC C y W2111X
+        else if (modelo === '976YC C' || modelo === 'W2111X') {
+          return `${modelo} <span style="color: #00BFFF; font-size: 1.2em; margin-left: 5px;">●</span>`;
+        }
+        // Gotita magenta para 976YC M y W2113X
+        else if (modelo === '976YC M' || modelo === 'W2113X') {
+          return `${modelo} <span style="color: #FF1493; font-size: 1.2em; margin-left: 5px;">●</span>`;
+        }
+        // Gotita amarilla para 976YC Y y W2112X
+        else if (modelo === '976YC Y' || modelo === 'W2112X') {
+          return `${modelo} <span style="color: #FFD700; font-size: 1.2em; margin-left: 5px;">●</span>`;
+        }
+        return modelo;
+      }
+      
+      const modeloConGotita = aplicarGotitaPorModelo(tonerEspecifico.modelo);
+      
+      const row = document.createElement('tr'); 
+      row.innerHTML = `
       <td>${tonerEspecifico.tipo}</td>
-      <td>${tonerEspecifico.modelo}</td>
+      <td>${modeloConGotita}</td>
       <td>${tonerEspecifico.tij}</td>
       <td>${tonerEspecifico.fecha.slice(0, 10)}</td>
       <td class="eliminar-td ${tonerEspecifico.consumibleID}"><button class="eliminar-btn">X</button></td>
